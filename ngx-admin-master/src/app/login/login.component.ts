@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
 	      	console.log(this.theme));*/
 	  }
 	login(){
-
-		this.router.navigate(['pages'], {});
+		
+		this.router.navigateByUrl('/pages');
 	}
 }
