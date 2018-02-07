@@ -49,16 +49,50 @@ class UsuarioController extends Controller
     {
         // Primero comprobaremos si estamos recibiendo todos los campos.
         if ( !$request->input('email') || !$request->input('nombre') ||
-            !$request->input('tipo_usuario') || !$request->input('tipo_registro') )
+            !$request->input('tipo_usuario') || !$request->input('tipo_registro') ||
+            !$request->input('ciudad') || !$request->input('estado') || !$request->input('telefono') )
         {
-            // Se devuelve un array messages con los messagees encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['message'=>'Faltan datos necesarios para el proceso de alta.'],422);
+            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
+            return response()->json(['error'=>'Faltan datos necesarios para el proceso de alta.'],422);
         } 
         
         $aux = \App\User::where('email', $request->input('email'))->get();
         if(count($aux)!=0){
-           // Devolvemos un código 409 Conflict. 
-            return response()->json(['message'=>'Ya existe un usuario con esas credenciales.'], 409);
+
+            if ($request->input('tipo_registro') == 1) {
+                //Devolvemos un código 409 Conflict. 
+                return response()->json(['error'=>'Ya existe un usuario con esas credenciales.'], 409);
+            }else{
+
+                $auxUser = $aux[0];
+                $auxUser->email = $request->input('email');
+                //$auxUser->password = Hash::make($request->input('password'));
+                $auxUser->nombre = $request->input('nombre');
+                $auxUser->ciudad = $request->input('ciudad');
+                $auxUser->estado = $request->input('estado');
+                $auxUser->telefono = $request->input('telefono');
+                $auxUser->imagen = $request->input('imagen');
+                $auxUser->tipo_usuario = $request->input('tipo_usuario');
+                $auxUser->tipo_registro = $request->input('tipo_registro');
+
+                if ($request->input('tipo_registro') == 2) {
+                    $auxUser->id_facebook = $request->input('id_facebook');
+                }else if ($request->input('tipo_registro') == 3) {
+                    $auxUser->id_twitter = $request->input('id_twitter');
+                }else if ($request->input('tipo_registro') == 4) {
+                    $auxUser->id_instagram = $request->input('id_instagram');
+                }
+                
+                // Almacenamos en la base de datos el registro.
+                if ($auxUser->save()) {
+                    return response()->json(['message'=>'Usuario actualizado con éxito.', 'usuario'=>$auxUser], 200);
+                }else{
+                    return response()->json(['error'=>'Error al actualizar el usuario.'], 500);
+                }
+                
+                
+            }
+            
         }
 
         /*Primero creo una instancia en la tabla usuarios*/
@@ -66,14 +100,20 @@ class UsuarioController extends Controller
         $usuario->email = $request->input('email');
         $usuario->password = Hash::make($request->input('password'));
         $usuario->nombre = $request->input('nombre');
+        $usuario->ciudad = $request->input('ciudad');
+        $usuario->estado = $request->input('estado');
+        $usuario->telefono = $request->input('telefono');
         $usuario->imagen = $request->input('imagen');
         $usuario->tipo_usuario = $request->input('tipo_usuario');
         $usuario->tipo_registro = $request->input('tipo_registro');
+        $usuario->id_facebook = $request->input('id_facebook');
+        $usuario->id_twitter = $request->input('id_twitter');
+        $usuario->id_instagram = $request->input('id_instagram');
 
         if($usuario->save()){
            return response()->json(['message'=>'Usuario creado con éxito.', 'usuario'=>$usuario], 200);
         }else{
-            return response()->json(['message'=>'Error al crear el usuario.'], 500);
+            return response()->json(['error'=>'Error al crear el usuario.'], 500);
         }
     }
 
@@ -89,7 +129,7 @@ class UsuarioController extends Controller
         $usuario = \App\User::find($id);
 
         if(count($usuario)==0){
-            return response()->json(['message'=>'No existe el usuario con id '.$id], 404);          
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);          
         }else{
 
             return response()->json(['usuario'=>$usuario], 200);
@@ -121,14 +161,17 @@ class UsuarioController extends Controller
 
         if (count($usuario)==0)
         {
-            // Devolvemos message codigo http 404
-            return response()->json(['message'=>'No existe el usuario con id '.$id], 404);
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
         }      
 
         // Listado de campos recibidos teóricamente.
         $email=$request->input('email'); 
         $password=$request->input('password');  
         $nombre=$request->input('nombre');
+        $ciudad = $request->input('ciudad');
+        $estado = $request->input('estado');
+        $telefono = $request->input('telefono');
         $imagen=$request->input('imagen');
         $tipo_usuario=$request->input('tipo_usuario');
         $tipo_registro=$request->input('tipo_registro');
@@ -145,7 +188,7 @@ class UsuarioController extends Controller
 
             if(count($aux)!=0){
                // Devolvemos un código 409 Conflict. 
-                return response()->json(['message'=>'Ya existe otro usuario con ese email.'], 409);
+                return response()->json(['error'=>'Ya existe otro usuario con ese email.'], 409);
             }
 
             $usuario->email = $email;
@@ -161,6 +204,24 @@ class UsuarioController extends Controller
         if ($nombre != null && $nombre!='')
         {
             $usuario->nombre = $nombre;
+            $bandera=true;
+        }
+
+        if ($ciudad != null && $ciudad!='')
+        {
+            $usuario->ciudad = $ciudad;
+            $bandera=true;
+        }
+
+        if ($estado != null && $estado!='')
+        {
+            $usuario->estado = $estado;
+            $bandera=true;
+        }
+
+        if ($telefono != null && $telefono!='')
+        {
+            $usuario->telefono = $telefono;
             $bandera=true;
         }
 
@@ -189,15 +250,15 @@ class UsuarioController extends Controller
             if ($usuario->save()) {
                 return response()->json(['message'=>'Usuario actualizado con éxito.', 'usuario'=>$usuario], 200);
             }else{
-                return response()->json(['message'=>'Error al actualizar el usuario.'], 500);
+                return response()->json(['error'=>'Error al actualizar el usuario.'], 500);
             }
             
         }
         else
         {
-            // Se devuelve un array messages con los messagees encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
             // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
-            return response()->json(['message'=>'No se ha modificado ningún dato del usuario.'],409);
+            return response()->json(['error'=>'No se ha modificado ningún dato del usuario.'],409);
         }
     }
 
@@ -214,8 +275,8 @@ class UsuarioController extends Controller
 
         if (count($usuario)==0)
         {
-            // Devolvemos message codigo http 404
-            return response()->json(['message'=>'No existe el usuario con id '.$id], 404);
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
         }
 
         // Eliminamos el usuario.

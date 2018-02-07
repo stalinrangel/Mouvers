@@ -45,7 +45,12 @@ class LoginController extends Controller
 
             $user = User::where('email', $request->input('email'))->first();
             if (empty($user)) {
-                return response()->json(['error' => 'User inválido'], 401);
+                return response()->json(['error' => 'Email inválido'], 401);
+            }
+
+            //En el panel solo se logean usuarios administradores
+            if ($user->tipo_usuario != 1) {
+                return response()->json(['error' => 'Credenciales inválidas.'], 401);
             }
 
             if (!$token = JWTAuth::attempt($credentials)) {
@@ -70,26 +75,100 @@ class LoginController extends Controller
 
     public function loginApp(Request $request)
     {
-        $credentials = $request->only('user', 'password');
+        $credentials = $request->only('email', 'password');
         $token = null;
         $user = null;
+        $bandera = false;
 
         try {
 
-            $user = User::where('user', $request->input('user'))->first();
-            if (empty($user)) {
-                return response()->json(['error' => 'User inválido'], 401);
-            }
+            if ($request->input('email')) {
 
-            //En la app solo se logean usuarios clientes
-            if ($user->tipo != 1) {
-                return response()->json(['error' => 'Credenciales inválidas.'], 401);
-            }
+                $user = User::where('email', $request->input('email'))->first();
+                if (empty($user)) {
+                    return response()->json(['error' => 'Email inválido.'], 401);
+                }
 
-            if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Password inválido'], 401);
-            }
+                //En la app solo se logean usuarios clientes
+                if ($user->tipo_usuario != 2) {
+                    return response()->json(['error' => 'Credenciales inválidas.'], 401);
+                }
 
+                //Para login con registro normal (email y password)
+                if ($user->tipo_registro == 1) {
+                    if (!$token = JWTAuth::attempt($credentials)) {
+                        return response()->json(['error' => 'Password inválido'], 401);
+                    }
+                    $bandera=true;
+                }
+                //Para login con registro con redes sociales
+                else{
+
+                    if ($user->id_facebook == null && $request->input('id_facebook') != null && $request->input('id_facebook') != '') {
+
+                        $user->id_facebook = $request->input('id_facebook');
+                        $user->save();
+                        $bandera=true;
+                    }
+                    if ($user->id_twitter == null && $request->input('id_twitter') != null && $request->input('id_twitter') != '') {
+
+                        $user->id_twitter = $request->input('id_twitter');
+                        $user->save();
+                        $bandera=true;
+                    }
+                    if ($user->id_instagram == null && $request->input('id_instagram') != null && $request->input('id_instagram') != '') {
+
+                        $user->id_instagram = $request->input('id_instagram');
+                        $user->save();
+                        $bandera=true;
+                    }
+
+                    $token = JWTAuth::fromUser($user);
+                }
+            }else if(!$bandera && $request->input('id_facebook')){
+
+                $user = User::where('id_facebook', $request->input('id_facebook'))->first();
+                if (empty($user)) {
+                    return response()->json(['error' => 'Usuario no encontrado.'], 401);
+                }
+
+                //En la app solo se logean usuarios clientes
+                if ($user->tipo_usuario != 2) {
+                    return response()->json(['error' => 'Credenciales inválidas.'], 401);
+                }
+
+                $token = JWTAuth::fromUser($user);
+
+            }else if(!$bandera && $request->input('id_twitter')){
+
+                $user = User::where('id_twitter', $request->input('id_twitter'))->first();
+                if (empty($user)) {
+                    return response()->json(['error' => 'Usuario no encontrado.'], 401);
+                }
+
+                //En la app solo se logean usuarios clientes
+                if ($user->tipo_usuario != 2) {
+                    return response()->json(['error' => 'Credenciales inválidas.'], 401);
+                }
+
+                $token = JWTAuth::fromUser($user);
+
+            }else if(!$bandera && $request->input('id_instagram')){
+
+                $user = User::where('id_instagram', $request->input('id_instagram'))->first();
+                if (empty($user)) {
+                    return response()->json(['error' => 'Usuario no encontrado.'], 401);
+                }
+
+                //En la app solo se logean usuarios clientes
+                if ($user->tipo_usuario != 2) {
+                    return response()->json(['error' => 'Credenciales inválidas.'], 401);
+                }
+
+                $token = JWTAuth::fromUser($user);
+            }
+            
+            
             $user = JWTAuth::toUser($token);
             
 
@@ -105,22 +184,5 @@ class LoginController extends Controller
                 'user' => $user
             ]);
     }
-
-
-    public function test2($id)
-    {
-    //-------------------------------
-    //Prueba de relacion de TecMarcaExtintor con TecExtintor
-    $tecextintores = \App\TecMarcaExtintor::find($id)->tecextintores;
-    return response()->json(['result' => $tecextintores]);
-    }
-
-    public function test3($id)
-    {
-    //Prueba de relacion inversa
-    $tecmarcaextintor = \App\TecExtintor::find($id)->tecmarcaextintor;
-    return response()->json(['result' => $tecmarcaextintor]);
-    }
-
 
 }

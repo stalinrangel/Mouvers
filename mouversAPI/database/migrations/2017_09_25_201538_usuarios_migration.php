@@ -17,9 +17,15 @@ class UsuariosMigration extends Migration
             $table->string('email')->unique();
             $table->string('password')->nullable();
             $table->string('nombre');
+            $table->string('ciudad');
+            $table->string('estado'); //estado del pais
+            $table->string('telefono');
             $table->string('imagen')->nullable();
-            $table->integer('tipo_usuario'); 
-            $table->integer('tipo_registro');
+            $table->integer('tipo_usuario'); //1=admin 2=cliente
+            $table->integer('tipo_registro'); //1=normal 2=facebook 3=twitter 4=instagram
+            $table->string('id_facebook')->nullable();
+            $table->string('id_twitter')->nullable();
+            $table->string('id_instagram')->nullable();
             $table->string('codigo_verificacion')->nullable();
             $table->timestamps();
         });
