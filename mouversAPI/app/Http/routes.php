@@ -31,6 +31,13 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/usuarios/{id}','UsuarioController@destroy');
         Route::get('/usuarios/{id}','UsuarioController@show');
 
+        //----Pruebas CategoriaController
+        Route::get('/categorias','CategoriaController@index');
+        Route::post('/categorias','CategoriaController@store');
+        Route::put('/categorias/{id}','CategoriaController@update');
+        Route::delete('/categorias/{id}','CategoriaController@destroy');
+        Route::get('/categorias/{id}','CategoriaController@show');
+
 
     Route::group(['middleware' => 'jwt-auth'], function(){
 
