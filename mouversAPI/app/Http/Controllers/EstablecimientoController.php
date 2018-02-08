@@ -16,7 +16,7 @@ class EstablecimientoController extends Controller
      */
     public function index()
     {
-        //cargar todas las establecimientos
+        //cargar todas los establecimientos
         $establecimientos = \App\Establecimiento::all();
 
         if(count($establecimientos) == 0){
@@ -56,13 +56,6 @@ class EstablecimientoController extends Controller
         if(count($aux)!=0){
            // Devolvemos un código 409 Conflict. 
             return response()->json(['error'=>'Ya existe un establecimiento con ese nombre.'], 409);
-        }
-
-        if($nuevoEstablecimiento=\App\Establecimiento::create($request->all())){
-           return response()->json(['message'=>'Establecimiento creado con éxito.',
-             'establecimiento'=>$nuevoEstablecimiento], 200);
-        }else{
-            return response()->json(['error'=>'Error al crear el establecimiento.'], 500);
         }
 
         /*Primero creo una instancia en la tabla establecimientos*/
@@ -235,5 +228,17 @@ class EstablecimientoController extends Controller
         $establecimiento->delete();
 
         return response()->json(['message'=>'Se ha eliminado correctamente el establecimiento.'], 200);
+    }
+
+    public function establecimientosProdsCat()
+    {
+        //cargar todos los establecimientos con sus productos y su categoria
+        $establecimientos = \App\Establecimiento::with('productos.categoria')->get();
+
+        if(count($establecimientos) == 0){
+            return response()->json(['error'=>'No existen establecimientos.'], 404);          
+        }else{
+            return response()->json(['establecimientos'=>$establecimientos], 200);
+        } 
     }
 }

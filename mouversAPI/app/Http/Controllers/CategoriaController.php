@@ -172,17 +172,29 @@ class CategoriaController extends Controller
             return response()->json(['error'=>'No existe la categoría con id '.$id], 404);
         }
        
-        /*$productos = $categoria->productos;
+        $productos = $categoria->productos;
 
         if (sizeof($productos) > 0)
         {
             // Devolvemos un código 409 Conflict. 
             return response()->json(['error'=>'Esta categoría no puede ser eliminada porque posee productos asociados.'], 409);
-        }*/
+        }
 
         // Eliminamos la categoria si no tiene relaciones.
         $categoria->delete();
 
         return response()->json(['message'=>'Se ha eliminado correctamente la categoría.'], 200);
+    }
+
+    public function categoriasProdsEst()
+    {
+        //cargar todas las categorias con sus productos y su establecimiento
+        $categorias = \App\Categoria::with('productos.establecimiento')->get();
+
+        if(count($categorias) == 0){
+            return response()->json(['error'=>'No existen categorías.'], 404);          
+        }else{
+            return response()->json(['categorias'=>$categorias], 200);
+        } 
     }
 }
