@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Registro
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+	<div class="content-form">
+		<div class="align-right">
+			<img src="assets/imgs/logo4.png" width="68%">
+		</div>
+		<form [formGroup]="registerUserForm">
+			<ion-list>
+			  <ion-item>
+			    <ion-label stacked>Nombre y Apellido</ion-label>
+			    <ion-input type="text" formControlName="nombre" [ngClass]="{'danger': formErrors.nombre}"></ion-input>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Teléfono</ion-label>
+			    <ion-input type="number" formControlName="telefono" [ngClass]="{'danger': formErrors.telefono}"></ion-input>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Correo Electrónico</ion-label>
+			    <ion-input type="email" formControlName="email" [ngClass]="{'danger': formErrors.email}"></ion-input>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Estado</ion-label>
+			    <ion-select interface="popover" formControlName="estado" [ngClass]="{'danger': formErrors.estado}" (ionChange)="setEstado($event)">
+					<ion-option [value]="estado.nom_ent" *ngFor = "let estado of estados">{{estado.nom_ent}}</ion-option>
+				</ion-select>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>{{city}}</ion-label>
+			    <ion-select interface="popover" formControlName="ciudad" [ngClass]="{'danger': formErrors.ciudad}">
+					<ion-option [value]="ciudad.nom_mun" *ngFor = "let ciudad of ciudades">{{ciudad.nom_mun}}</ion-option>
+				</ion-select>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Contraseña</ion-label>
+			    <ion-input [type]="password_type1" formControlName="password" [ngClass]="{'danger': formErrors.password}"></ion-input>
+			    <button ion-button clear  class="icon-eyes" item-right (click)="togglePasswordMode1()">
+				    <ion-icon ios="md-eye" md="md-eye"></ion-icon>
+				</button>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Confirmar contraseña</ion-label>
+			    <ion-input [type]="password_type2" formControlName="rpassword" [ngClass]="{'danger': formErrors.rpassword}"></ion-input>
+			    <button ion-button clear class="icon-eyes" item-right (click)="togglePasswordMode2()">
+				    <ion-icon ios="md-eye" md="md-eye"></ion-icon>
+				</button>
+			  </ion-item>
+			  <ion-item>
+				<ion-label stacked>Condiciones de uso</ion-label>
+			  </ion-item>
+			  <iframe width="100%" class="frame" src="http://mouvers.mx/terminos/terminos.html" name="iframe_a" frameborder="0" allowfullscreen></iframe>
+			  <ion-item class="content-check">
+				<ion-label class="white">Aceptar condiciones de uso</ion-label>
+				<ion-checkbox class="check-product" formControlName="check"></ion-checkbox>
+			  </ion-item>
+			</ion-list>
+			<div class="content-button" (click)="register(registerUserForm)">
+				<div class="img-button back-blue">
+					<img src="assets/imgs/checked.png">
+				</div>
+				<div class="div-button back-blue">
+					Confirmar registro
+				</div>
+			</div>
+		</form>
+	</div>
+</ion-content>

@@ -1,0 +1,91 @@
+page-products {
+	.title-text{
+		text-align: center;
+    	padding: 40% 0px 30px 0px;
+	}
+	ion-title {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  padding: 0 0px 1px;
+	  width: 100%;
+	  height: 100%;
+	  text-align: center;
+	  z-index: -1;
+	  padding-left: 0px !important;
+	  padding-right: 0px !important;
+	}
+	.icon-menu{
+		width: 17px;
+		height: 17px;
+    	margin-right: 5px;
+    	position: relative;
+    	top: 2px;
+	}
+	.icon-cart{
+		color: #ffffff;
+		font-size: 1.8em;
+	}
+	.card-content{
+	    left: 0;
+	    right: 0;
+	    top: 0;
+	    bottom: 0;
+	    position: absolute;
+	    z-index: 1;
+	    display: block;
+	    overflow: auto;
+	    contain: size style layout;
+	    padding: 25px 20px 0px;
+	    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.8)), to(rgba(255, 255, 255, 0.8))), url(../assets/imgs/edificios.png) #fff;
+	    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url(../assets/imgs/edificios.png) #fff;
+		background-size: 100%;
+	    background-position-y: bottom;
+	    background-repeat: no-repeat;
+	}
+	accordion-list {
+        background: color($colors, light);
+        height: 100%;
+    }
+    .section {
+        background: #0b417a;
+        color: #fff;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+    .item-name{
+    	position: absolute;
+	    left: 0;
+	    right: 0;
+	    top: 0;
+	    bottom: 0;
+	    text-align: center;
+	    display: grid;
+	    align-items: center;
+	    font-weight: bold;
+	    font-size: 20px;
+    }
+    .section-active {
+        background: #0b417a;
+        color: #fff;
+    }
+ 
+    .child {
+        background: #e8e7e6;
+        color: #000;
+        margin-bottom: 4px;
+    }
+    .child-item {
+        background: #f3f2f1;
+        padding: 10px;
+    }
+    .label {
+        margin: 0px;
+    }
+    .list {
+        margin-bottom: 4px;
+    }
+    .list-header-md, .list-header-ios{
+    	margin-bottom: 4px;
+    }
+}

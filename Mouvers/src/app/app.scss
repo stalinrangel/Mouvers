@@ -1,0 +1,188 @@
+.content-ios, .content-md {
+    color: #000;
+    background-color: #e0e0e0;
+}
+.toolbar-background-md, .toolbar-background-ios {
+    border-color: #00203e;
+    background: #00203e;
+    border-bottom: 1px solid #76f8f6 !important;
+}
+.bar-button-default-md, .bar-button-default-ios, .back-button-icon-md{
+	color: #ffff !important;
+}
+.item-input-has-focus .label-md[stacked], .input-has-focus .label-md[stacked], .item-input-has-focus .label-ios[stacked], .input-has-focus .label-ios[stacked]{
+	color: #76f9f8;
+}
+.radio-md .radio-inner{
+	background-color: #0b417a;
+}
+.radio-md .radio-checked {
+    border-color: #0b417a;
+}
+.item-radio-checked.item-md ion-label{
+	color: #0b417a;
+}
+.item-radio.item-md ion-label{
+	font-size: 16px;
+}
+.item-label-stacked .select-md, .item-label-stacked .select-ios{
+	background-color: #ffffff;
+	border-radius: 3px;
+}
+.alert-md .alert-button, .alert-ios .alert-button{
+	color: #0b417a;
+	font-weight: bold;
+}
+.alert-md .alert-wrapper{
+	background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.8)),url(../assets/imgs/edificios.png) #fff;
+    background-size: cover;
+    background-position-y: 60px;
+    background-repeat: no-repeat;
+}
+.item-label-stacked .select-md, .item-label-stacked .select-ios, .item-label-stacked .text-input-md, .item-ios.item-label-stacked .text-input{
+	padding-left: 5px;
+}
+ion-header ion-icon.back-button-icon.icon, .tabs-md .tab-button-icon, .tabs-ios .tab-button-icon, .toolbar-title-md, .toolbar-title-ios {
+    color: #ffffff;
+}
+.toolbar-title-md, .toolbar-title-ios {
+	font-size: 18px;
+}
+.loading-md .spinner-crescent circle {
+    stroke: #00203e;
+}
+.tabs-md .tabbar, .tabs-ios .tabbar{
+	background-color: #00203e;
+}
+.tabs-md .tab-button[aria-selected=true], .tabs-md .tab-button[aria-selected=true] .tab-button-icon, .tabs-ios .tab-button[aria-selected=true], .tabs-ios .tab-button[aria-selected=true] .tab-button-icon{
+	color: #ffffff;
+	background-color: #0b417a;
+}
+.tabbar, .tabs-ios, .tabs-md , .tabs-wp{ 
+	.tab-button-icon {
+        background-repeat:no-repeat;
+        background-position:center;
+        height:24px;
+        width:24px;
+        background-size:contain;
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        &:before {
+            display:none;
+        }
+    }
+}
+.tabs-ios {
+  a[aria-selected=false]{
+    .tab-button-icon[ng-reflect-name=menus], .tab-button-icon[aria-label="menus outline"] {
+      background-image: url(../assets/imgs/home.png);
+      height:23px;
+      width:23px;
+    }
+    .tab-button-icon[ng-reflect-name=envio], .tab-button-icon[aria-label="envio outline"] {
+      background-image: url(../assets/imgs/motorbike.png);
+      height:30px;
+      width:30px;
+    }
+    .tab-button-icon[ng-reflect-name=usuario], .tab-button-icon[aria-label= "usuario outline"] {
+      background-image: url(../assets/imgs/user.png);
+      height:19px;
+      width:19px;
+    }
+  }
+  a[aria-selected=true]{
+    .tab-button-icon[ng-reflect-name=menus], .tab-button-icon[aria-label="menus"] {
+      background-image: url(../assets/imgs/home.png);
+      height:23px;
+      width:23px;
+    }
+    .tab-button-icon[ng-reflect-name=envio], .tab-button-icon[aria-label="envio"] {
+      background-image: url(../assets/imgs/motorbike.png);
+      height:30px;
+      width:30px;
+    }
+    .tab-button-icon[ng-reflect-name=usuario], .tab-button-icon[aria-label="usuario"] {
+      background-image: url(../assets/imgs/user.png);
+      height:19px;
+      width:19px;
+    }
+  }
+}
+.tabs-md {
+  a[aria-selected=false], a[aria-selected=true]{
+    .tab-button-icon[ng-reflect-name=menus], .tab-button-icon[aria-label="menus"] {
+      background-image: url(../assets/imgs/home.png);
+      height:23px;
+      width:23px;
+    }
+    .tab-button-icon[ng-reflect-name=envio], .tab-button-icon[aria-label="envio"] {
+      background-image: url(../assets/imgs/motorbike.png);
+      height:30px;
+      width:30px;
+    }
+    .tab-button-icon[ng-reflect-name=usuario], .tab-button-icon[aria-label="usuario"] {
+      background-image: url(../assets/imgs/user.png);
+      height:19px;
+      width:19px;
+    }
+  }
+}
+.tabs-wp {
+  a[aria-selected=false], a[aria-selected=true]{
+    .tab-button-icon[ng-reflect-name=menus], .tab-button-icon[aria-label="menus"] {
+      background-image: url(../assets/imgs/home.png);
+      height:23px;
+      width:23px;
+    }
+    .tab-button-icon[ng-reflect-name=envio], .tab-button-icon[aria-label="envio"] {
+      background-image: url(../assets/imgs/motorbike.png);
+      height:30px;
+      width:30px;
+    }
+    .tab-button-icon[ng-reflect-name=usuario], .tab-button-icon[aria-label="usuario"] {
+      background-image: url(../assets/imgs/user.png);
+      height:19px;
+      width:19px;
+    }
+  }
+}
+.card-main{
+	margin: 0px;
+	width: 100%;
+  height: 100%;
+  display: block;
+	background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.8)),url(../assets/imgs/edificios.png) #fff;
+  background-size: 100%;
+  background-position-y: bottom;
+  background-repeat: no-repeat;
+  padding: 15px;
+}
+.badge-md, .badge-ios {
+  color: #fff;
+  background-color: #D32F2F;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid;
+  border-radius: 50%;
+  font-size: 11px;
+  position: absolute;
+  top: -4px;
+  left: 20px;
+  padding: 5% 0%;
+}
+.bar-button-ios[icon-only] ion-icon{
+  font-size: 1.5em;
+}
+.bar-button-md[icon-only], .bar-button-ios[icon-only]{
+  width: 40px;
+}
+.bar-buttons-md[end], .bar-buttons-ios[end]{
+  margin-top: 5px;
+}
+.toast-ios .toast-message, .toast-md .toast-message{
+  text-align: center;
+}
+.toast-md .toast-wrapper, .toast-ios .toast-wrapper{
+  background: rgba(200, 53, 43, 0.77);
+}

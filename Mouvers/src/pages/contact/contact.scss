@@ -1,0 +1,53 @@
+page-contact {
+	.header-profile{
+		background-image: url(../assets/imgs/city.jpg);
+	    background-size: 145%;
+	    background-repeat: no-repeat;
+	    background-position: center 60%;
+	    text-align: center;
+	    padding: 15% 0% 3%;
+	}
+	.img-profile{
+	    border: 3px solid #fff;
+	    border-radius: 50%;
+	    width: 25%;
+	    height: 25%;
+	    max-width: 100px;
+    	max-height: 100px;
+	}
+	.name-profile{
+		font-size: 19px;
+	    margin: 10px;
+	    color: #fff;
+	    font-weight: bold;
+	    text-transform: uppercase;
+	    letter-spacing: 1px;
+	}
+	.content-count{
+		background-color: #00203e;
+		color: #fff;
+		text-align: center;
+	}
+	.number-count{
+		font-size: 20px;
+		margin: 3px 0px;
+	}
+	.title-count{
+		margin: 0px 0px 3px;
+		font-size: 13px;
+	}
+	.line-left{
+		border-left: qpx solid #0b417a;
+	}
+
+	.button-salir{
+		background-color: #0b417a;
+		display: block;
+		margin: auto;
+	}
+
+	
+}
+.ios ion-tab > .ion-page > ion-content.statusbar-padding:first-child .scroll-content{
+	padding-top: 0px;
+}

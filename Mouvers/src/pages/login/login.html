@@ -1,0 +1,63 @@
+<div id="custom-overlay" [style.display]="splash ? 'flex': 'none'">
+  <div class="flb">
+    <div class="Aligner-item Aligner-item--top"></div>
+    <img src="assets/imgs/logo2.png">
+    <div class="Aligner-item Aligner-item--bottom"></div>
+  </div>
+</div>
+<ion-content padding>
+	<div class="content-form">
+		<div class="align-right">
+			<img src="assets/imgs/logo4.png" width="75%">
+		</div>
+		<form [formGroup]="loginUserForm">
+			<ion-list>
+			  <ion-item>
+			    <ion-label stacked>Correo Electrónico</ion-label>
+			    <ion-input type="text" formControlName="email"></ion-input>
+			  </ion-item>
+
+			  <ion-item>
+			    <ion-label stacked>Constraseña</ion-label>
+			    <ion-input type="password" formControlName="password"></ion-input>
+			  </ion-item>
+			</ion-list>
+			<div class="content-button" (click)="login(loginUserForm)">
+				<div class="img-button back-blue">
+					<img src="assets/imgs/usuario.png">
+				</div>
+				<div class="div-button back-blue">
+					Iniciar sesión
+				</div>
+			</div>
+		</form>
+		<div class="content-button" (click)="loginFacebook()">
+			<div class="img-button back-blue">
+				<img src="assets/imgs/facebook.png">
+			</div>
+			<div class="div-button back-blue">
+				Iniciar sesión con Facebook
+			</div>
+		</div>
+		<div class="content-button" (click)="loginTwitter()">
+			<div class="img-button back-light">
+				<img src="assets/imgs/twitter.png">
+			</div>
+			<div class="div-button back-light">
+				Iniciar sesión con Twitter
+			</div>
+		</div>
+		<div class="content-button" (click)="loginInstagram()">
+			<div class="img-button back-pink">
+				<img src="assets/imgs/instagram.png">
+			</div>
+			<div class="div-button back-pink">
+				Iniciar sesión con Instagram
+			</div>
+		</div>
+		<p class="olvido-password">¿Olvido contraseña?</p>
+		<div class="link-register" (click)="register()">
+			REGISTRATE
+		</div>
+	</div>
+</ion-content>
