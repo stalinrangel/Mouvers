@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Calificacion extends Model
 {
 	/**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'categorias';
+    protected $table = 'calificaciones';
 
     // Eloquent asume que cada tabla tiene una clave primaria con una columna llamada id.
     // Si éste no fuera el caso entonces hay que indicar cuál es nuestra clave primaria en la tabla:
@@ -24,7 +24,7 @@ class Categoria extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'imagen'];
+    protected $fillable = ['pedido_id', 'puntaje', 'comentario'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -33,10 +33,11 @@ class Categoria extends Model
      */
     protected $hidden = ['created_at','updated_at'];
 
-     // Relación de categoria con subcategorias:
-    public function subcategorias()
+    // Relación de calificacion con pedidos:
+    public function pedido()
     {
-        // 1 categoria puede tener varias subcategorias
-        return $this->hasMany('App\Subcategoria', 'categoria_id');
+        // 1 calificacion pertenece a un pedido
+        return $this->belongsTo('App\Pedido', 'pedido_id');
     }
+
 }

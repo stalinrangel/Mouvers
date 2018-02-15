@@ -24,7 +24,7 @@ class Producto extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'precio', 'imagen', 'categoria_id', 'establecimiento_id'];
+    protected $fillable = ['nombre', 'precio', 'imagen', 'subcategoria_id', 'establecimiento_id'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -33,11 +33,11 @@ class Producto extends Model
      */
     protected $hidden = ['created_at','updated_at'];
 
-    // Relación de producto con categoria:
-    public function categoria()
+    // Relación de producto con subcategoria:
+    public function subcategoria()
     {
-        // 1 producto pertenece a una categoria
-        return $this->belongsTo('App\Categoria', 'categoria_id');
+        // 1 producto pertenece a una subcategoria
+        return $this->belongsTo('App\Subcategoria', 'subcategoria_id');
     }
 
     // Relación de producto con establecimiento:
@@ -45,5 +45,11 @@ class Producto extends Model
     {
         // 1 producto pertenece a un establecimiento
         return $this->belongsTo('App\Establecimiento', 'establecimiento_id');
+    }
+
+    // Relación de producto con pedidos:
+    public function pedidos(){
+        // 1 producto puede estar en muchos pedidos
+        return $this->belongsToMany('\App\Pedido','pedido_productos','producto_id','pedido_id'); 
     }
 }

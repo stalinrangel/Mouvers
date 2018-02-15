@@ -45,18 +45,18 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('nombre') || !$request->input('categoria_id') ||
+        if ( !$request->input('nombre') || !$request->input('subcategoria_id') ||
             !$request->input('establecimiento_id'))
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
             return response()->json(['error'=>'Faltan datos necesarios para el proceso de alta.'],422);
         } 
 
-        // Comprobamos si la categoria que nos están pasando existe o no.
-        $categoria = \App\Categoria::find($request->input('categoria_id'));
+        // Comprobamos si la subcategoria que nos están pasando existe o no.
+        $subcategoria = \App\Subcategoria::find($request->input('subcategoria_id'));
 
-        if(count($categoria)==0){
-            return response()->json(['error'=>'No existe la categoría con id '.$request->input('categoria_id')], 404);          
+        if(count($subcategoria)==0){
+            return response()->json(['error'=>'No existe la subcategoría con id '.$request->input('subcategoria_id')], 404);          
         } 
 
         // Comprobamos si el establecimiento que nos están pasando existe o no.
@@ -134,7 +134,7 @@ class ProductoController extends Controller
         $nombre=$request->input('nombre');
         $precio=$request->input('precio');
         $imagen=$request->input('imagen');
-        $categoria_id=$request->input('categoria_id');
+        $subcategoria_id=$request->input('subcategoria_id');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -143,7 +143,7 @@ class ProductoController extends Controller
         if ($nombre != null && $nombre!='')
         {
             $aux = \App\Producto::where('nombre', $request->input('nombre'))
-            ->where('categoria_id', $producto->categoria_id)
+            ->where('subcategoria_id', $producto->subcategoria_id)
             ->where('establecimiento_id', $producto->establecimiento_id)
             ->where('id', '<>', $producto->id)->get();
 
@@ -168,28 +168,28 @@ class ProductoController extends Controller
             $bandera=true;
         }
 
-        if ($categoria_id != null && $categoria_id!='')
+        if ($subcategoria_id != null && $subcategoria_id!='')
         {
-            // Comprobamos si la categoria que nos están pasando existe o no.
-            $categoria = \App\Categoria::find($categoria_id);
+            // Comprobamos si la subcategoria que nos están pasando existe o no.
+            $subcategoria = \App\Subcategoria::find($subcategoria_id);
 
-            if(count($categoria)==0){
-                return response()->json(['error'=>'No existe la categoría con id '.$categoria_id], 404);          
+            if(count($subcategoria)==0){
+                return response()->json(['error'=>'No existe la subcategoría con id '.$categoria_id], 404);          
             } 
 
-            if ($producto->categoria_id != $categoria_id) {
-                //Comprobar que no exista un producto con el mismo nombre en la nueva categoria
+            if ($producto->subcategoria_id != $subcategoria_id) {
+                //Comprobar que no exista un producto con el mismo nombre en la nueva subcategoria
                 $aux2 = \App\Producto::where('nombre', $producto->nombre)
                 ->where('establecimiento_id', $producto->establecimiento_id)
-                ->where('categoria_id', $categoria_id)->get();
+                ->where('subcategoria_id', $subcategoria_id)->get();
 
                 if(count($aux2)!=0){
                    // Devolvemos un código 409 Conflict. 
-                    return response()->json(['error'=>'Ya existe un producto con el nombre '.$producto->nombre.' asociado al establecimiento y a la categoría '.$categoria->nombre.'.'], 409);
+                    return response()->json(['error'=>'Ya existe un producto con el nombre '.$producto->nombre.' asociado al establecimiento y a la subcategoría '.$subcategoria->nombre.'.'], 409);
                 }
             }
 
-            $producto->categoria_id = $categoria_id;
+            $producto->subcategoria_id = $subcategoria_id;
             $bandera=true;
         }
 
@@ -220,13 +220,31 @@ class ProductoController extends Controller
      */
     public function destroy($id)
     {
-        //Implementar despues de que se tenga la tabla pedio_productos
+        // Comprobamos si el producto que nos están pasando existe o no.
+        $producto = \App\Producto::find($id);
+
+        if(count($producto)==0){
+            return response()->json(['error'=>'No existe el producto con id '.$id], 404);          
+        } 
+
+        $pedidos = $producto->pedidos;
+
+        if (sizeof($pedidos) > 0)
+        {
+            // Devolvemos un código 409 Conflict. 
+            return response()->json(['error'=>'Este producto no puede ser eliminado porque posee pedidos asociados.'], 409);
+        }
+
+        // Eliminamos el producto si no tiene relaciones.
+        $producto->delete();
+
+        return response()->json(['message'=>'Se ha eliminado correctamente el producto.'], 200);
     }
 
-    public function productosCatEst()
+    public function productosSubcatEst()
     {
-        //cargar todos los productos con su categoria y establecimineto
-        $productos = \App\Producto::with('categoria')->with('establecimiento')->get();
+        //cargar todos los productos con su subcategoria y establecimineto
+        $productos = \App\Producto::with('subcategoria')->with('establecimiento')->get();
 
         if(count($productos) == 0){
             return response()->json(['error'=>'No existen productos.'], 404);          

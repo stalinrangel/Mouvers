@@ -95,7 +95,10 @@ class LoginController extends Controller
                 }
 
                 //Para login con registro normal (email y password)
-                if ($user->tipo_registro == 1) {
+                if ($user->tipo_registro == 1 || $request->has("password")) {
+                    if ($request->input('password') == null || $request->input('password') == '') {
+                        return response()->json(['error' => 'Password inválido!'], 401);
+                    }
                     if (!$token = JWTAuth::attempt($credentials)) {
                         return response()->json(['error' => 'Password inválido'], 401);
                     }

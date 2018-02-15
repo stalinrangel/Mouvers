@@ -98,7 +98,12 @@ class UsuarioController extends Controller
         /*Primero creo una instancia en la tabla usuarios*/
         $usuario = new \App\User;
         $usuario->email = $request->input('email');
-        $usuario->password = Hash::make($request->input('password'));
+
+        if ($request->input('password') != null && $request->input('password') != '')
+        {
+            $usuario->password = Hash::make($request->input('password'));
+        }
+
         $usuario->nombre = $request->input('nombre');
         $usuario->ciudad = $request->input('ciudad');
         $usuario->estado = $request->input('estado');

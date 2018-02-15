@@ -230,10 +230,10 @@ class EstablecimientoController extends Controller
         return response()->json(['message'=>'Se ha eliminado correctamente el establecimiento.'], 200);
     }
 
-    public function establecimientosProdsCat()
+    public function establecimientosProdsSubcat()
     {
         //cargar todos los establecimientos con sus productos y su categoria
-        $establecimientos = \App\Establecimiento::with('productos.categoria')->get();
+        $establecimientos = \App\Establecimiento::with('productos.subcategoria')->get();
 
         if(count($establecimientos) == 0){
             return response()->json(['error'=>'No existen establecimientos.'], 404);          

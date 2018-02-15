@@ -18,8 +18,8 @@ class ProductosMigration extends Migration
             $table->float('precio')->nullable();
             $table->string('imagen')->nullable();
 
-            $table->integer('categoria_id')->unsigned();
-            $table->foreign('categoria_id')->references('id')->on('categorias');
+            $table->integer('subcategoria_id')->unsigned();
+            $table->foreign('subcategoria_id')->references('id')->on('subcategorias');
 
             $table->integer('establecimiento_id')->unsigned();
             $table->foreign('establecimiento_id')->references('id')->on('establecimientos');

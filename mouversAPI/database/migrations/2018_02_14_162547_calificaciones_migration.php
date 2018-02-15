@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CategoriasMigration extends Migration
+class CalificacionesMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,15 @@ class CategoriasMigration extends Migration
      */
     public function up()
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('calificaciones', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre')->unique();
-            $table->string('imagen')->nullable();
+
+            $table->integer('pedido_id')->unsigned();
+            $table->foreign('pedido_id')->references('id')->on('pedidos');
+
+            $table->integer('puntaje');
+            $table->text('comentario')->nullable();
+
             $table->timestamps();
         });
     }
@@ -27,6 +32,6 @@ class CategoriasMigration extends Migration
      */
     public function down()
     {
-        Schema::drop('categorias');
+        Schema::drop('calificaciones');
     }
 }

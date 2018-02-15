@@ -33,7 +33,7 @@ Route::group(  ['middleware' =>'cors'], function(){
 
         //----Pruebas CategoriaController
         Route::get('/categorias','CategoriaController@index');
-        Route::get('/categorias/productos/establecimiento','CategoriaController@categoriasProdsEst');
+        Route::get('/categorias/subcats/productos/establecimiento','CategoriaController@catsSubcatsProdsEst');
         Route::post('/categorias','CategoriaController@store');
         Route::put('/categorias/{id}','CategoriaController@update');
         Route::delete('/categorias/{id}','CategoriaController@destroy');
@@ -41,7 +41,7 @@ Route::group(  ['middleware' =>'cors'], function(){
 
         //----Pruebas EstablecimientoController
         Route::get('/establecimientos','EstablecimientoController@index');
-        Route::get('/establecimientos/productos/categoria','EstablecimientoController@establecimientosProdsCat');
+        Route::get('/establecimientos/productos/subcategoria','EstablecimientoController@establecimientosProdsSubcat');
         Route::post('/establecimientos','EstablecimientoController@store');
         Route::put('/establecimientos/{id}','EstablecimientoController@update');
         Route::delete('/establecimientos/{id}','EstablecimientoController@destroy');
@@ -49,11 +49,33 @@ Route::group(  ['middleware' =>'cors'], function(){
 
         //----Pruebas ProductoController
         Route::get('/productos','ProductoController@index');
-        Route::get('/productos/categoria/establecimiento','ProductoController@productosCatEst');
+        Route::get('/productos/subcategoria/establecimiento','ProductoController@productosSubcatEst');
         Route::post('/productos','ProductoController@store');
         Route::put('/productos/{id}','ProductoController@update');
         Route::delete('/productos/{id}','ProductoController@destroy');
         Route::get('/productos/{id}','ProductoController@show');
+
+        //----Pruebas SubcategoriaController
+        Route::get('/subcategorias','SubcategoriaController@index');
+        Route::get('/subcategorias/productos/establecimiento','SubcategoriaController@subcatsProdsEst');
+        Route::post('/subcategorias','SubcategoriaController@store');
+        Route::put('/subcategorias/{id}','SubcategoriaController@update');
+        Route::delete('/subcategorias/{id}','SubcategoriaController@destroy');
+        Route::get('/subcategorias/{id}','SubcategoriaController@show');
+
+        //----Pruebas PedidoController
+        Route::get('/pedidos','PedidoController@index');
+        Route::post('/pedidos','PedidoController@store');
+        Route::put('/pedidos/{id}','PedidoController@update');
+        Route::delete('/pedidos/{id}','PedidoController@destroy');
+        Route::get('/pedidos/{id}','PedidoController@show');
+
+        //----Pruebas CalificacionController
+        Route::get('/calificaciones','CalificacionController@index');
+        Route::post('/calificaciones','CalificacionController@store');
+        Route::put('/calificaciones/{id}','CalificacionController@update');
+        Route::delete('/calificaciones/{id}','CalificacionController@destroy');
+        Route::get('/calificaciones/{id}','CalificacionController@show');
 
 
     Route::group(['middleware' => 'jwt-auth'], function(){

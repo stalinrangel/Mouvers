@@ -21,7 +21,7 @@ class UsuariosMigration extends Migration
             $table->string('estado'); //estado del pais
             $table->string('telefono');
             $table->string('imagen')->nullable();
-            $table->integer('tipo_usuario'); //1=admin 2=cliente
+            $table->integer('tipo_usuario'); //1=admin 2=cliente 3=repartidor
             $table->integer('tipo_registro'); //1=normal 2=facebook 3=twitter 4=instagram
             $table->string('id_facebook')->nullable();
             $table->string('id_twitter')->nullable();

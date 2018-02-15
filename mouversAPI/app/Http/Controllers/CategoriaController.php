@@ -117,6 +117,7 @@ class CategoriaController extends Controller
 
         // Listado de campos recibidos teóricamente.
         $nombre=$request->input('nombre');
+        $imagen=$request->input('imagen');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -133,6 +134,12 @@ class CategoriaController extends Controller
             }
 
             $categoria->nombre = $nombre;
+            $bandera=true;
+        }
+
+        if ($imagen != null && $imagen!='')
+        {
+            $categoria->imagen = $imagen;
             $bandera=true;
         }
 
@@ -172,12 +179,12 @@ class CategoriaController extends Controller
             return response()->json(['error'=>'No existe la categoría con id '.$id], 404);
         }
        
-        $productos = $categoria->productos;
+        $subcategorias = $categoria->subcategorias;
 
-        if (sizeof($productos) > 0)
+        if (sizeof($subcategorias) > 0)
         {
             // Devolvemos un código 409 Conflict. 
-            return response()->json(['error'=>'Esta categoría no puede ser eliminada porque posee productos asociados.'], 409);
+            return response()->json(['error'=>'Esta categoría no puede ser eliminada porque posee subcategorías asociadas.'], 409);
         }
 
         // Eliminamos la categoria si no tiene relaciones.
@@ -186,10 +193,10 @@ class CategoriaController extends Controller
         return response()->json(['message'=>'Se ha eliminado correctamente la categoría.'], 200);
     }
 
-    public function categoriasProdsEst()
+    public function catsSubcatsProdsEst()
     {
-        //cargar todas las categorias con sus productos y su establecimiento
-        $categorias = \App\Categoria::with('productos.establecimiento')->get();
+        //cargar todas las categorias con sus subcats productos y su establecimiento
+        $categorias = \App\Categoria::with('subcategorias.productos.establecimiento')->get();
 
         if(count($categorias) == 0){
             return response()->json(['error'=>'No existen categorías.'], 404);          
