@@ -77,7 +77,7 @@ class CategoriaController extends Controller
     public function show($id)
     {
         //cargar una cat
-        $categoria = \App\Categoria::find($id);
+        $categoria = \App\Categoria::with('subcategorias.productos.establecimiento')->find($id);
 
         if(count($categoria)==0){
             return response()->json(['error'=>'No existe la categoría con id '.$id], 404);          

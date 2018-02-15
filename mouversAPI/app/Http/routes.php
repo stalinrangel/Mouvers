@@ -55,13 +55,13 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/productos/{id}','ProductoController@destroy');
         Route::get('/productos/{id}','ProductoController@show');
 
-        //----Pruebas SubcategoriaController
-        Route::get('/subcategorias','SubcategoriaController@index');
-        Route::get('/subcategorias/productos/establecimiento','SubcategoriaController@subcatsProdsEst');
-        Route::post('/subcategorias','SubcategoriaController@store');
-        Route::put('/subcategorias/{id}','SubcategoriaController@update');
-        Route::delete('/subcategorias/{id}','SubcategoriaController@destroy');
-        Route::get('/subcategorias/{id}','SubcategoriaController@show');
+        //----Pruebas SubCategoriaController
+        Route::get('/subcategorias','SubCategoriaController@index');
+        Route::get('/subcategorias/productos/establecimiento','SubCategoriaController@subcatsProdsEst');
+        Route::post('/subcategorias','SubCategoriaController@store');
+        Route::put('/subcategorias/{id}','SubCategoriaController@update');
+        Route::delete('/subcategorias/{id}','SubCategoriaController@destroy');
+        Route::get('/subcategorias/{id}','SubCategoriaController@show');
 
         //----Pruebas PedidoController
         Route::get('/pedidos','PedidoController@index');
