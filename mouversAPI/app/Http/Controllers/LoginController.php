@@ -74,15 +74,16 @@ class LoginController extends Controller
     }
 
     public function loginApp(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+    {    
         $token = null;
         $user = null;
         $bandera = false;
 
         try {
 
-            if ($request->input('email')) {
+            if ($request->input('email') && $request->input('password')) {
+
+                $credentials = $request->only('email', 'password');
 
                 $user = User::where('email', $request->input('email'))->first();
                 if (empty($user)) {
@@ -94,40 +95,70 @@ class LoginController extends Controller
                     return response()->json(['error' => 'Credenciales inválidas.'], 401);
                 }
 
-                //Para login con registro normal (email y password)
-                if ($user->tipo_registro == 1 || $request->has("password")) {
-                    if ($request->input('password') == null || $request->input('password') == '') {
-                        return response()->json(['error' => 'Password inválido!'], 401);
-                    }
-                    if (!$token = JWTAuth::attempt($credentials)) {
-                        return response()->json(['error' => 'Password inválido'], 401);
-                    }
-                    $bandera=true;
+                //Solo se pueden logear usuarios validados
+                if ($user->validado == 0) {
+                    return response()->json(['error' => 'Debes validar tu cuenta para poder hacer logín.'], 401);
                 }
-                //Para login con registro con redes sociales
-                else{
 
-                    if ($user->id_facebook == null && $request->input('id_facebook') != null && $request->input('id_facebook') != '') {
-
-                        $user->id_facebook = $request->input('id_facebook');
-                        $user->save();
-                        $bandera=true;
-                    }
-                    if ($user->id_twitter == null && $request->input('id_twitter') != null && $request->input('id_twitter') != '') {
-
-                        $user->id_twitter = $request->input('id_twitter');
-                        $user->save();
-                        $bandera=true;
-                    }
-                    if ($user->id_instagram == null && $request->input('id_instagram') != null && $request->input('id_instagram') != '') {
-
-                        $user->id_instagram = $request->input('id_instagram');
-                        $user->save();
-                        $bandera=true;
-                    }
-
-                    $token = JWTAuth::fromUser($user);
+                
+                if ($request->input('password') == null || $request->input('password') == '') {
+                    return response()->json(['error' => 'Password inválido!'], 401);
                 }
+
+                if (!$token = JWTAuth::attempt($credentials)) {
+                    return response()->json(['error' => 'Password inválido'], 401);
+                }
+
+                $token = JWTAuth::fromUser($user);
+                $bandera=true;
+                
+                if ($user->id_facebook == null && $request->input('id_facebook') != null && $request->input('id_facebook') != '') {
+
+                    $user->id_facebook = $request->input('id_facebook');
+                    $user->save();
+                }
+                if ($user->id_twitter == null && $request->input('id_twitter') != null && $request->input('id_twitter') != '') {
+
+                    $user->id_twitter = $request->input('id_twitter');
+                    $user->save();
+                }
+                if ($user->id_instagram == null && $request->input('id_instagram') != null && $request->input('id_instagram') != '') {
+
+                    $user->id_instagram = $request->input('id_instagram');
+                    $user->save();
+                }
+
+            }else if(!$bandera && $request->input('email') && !$request->input('password')){
+
+                $user = User::where('email', $request->input('email'))->first();
+                if (empty($user)) {
+                    return response()->json(['error' => 'Usuario no encontrado.'], 401);
+                }
+
+                //En la app solo se logean usuarios clientes
+                if ($user->tipo_usuario != 2 || $user->tipo_registro == 1) {
+                    return response()->json(['error' => 'Credenciales inválidas.'], 401);
+                }
+
+                $token = JWTAuth::fromUser($user);
+                $bandera=true;
+                
+                if ($user->id_facebook == null && $request->input('id_facebook') != null && $request->input('id_facebook') != '') {
+
+                    $user->id_facebook = $request->input('id_facebook');
+                    $user->save();
+                }
+                if ($user->id_twitter == null && $request->input('id_twitter') != null && $request->input('id_twitter') != '') {
+
+                    $user->id_twitter = $request->input('id_twitter');
+                    $user->save();
+                }
+                if ($user->id_instagram == null && $request->input('id_instagram') != null && $request->input('id_instagram') != '') {
+
+                    $user->id_instagram = $request->input('id_instagram');
+                    $user->save();
+                }
+
             }else if(!$bandera && $request->input('id_facebook')){
 
                 $user = User::where('id_facebook', $request->input('id_facebook'))->first();
@@ -141,6 +172,7 @@ class LoginController extends Controller
                 }
 
                 $token = JWTAuth::fromUser($user);
+                $bandera=true;
 
             }else if(!$bandera && $request->input('id_twitter')){
 
@@ -155,6 +187,7 @@ class LoginController extends Controller
                 }
 
                 $token = JWTAuth::fromUser($user);
+                $bandera=true;
 
             }else if(!$bandera && $request->input('id_instagram')){
 
@@ -169,6 +202,7 @@ class LoginController extends Controller
                 }
 
                 $token = JWTAuth::fromUser($user);
+                $bandera=true;
             }
             
             

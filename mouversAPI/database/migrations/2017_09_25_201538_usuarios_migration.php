@@ -27,6 +27,7 @@ class UsuariosMigration extends Migration
             $table->string('id_twitter')->nullable();
             $table->string('id_instagram')->nullable();
             $table->string('codigo_verificacion')->nullable();
+            $table->integer('validado'); //0=no validado 1=validado 
             $table->timestamps();
         });
     }

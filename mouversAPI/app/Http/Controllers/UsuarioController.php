@@ -74,6 +74,7 @@ class UsuarioController extends Controller
                 $auxUser->imagen = $request->input('imagen');
                 $auxUser->tipo_usuario = $request->input('tipo_usuario');
                 $auxUser->tipo_registro = $request->input('tipo_registro');
+                $auxUser->validado = 1; //autovalidar el usuario
 
                 if ($request->input('tipo_registro') == 2) {
                     $auxUser->id_facebook = $request->input('id_facebook');
@@ -95,6 +96,12 @@ class UsuarioController extends Controller
             
         }
 
+        if ($request->input('tipo_registro') == 1) {
+            $validado = 0;
+        }else{
+            $validado = 1;
+        }
+
         /*Primero creo una instancia en la tabla usuarios*/
         $usuario = new \App\User;
         $usuario->email = $request->input('email');
@@ -114,6 +121,7 @@ class UsuarioController extends Controller
         $usuario->id_facebook = $request->input('id_facebook');
         $usuario->id_twitter = $request->input('id_twitter');
         $usuario->id_instagram = $request->input('id_instagram');
+        $usuario->validado = $validado;
 
         if($usuario->save()){
            return response()->json(['message'=>'Usuario creado con éxito.', 'usuario'=>$usuario], 200);
@@ -181,6 +189,7 @@ class UsuarioController extends Controller
         $tipo_usuario=$request->input('tipo_usuario');
         $tipo_registro=$request->input('tipo_registro');
         //$codigo_verificacion=$request->input('codigo_verificacion');
+        $validado=$request->input('validado');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -248,6 +257,12 @@ class UsuarioController extends Controller
             $bandera=true;
         }
 
+        if ($validado != null && $validado!='')
+        {
+            $usuario->validado = $validado;
+            $bandera=true;
+        }
+
 
         if ($bandera)
         {
@@ -288,5 +303,25 @@ class UsuarioController extends Controller
         $usuario->delete();
 
         return response()->json(['message'=>'Se ha eliminado correctamente el usuario.'], 200);
+    }
+
+    public function validarCuenta($email)
+    {
+        //cargar un usuario
+        $usuario = \App\User::where('email', $email)->get();
+
+        if(count($usuario)==0){
+            return response()->json(['error'=>'No existe el usuario con email '.$email], 404);          
+        }else{
+
+            $usuario[0]->validado = 1;
+
+            if ($usuario[0]->save()) {
+                return response()->view('emails.validar_cuenta', [], 200);
+                //return response()->json(['message'=>'Cuenta validada con éxito.'], 200);
+            }else{
+                return response()->json(['error'=>'Error al validar la cuenta.'], 500);
+            }
+        }
     }
 }

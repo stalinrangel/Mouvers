@@ -22,7 +22,11 @@ Route::group(  ['middleware' =>'cors'], function(){
     //----Pruebas LoginController
     Route::post('/login/web','LoginController@loginWeb');
     Route::post('/login/app','LoginController@loginApp');
-    //Route::post('/validar/token','LoginController@validarToken'); 
+    //Route::post('/validar/token','LoginController@validarToken');
+
+    //----Pruebas PasswordController
+    Route::get('/password/cliente/{correo}','PasswordController@generarCodigo');
+    Route::get('/password/codigo/{codigo}','PasswordController@validarCodigo'); 
 
         //----Pruebas UsuarioController
         Route::get('/usuarios','UsuarioController@index');
@@ -30,6 +34,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/usuarios/{id}','UsuarioController@update');
         Route::delete('/usuarios/{id}','UsuarioController@destroy');
         Route::get('/usuarios/{id}','UsuarioController@show');
+        Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
 
         //----Pruebas CategoriaController
         Route::get('/categorias','CategoriaController@index');
