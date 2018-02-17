@@ -9,6 +9,9 @@ use App\Http\Controllers\Controller;
 //use Illuminate\Support\Facades\DB;
 use Hash;
 use DB;
+use Mail;
+use Session;
+use Redirect;
 
 class UsuarioController extends Controller
 {
@@ -124,6 +127,12 @@ class UsuarioController extends Controller
         $usuario->validado = $validado;
 
         if($usuario->save()){
+
+            /*//Si es un registro con normal con email y password enviar correo de verificacion
+            if ($usuario->tipo_registro == 1) {
+                $this->emailDeValidacion($usuario->email);
+            }*/
+
            return response()->json(['message'=>'Usuario creado con éxito.', 'usuario'=>$usuario], 200);
         }else{
             return response()->json(['error'=>'Error al crear el usuario.'], 500);
@@ -311,17 +320,39 @@ class UsuarioController extends Controller
         $usuario = \App\User::where('email', $email)->get();
 
         if(count($usuario)==0){
-            return response()->json(['error'=>'No existe el usuario con email '.$email], 404);          
+            return response()->view('validar_cuenta.404', [], 404);
+            //return response()->json(['error'=>'No existe el usuario con email '.$email], 404);          
         }else{
+
+            if ($usuario[0]->validado == 1) {
+                return response()->view('validar_cuenta.200', [], 200);
+                //return response()->json(['message'=>'Cuenta validada con éxito.'], 200);
+            }
 
             $usuario[0]->validado = 1;
 
             if ($usuario[0]->save()) {
-                return response()->view('emails.validar_cuenta', [], 200);
+                return response()->view('validar_cuenta.200', [], 200);
                 //return response()->json(['message'=>'Cuenta validada con éxito.'], 200);
             }else{
-                return response()->json(['error'=>'Error al validar la cuenta.'], 500);
+                return response()->view('validar_cuenta.500', [], 500);
+                //return response()->json(['error'=>'Error al validar la cuenta.'], 500);
             }
         }
+    }
+
+    public function emailDeValidacion($email)
+    {
+        $enlace = 'http://localhost/gitHub/Mouvers/mouversAPI/public/usuarios/validar/'.$email;
+
+        //return response()->view('emails.validar_cuenta', ['enlace' => $enlace], 200);
+
+        $data = array( 'enlace' => $enlace);
+
+        //Enviamos el correo con el enlace para validar
+        Mail::send('emails.validar_cuenta', $data, function($msj) use ($email){
+            $msj->subject('Validar cuenta Mouvers');
+            $msj->to($email);
+        });
     }
 }

@@ -43,21 +43,9 @@
         <div class="content">
             <!-- <div class="title">Laravel 5</div> -->
 
-            <p>
-				<strong>Entra en el siguiente enlace para validar tu cuenta: </strong>
-				<br><br>
-				<a target="_blank" href="{{$enlace}}">{{$enlace}}</a>
-				
-			</p>
-
-			<br>
-			<p>Si no validas tu cuenta, es posible que no puedas acceder a ciertas funciones de Mouvers.</p>
-
-			<br>
-			<p>Saludos cordiales, el equipo de Mouvers.</p>
+            <img src="https://cdn.xl.thumbs.canstockphoto.es/estado-c%C3%B3digo-http-servidor-interno-error-500-almacen-de-im%C3%A1genes_csp24006055.jpg" alt="500">
         </div>
     </div>
-
 	
 </body>
 </html>

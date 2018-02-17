@@ -43,21 +43,9 @@
         <div class="content">
             <!-- <div class="title">Laravel 5</div> -->
 
-            <p>
-				<strong>Entra en el siguiente enlace para validar tu cuenta: </strong>
-				<br><br>
-				<a target="_blank" href="{{$enlace}}">{{$enlace}}</a>
-				
-			</p>
-
-			<br>
-			<p>Si no validas tu cuenta, es posible que no puedas acceder a ciertas funciones de Mouvers.</p>
-
-			<br>
-			<p>Saludos cordiales, el equipo de Mouvers.</p>
+            <img src="https://codigo200.files.wordpress.com/2017/11/cropped-onlinelogomaker-110817-2126-35332.png?w=200" alt="200">
         </div>
     </div>
 
-	
 </body>
 </html>

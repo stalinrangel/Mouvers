@@ -35,6 +35,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/usuarios/{id}','UsuarioController@destroy');
         Route::get('/usuarios/{id}','UsuarioController@show');
         Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
+        Route::get('/usuarios/email/validar/{email}','UsuarioController@emailDeValidacion');
 
         //----Pruebas CategoriaController
         Route::get('/categorias','CategoriaController@index');

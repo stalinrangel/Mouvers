@@ -77,11 +77,41 @@ class CategoriaController extends Controller
     public function show($id)
     {
         //cargar una cat
-        $categoria = \App\Categoria::with('subcategorias.productos.establecimiento')->find($id);
+        /*$categoria = \App\Categoria::with('subcategorias.productos.establecimiento')->find($id);*/
+
+        $categoria = \App\Categoria::with('subcategorias')->find($id);
 
         if(count($categoria)==0){
             return response()->json(['error'=>'No existe la categoría con id '.$id], 404);          
         }else{
+
+            $aux = [];
+
+            for ($i=0; $i < count($categoria->subcategorias); $i++) { 
+
+                $subcategoria_id = $categoria->subcategorias[$i]->id;
+
+                $estbl = 
+                \App\Establecimiento::with(['productos' => function ($query) use ($subcategoria_id){
+                    $query->where('subcategoria_id', $subcategoria_id);
+                }])->get();
+
+                
+
+                $categoria->subcategorias[$i]->establecimientos = [];
+                for ($j=0; $j < count($estbl) ; $j++) { 
+                    if (count($estbl[$j]->productos) > 0) {
+                        //array_push($categoria->subcategorias[$i]->establecimientos, $estbl[$j]);
+                        array_push($aux, $estbl[$j]);
+                    }
+                }
+                    $categoria->subcategorias[$i]->establecimientos = $aux;
+                    $aux = [];
+                //return response()->json(['estbl'=>$estbl], 200);
+
+            }
+
+            
             return response()->json(['categoria'=>$categoria], 200);
         } 
     }
