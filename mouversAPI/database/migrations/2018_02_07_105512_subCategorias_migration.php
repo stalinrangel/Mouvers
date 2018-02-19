@@ -16,6 +16,7 @@ class SubCategoriasMigration extends Migration
             $table->increments('id');
             $table->string('nombre')->unique();
             $table->string('imagen')->nullable();
+            $table->string('estado'); // ON/OFF
 
             $table->integer('categoria_id')->unsigned();
             $table->foreign('categoria_id')->references('id')->on('categorias');

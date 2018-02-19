@@ -46,7 +46,9 @@ class EstablecimientoController extends Controller
     { 
 
         // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('nombre') || !$request->input('direccion'))
+        if ( !$request->input('nombre') ||
+             !$request->input('estado') ||
+             !$request->input('direccion'))
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
             return response()->json(['error'=>'Faltan datos necesarios para el proceso de alta.'],422);
@@ -64,6 +66,7 @@ class EstablecimientoController extends Controller
         $nuevoEstablecimiento->direccion = $request->input('direccion');
         $nuevoEstablecimiento->lat = $request->input('lat');
         $nuevoEstablecimiento->lng = $request->input('lng');
+        $nuevoEstablecimiento->estado = $request->input('estado');
         $nuevoEstablecimiento->num_pedidos = 0;
 
         if($nuevoEstablecimiento->save()){

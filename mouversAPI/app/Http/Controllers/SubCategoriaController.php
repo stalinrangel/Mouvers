@@ -48,7 +48,9 @@ class SubCategoriaController extends Controller
         //$nombre=$request->input('nombre'); 
 
         // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('nombre') || !$request->input('categoria_id'))
+        if ( !$request->input('nombre') ||
+             !$request->input('estado') ||
+             !$request->input('categoria_id'))
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
             return response()->json(['error'=>'Faltan datos necesarios para el proceso de alta.'],422);

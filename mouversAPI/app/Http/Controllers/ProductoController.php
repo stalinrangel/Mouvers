@@ -45,7 +45,9 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('nombre') || !$request->input('subcategoria_id') ||
+        if ( !$request->input('nombre') ||
+            !$request->input('estado') ||
+            !$request->input('subcategoria_id') ||
             !$request->input('establecimiento_id'))
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
@@ -134,6 +136,7 @@ class ProductoController extends Controller
         $nombre=$request->input('nombre');
         $precio=$request->input('precio');
         $imagen=$request->input('imagen');
+        $descripcion=$request->input('descripcion');
         $subcategoria_id=$request->input('subcategoria_id');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
@@ -165,6 +168,12 @@ class ProductoController extends Controller
         if ($imagen != null && $imagen!='')
         {
             $producto->imagen = $imagen;
+            $bandera=true;
+        }
+
+        if ($descripcion != null && $descripcion!='')
+        {
+            $producto->descripcion = $descripcion;
             $bandera=true;
         }
 

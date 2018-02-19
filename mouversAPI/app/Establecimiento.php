@@ -24,7 +24,7 @@ class Establecimiento extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'direccion', 'lat', 'lng', 'num_pedidos'];
+    protected $fillable = ['nombre', 'direccion', 'lat', 'lng', 'estado', 'num_pedidos'];
 
     /**
      * The attributes excluded from the model's JSON form.

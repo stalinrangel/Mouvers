@@ -17,6 +17,8 @@ class ProductosMigration extends Migration
             $table->string('nombre');
             $table->float('precio')->nullable();
             $table->string('imagen')->nullable();
+            $table->text('descripcion')->nullable();
+            $table->string('estado'); // ON/OFF
 
             $table->integer('subcategoria_id')->unsigned();
             $table->foreign('subcategoria_id')->references('id')->on('subcategorias');
