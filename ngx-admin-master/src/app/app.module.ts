@@ -9,14 +9,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { CoreModule } from './@core/core.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ThemeModule } from './@theme/theme.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { LoginModule } from './login/login.module';
 
-import  { LoginComponent } from './login/login.component';
+//Mis imports
+import { RutaBaseService } from './services/ruta-base/ruta-base.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [AppComponent,  ],
   imports: [
@@ -29,10 +31,11 @@ import  { LoginComponent } from './login/login.component';
     NgbModule.forRoot(),
     ThemeModule.forRoot(),
     CoreModule.forRoot(),
-    LoginModule
+
   ],
   bootstrap: [AppComponent],
   providers: [
+    RutaBaseService,
     { provide: APP_BASE_HREF, useValue: '/' },
   ],
 })
