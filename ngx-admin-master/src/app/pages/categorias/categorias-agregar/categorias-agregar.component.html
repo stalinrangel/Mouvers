@@ -1,0 +1,34 @@
+<div class="row">
+  <div class="col-lg-6" style="display:block; margin:auto">
+    <nb-card>
+      <nb-card-header>Registro de Nueva Categoría</nb-card-header>
+      <nb-card-body>
+        <form [formGroup]="myFormAgregar" novalidate>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Nombre</label>
+            <input type="text" class="form-control" id="exampleInputNombre" placeholder="Nombre" formControlName="nombre">
+            <div *ngIf="myFormAgregar.get('nombre').errors && myFormAgregar.get('nombre').dirty">
+              <p *ngIf="myFormAgregar.get('nombre').hasError('required')">Nombre es requerido</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputImagen">Imagen</label>
+            <input type="text" class="form-control" id="exampleInputImagen" placeholder="Imagen" formControlName="imagen">
+            <div *ngIf="myFormAgregar.get('imagen').errors && myFormAgregar.get('imagen').dirty">
+              <p *ngIf="myFormAgregar.get('imagen').hasError('required')">Imagen es requerido</p>
+            </div>
+          </div>
+          
+          <br>
+          <button type="submit" class="btn btn-info" (click)="crear()" [disabled]="myFormAgregar.invalid">Agregar</button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>

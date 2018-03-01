@@ -44,6 +44,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/categorias/{id}','CategoriaController@update');
         Route::delete('/categorias/{id}','CategoriaController@destroy');
         Route::get('/categorias/{id}','CategoriaController@show');
+        Route::get('/categorias/{id}/subcategorias','CategoriaController@categoriaSubcategorias');
 
         //----Pruebas EstablecimientoController
         Route::get('/establecimientos','EstablecimientoController@index');

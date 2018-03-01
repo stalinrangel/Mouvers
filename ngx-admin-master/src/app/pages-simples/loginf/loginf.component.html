@@ -27,7 +27,7 @@
     </nb-card-header> -->
     <nb-card>
       <nb-card-body>
-        <toaster-container [toasterconfig]="config"></toaster-container>
+        
         
         <div class="flex-centered col-xl-4 col-lg-6 col-md-8 col-sm-12">
 
@@ -53,7 +53,13 @@
       </nb-card-body>
     </nb-card>
   </nb-layout-column>
-</nb-layout> 
+</nb-layout>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div> 
 
 
 

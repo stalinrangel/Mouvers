@@ -45,7 +45,7 @@ class LoginController extends Controller
 
             $user = User::where('email', $request->input('email'))->first();
             if (empty($user)) {
-                return response()->json(['error' => 'Email inválido'], 401);
+                return response()->json(['error' => 'Email inválido.'], 401);
             }
 
             //En el panel solo se logean usuarios administradores
@@ -54,7 +54,7 @@ class LoginController extends Controller
             }
 
             if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Password inválido'], 401);
+                return response()->json(['error' => 'Password inválido.'], 401);
             }
 
             $user = JWTAuth::toUser($token);
@@ -106,7 +106,7 @@ class LoginController extends Controller
                 }
 
                 if (!$token = JWTAuth::attempt($credentials)) {
-                    return response()->json(['error' => 'Password inválido'], 401);
+                    return response()->json(['error' => 'Password inválido.'], 401);
                 }
 
                 $token = JWTAuth::fromUser($user);

@@ -4,12 +4,12 @@ import { Injectable } from '@angular/core';
 export class RutaBaseService {
 
 	//Local freddy
-	//public api_base = 'http://localhost/gitHub/Mouvers/';
-	//public images_base = 'http://localhost/gitHub/Mouvers/images_uploads/'; //No esta en uso
+	public api_base = 'http://localhost/gitHub/Mouvers/';
+	public images_base = 'http://localhost/gitHub/Mouvers/images_uploads/'; //No esta en uso
 
 	//Remoto
-	public api_base = 'http://rattios.com/';
-	public images_base = 'http://rattios.com/images_uploads/'; //No esta en uso
+	//public api_base = 'http://rattios.com/';
+	//public images_base = 'http://rattios.com/images_uploads/'; //No esta en uso
 
 	constructor() { }
 

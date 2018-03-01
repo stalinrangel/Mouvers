@@ -8,10 +8,21 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { ToasterModule } from 'angular2-toaster';
 
+import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
+
 @NgModule({
   imports: [
   	ToasterModule,
-    ThemeModule
+    ThemeModule,
+    LoadingModule.forRoot({
+        animationType: ANIMATION_TYPES.chasingDots,
+        backdropBackgroundColour: 'rgba(0,0,0,0.5)', 
+        backdropBorderRadius: '4px',
+        primaryColour: '#ffffff', 
+        secondaryColour: '#ffffff', 
+        tertiaryColour: '#ffffff',
+        fullScreenBackdrop: true
+    })
   ],
   declarations: [
     LoginfComponent,

@@ -1,41 +1,72 @@
-<nb-card>
+<nb-card *ngIf="mostrar">
   <nb-card-header>
-   Lista de Clientes
+    <div class="row show-grid">
+          <div class="col-6">
+            <div>Lista de Clientes</div>
+          </div>
+          <div class="col-6">
+            <div>
+              <div style="text-align: right;">
+               <strong>Buscar: </strong>
+               <input  type="text"  id="inputName" [(ngModel)]="inputName" (ngModelChange)="FilterByName()"/>
+              </div>
+            </div>
+          </div>
+        </div>
   </nb-card-header>
 
   <nb-card-body>
+
     <!-- <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">
     </ng2-smart-table> -->
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>    
+    <table class="table table-striped">
+      <thead>
+         <th></th>
+         <!-- <th style="text-align: center;">ID</th> -->
+         <th style="text-align: center;">Nombre</th>
+         <th style="text-align: center;">Email</th>
+         <th style="text-align: center;">Teléfono</th>
+         <th style="text-align: center;">Ciudad</th>
+         <th style="text-align: center;">Estado</th>
+         <th style="text-align: center;">Acciones</th>
+      </thead>
+      <tbody>
+         <tr *ngFor="let item of items" >
+            <td></td>
+            <td style="text-align: center;">{{item.nombre}}</td>
+            <td style="text-align: center;">{{item.email}}</td>
+            <td style="text-align: center;">{{item.telefono}}</td>
+            <td style="text-align: center;">{{item.ciudad}}</td>
+            <td style="text-align: center;">{{item.estado}}</td>
+            <td style="text-align: center;">
+              
+            </td>
+         </tr>
+      </tbody>
+    </table>
+      
   </nb-card-body>
+  <nb-card-footer>
+    <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+      <div class="btn-group">
+         <label style="margin-top:10px">Página {{currentIndex}}/{{pageNumber}} </label>
+      </div>
+      <div class="btn-group pull-right">
+         <ul class="pagination" >
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == 1 || pageNumber == 0)}" ><a class="page-link"  (click)="prevPage()" >Atrás</a></li>
+               <li class="page-item" *ngFor="let page of pagesIndex"  [ngClass]="{'active': (currentIndex == page)}">
+                  <a class="page-link" (click)="setPage(page)"  >{{page}} </a>
+               </li>
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == pageNumber || pageNumber == 0)}" ><a class="page-link"   (click)="nextPage()" >Siguiente</a></li>
+         </ul>
+      </div>
+    </div>  
+  </nb-card-footer>
 </nb-card>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>

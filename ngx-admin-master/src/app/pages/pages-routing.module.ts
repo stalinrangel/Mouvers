@@ -29,17 +29,20 @@ const routes: Routes = [{
   }, {
     path: 'forms',
     loadChildren: './forms/forms.module#FormsModule',
-  }, {
+  },{
+    path: 'tables',
+    loadChildren: './tables/tables.module#TablesModule',
+  },{
     path: 'socios',
     loadChildren: './socios/socios.module#SociosModule',
   },
   {
     path: 'clientes',
     loadChildren: './clientes/clientes.module#ClientesModule',
-  }, {
-    path: 'tables',
-    loadChildren: './tables/tables.module#TablesModule',
-  }, {
+  },{
+    path: 'categorias',
+    loadChildren: './categorias/categorias.module#CategoriasModule',
+  },{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

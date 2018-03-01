@@ -10,7 +10,6 @@ import 'rxjs/add/operator/toPromise';
 import { RutaBaseService } from '../../services/ruta-base/ruta-base.service';
 
 import { ToasterService, ToasterConfig, Toast, BodyOutputType } from 'angular2-toaster';
-
 import 'style-loader!angular2-toaster/toaster.css';
 
 @Component({
@@ -21,11 +20,7 @@ import 'style-loader!angular2-toaster/toaster.css';
 })
 export class LoginfComponent implements OnInit {
 
-	email= ''
-	password='';
-	private data:any;
-	public loading = false;
-
+	//----Alertas---<
 	config: ToasterConfig;
 
 	position = 'toast-top-right';
@@ -34,14 +29,30 @@ export class LoginfComponent implements OnInit {
 	content = `I'm cool toaster!`;
 	timeout = 5000;
 	toastsLimit = 5;
-	type = 'default';
+	type = 'default'; // 'default', 'info', 'success', 'warning', 'error'
 
 	isNewestOnTop = true;
 	isHideOnClick = true;
 	isDuplicatesPrevented = false;
 	isCloseButton = true;
+	//----Alertas--->
 
-	constructor(private toasterService: ToasterService, private http: HttpClient, private rutaService: RutaBaseService, private router: Router, private route: ActivatedRoute, public nbspinnerservice:NbSpinnerService, public themeService:NbThemeService){
+	email= 'admin@correo.com'
+	password='12345';
+	private data:any;
+	public loading = false;
+
+	submitted = false;
+
+	constructor( private toasterService: ToasterService,
+				 private http: HttpClient,
+				 private rutaService: RutaBaseService,
+				 private router: Router,
+				 private route: ActivatedRoute,
+				 public nbspinnerservice:NbSpinnerService,
+				 public themeService:NbThemeService)
+	{
+
 		nbspinnerservice.load();
 		nbspinnerservice.clear();
 	}
@@ -70,20 +81,17 @@ export class LoginfComponent implements OnInit {
 	      bodyOutputType: BodyOutputType.TrustedHtml,
 	    };
 	    this.toasterService.popAsync(toast);
-	  }
+	}
 
 	Ingresar(){
 
-		//this.showToast(this.type, this.title, this.content);
-
 	  	this.loading = true;
+	  	this.submitted = true;
 	   
 	    var datos= {
 	    	email: this.email,
 	    	password: this.password
 	    }
-
-	    this.router.navigateByUrl('/pages');
 	    
 		//this.http.post('http://rattios.com/mouversAPI/public/login/web', datos)
 		this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/login/web', datos)
@@ -106,8 +114,10 @@ export class LoginfComponent implements OnInit {
 
 		    console.log(msg)
 		  	//console.log(msg.error.error);
-		  	alert('Error: '+msg.error.error);
+		  	//alert('Error: '+msg.error.error);
+		  	this.showToast('error', 'Error!', msg.error.error);
 		  	this.loading = false;
+		  	this.submitted = false;
 		  }
 		);
   	}

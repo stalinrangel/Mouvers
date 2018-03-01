@@ -10,8 +10,48 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Login',
     icon: 'nb-locked',
-    link: '/pages/login',
+    link: '/pagessinples/loginf',
     home: true,
+  },
+  {
+    title: 'Socios',
+    icon: 'nb-person',
+    children: [
+      {
+        title: 'Agregar Socios',
+        link: '/pages/socios/agregar',
+      },
+      {
+        title: 'Ver Socios',
+        link: '/pages/socios/ver',
+      },
+    ],
+  },
+  {
+    title: 'Clientes',
+    icon: 'nb-person',
+    children: [
+      {
+        title: 'Ver Clientes',
+        link: '/pages/clientes/ver',
+      },
+     
+    ],
+  },
+  {
+    title: 'Categorías',
+    icon: 'nb-gear',
+    children: [
+      {
+        title: 'Agregar Categorías',
+        link: '/pages/categorias/agregar',
+      },
+      {
+        title: 'Ver Categorías',
+        link: '/pages/categorias/ver',
+      },
+     
+    ],
   },
   {
     title: 'FEATURES',
@@ -66,31 +106,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
       },
     ],
   },
-  {
-    title: 'Socios',
-    icon: 'nb-person',
-    children: [
-      {
-        title: 'Agregar Socios',
-        link: '/pages/socios/agregar',
-      },
-      {
-        title: 'Ver Socios',
-        link: '/pages/socios/ver',
-      },
-    ],
-  },
-  {
-    title: 'Clientes',
-    icon: 'nb-email',
-    children: [
-      {
-        title: 'Ver Clientes',
-        link: '/pages/clientes/ver',
-      },
-     
-    ],
-  },
+
   {
     title: 'Components',
     icon: 'nb-gear',

@@ -149,6 +149,8 @@ class CategoriaController extends Controller
         // Listado de campos recibidos teóricamente.
         $nombre=$request->input('nombre');
         $imagen=$request->input('imagen');
+        $estado=$request->input('estado');
+        $subcategorias=$request->input('subcategorias');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -174,6 +176,63 @@ class CategoriaController extends Controller
             $bandera=true;
         }
 
+        if ($estado != null && $estado!='')
+        {
+
+            if ($estado == 'OFF') {
+                $subcategorias = $categoria->subcategorias;
+
+                if (sizeof($subcategorias) > 0)
+                {
+                    for ($i=0; $i < count($subcategorias) ; $i++) { 
+                        $subcategorias[$i]->estado = $estado;
+                        $subcategorias[$i]->save();
+
+                        $productos = $subcategorias[$i]->productos;
+                        if (sizeof($productos) > 0) {
+                            for ($j=0; $j < count($productos); $j++) { 
+                                $productos[$j]->estado = $estado;
+                                $productos[$j]->save();
+                            }
+                        }
+                    }
+                }
+            }
+
+            $categoria->estado = $estado;
+            $bandera=true;
+        }
+
+        if (sizeof($subcategorias) > 0 )
+        {
+            $bandera=true;
+
+            $subcategorias = json_decode($subcategorias);
+            for ($i=0; $i < count($subcategorias) ; $i++) {
+
+                if ($subcategorias[$i]->estado == 'ON') {
+
+                    $subcat = \App\Subcategoria::find($subcategorias[$i]->id);
+
+                    if(count($subcat) == 0){
+                       // Devolvemos un código 409 Conflict. 
+                        return response()->json(['error'=>'No existe la subcategoria con id '.$subcategorias[$i]->id], 409);
+                    }else{
+                        $subcat->estado = $subcategorias[$i]->estado;
+                        $subcat->save();
+
+                        $productos = $subcat->productos;
+                        if (sizeof($productos) > 0) {
+                            for ($j=0; $j < count($productos); $j++) { 
+                                $productos[$j]->estado = $estado;
+                                $productos[$j]->save();
+                            }
+                        }
+                    }
+                }  
+            }
+        }
+
         if ($bandera)
         {
             // Almacenamos en la base de datos el registro.
@@ -189,7 +248,7 @@ class CategoriaController extends Controller
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
             // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
-            return response()->json(['error'=>'No se ha modificado ningún dato la categoría.'],409);
+            return response()->json(['error'=>'No se ha modificado ningún dato a la categoría.'],409);
         }
     }
 
@@ -233,6 +292,25 @@ class CategoriaController extends Controller
             return response()->json(['error'=>'No existen categorías.'], 404);          
         }else{
             return response()->json(['categorias'=>$categorias], 200);
+        } 
+    }
+
+    public function categoriaSubcategorias($id)
+    {
+
+        //cargar una cat con sus subcat
+        $categoria = \App\Categoria::with('subcategorias')->find($id);
+
+        if(count($categoria)==0){
+            return response()->json(['error'=>'No existe la categoría con id '.$id], 404);          
+        }else{
+
+            //cargar las subcat de la cat
+            //$categoria = $categoria->with('subcategorias')->get();
+            //$categoria->productos = $categoria->productos()->get();
+            //$categoria = $categoria->subcategorias;
+
+            return response()->json(['categoria'=>$categoria], 200);
         } 
     }
 }

@@ -18,6 +18,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //Mis imports
 import { RutaBaseService } from './services/ruta-base/ruta-base.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
+
 
 @NgModule({
   declarations: [AppComponent,  ],
@@ -31,6 +33,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NgbModule.forRoot(),
     ThemeModule.forRoot(),
     CoreModule.forRoot(),
+    LoadingModule.forRoot({
+        animationType: ANIMATION_TYPES.wanderingCubes,
+        backdropBackgroundColour: 'rgba(0,0,0,0.5)', 
+        backdropBorderRadius: '4px',
+        primaryColour: '#ffffff', 
+        secondaryColour: '#ffffff', 
+        tertiaryColour: '#ffffff',
+        fullScreenBackdrop: true
+    })
 
   ],
   bootstrap: [AppComponent],

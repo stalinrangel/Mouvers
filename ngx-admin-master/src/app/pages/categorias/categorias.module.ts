@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { ThemeModule } from '../../@theme/theme.module';
-import { ClientesRoutingModule, routedComponents } from './clientes-routing.module';
+import { CategoriasRoutingModule, routedComponents } from './categorias-routing.module';
 
 //Mis imports
 import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
 import { ToasterModule } from 'angular2-toaster';
+//import { Ng2UploaderModule } from 'ng2-uploader';
 
 @NgModule({
   imports: [
+    //Ng2UploaderModule,
     ToasterModule,
     ThemeModule,
-    ClientesRoutingModule,
+    CategoriasRoutingModule,
     LoadingModule.forRoot({
         animationType: ANIMATION_TYPES.chasingDots,
         backdropBackgroundColour: 'rgba(0,0,0,0.5)', 
@@ -28,4 +30,4 @@ import { ToasterModule } from 'angular2-toaster';
 
   ],
 })
-export class ClientesModule { }
+export class CategoriasModule { }

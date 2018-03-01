@@ -11,7 +11,7 @@ const routes: Routes = [{
   children: [{
     path: 'agregar',
     component: SociosAgregarComponent,
-  }, {
+  },{
     path: 'ver',
     component: SociosVerComponent,
   }],
