@@ -1,0 +1,218 @@
+<nb-card *ngIf="!editando && mostrar">
+  <nb-card-header>
+    <div class="row show-grid">
+          <div class="col-6">
+            <div>Lista de Subategorías</div>
+          </div>
+          <div class="col-6">
+            <div>
+              <div style="text-align: right;">
+               <strong>Buscar: </strong>
+               <input  type="text"  id="inputName" [(ngModel)]="inputName" (ngModelChange)="FilterByName()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+  </nb-card-header>
+
+  <nb-card-body>
+
+    <table class="table table-striped">
+      <thead>
+         <th></th>
+         <!-- <th style="text-align: center;">ID</th> -->
+         <th style="text-align: center;">Imagen</th>
+         <th style="text-align: center;">Nombre</th>
+         <th style="text-align: center;">Categoría</th>
+         <th style="text-align: center;">Estado</th>
+         <th style="text-align: center;">Acciones</th>
+      </thead>
+      <tbody>
+         <tr *ngFor="let item of items" >
+            <td></td>
+            <td style="text-align: center; vertical-align:middle;"><img src = "{{item.imagen}}" alt="" height="auto" width="60px"></td>
+            <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
+            <td style="text-align: center; vertical-align:middle;">{{item.categoria.nombre}}</td>
+            <td style=" vertical-align:middle;">
+              <div *ngIf="mostrarSwiches" class="estado" style="display:block; margin:auto">
+                <label class="theme-switch">
+                  <span class="light">OFF</span>
+                  <div class="switch">
+                    <input type="checkbox" [disabled]="item.categoria.estado == 'OFF' " [checked]="item.estado === 'ON'" (change)="cambioSwicheSubcat(item, modal2)" #theme>
+                    <span class="slider"></span>
+                  </div>
+                  <span class="cosmic">ON</span>
+                </label>
+              </div>
+            </td> 
+            <td style="text-align: center; vertical-align:middle;">
+              <button type="button" class="btn btn-primary btn-icon" title="Editar" (click)="aEditar(item)">
+                <i class="nb-edit"></i>
+              </button>
+              <button type="button" class="btn btn-danger btn-icon" title="Eliminar" (click)="open(modal1); aEliminar(item)">
+                <i class="nb-trash"></i>
+              </button>
+            </td>
+         </tr>
+      </tbody>
+    </table>
+      
+  </nb-card-body>
+  <nb-card-footer>
+    <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+      <div class="btn-group">
+         <label style="margin-top:10px">Página {{currentIndex}}/{{pageNumber}} </label>
+      </div>
+      <div class="btn-group pull-right">
+         <ul class="pagination" >
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == 1 || pageNumber == 0)}" ><a class="page-link"  (click)="prevPage()" >Atrás</a></li>
+               <li class="page-item" *ngFor="let page of pagesIndex"  [ngClass]="{'active': (currentIndex == page)}">
+                  <a class="page-link" (click)="setPage(page)"  >{{page}} </a>
+               </li>
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == pageNumber || pageNumber == 0)}" ><a class="page-link"   (click)="nextPage()" >Siguiente</a></li>
+         </ul>
+      </div>
+    </div>  
+  </nb-card-footer>
+</nb-card>
+
+<div class="row" *ngIf="editando">
+  <div class="col-lg-6" style="display:block; margin:auto">
+    <nb-card>
+      <nb-card-header>Editar Subcategoría</nb-card-header>
+      <nb-card-body>
+        <form [formGroup]="myFormEditar" novalidate>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Nombre</label>
+            <input type="text" class="form-control" id="exampleInputNombre" placeholder="Nombre" formControlName="nombre">
+            <div *ngIf="myFormEditar.get('nombre').errors && myFormEditar.get('nombre').dirty">
+              <p *ngIf="myFormEditar.get('nombre').hasError('required')">Nombre es requerido</p>
+            </div>
+          </div>
+          <div *ngIf="categorias" class="form-group">
+            <label for="exampleInputCat">Categoría</label>
+            <select class="form-control" id="exampleInputCat" formControlName="categoria_id">
+              <!-- <option disabled selected>Selecciona una categoría</option> -->
+              <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputImagen">Imagen</label>
+            <input type="text" class="form-control" id="exampleInputImagen" placeholder="Imagen" formControlName="imagen">
+            <div *ngIf="myFormEditar.get('imagen').errors && myFormEditar.get('imagen').dirty">
+              <p *ngIf="myFormEditar.get('imagen').hasError('required')">Imagen es requerido</p>
+            </div>
+          </div>
+          
+          <br>
+          <button class="btn btn-secondary" (click)="atras()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" (click)="editar()" [disabled]="myFormEditar.invalid">Editar</button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<ng-template #modal1 let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Eliminar Subcategoría: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>¿Realmente desea eliminar la subcategoría {{eliminar_nombre}}?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); eliminar()">Eliminar</button>
+  </div>
+</ng-template>
+
+<ng-template #modal2 let-c="close" let-d="dismiss" size="lg">
+  <div class="modal-header">
+    <h4 class="modal-title">Productos de la Subcategoría {{habSubcategoria.nombre}}: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click'); apagarSwiche()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <nb-card >
+      <nb-card-header>
+        <div class="row show-grid">
+              <div class="col-6">
+                <div>Lista de Productos</div>
+              </div>
+              <div class="col-6">
+                <div>
+                  <div style="text-align: right;">
+                   <strong>Buscar: </strong>
+                   <input  type="text"  id="inputName2" [(ngModel)]="inputName2" (ngModelChange)="FilterByName2()"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </nb-card-header>
+
+      <nb-card-body>
+
+        <table class="table table-striped">
+          <thead>
+             <!-- <th style="text-align: center;">ID</th> -->
+             <th style="text-align: center;">Imagen</th>
+             <th style="text-align: center;">Nombre</th>
+             <th style="text-align: center;">Establecimiento</th>
+             <th style="text-align: center;">Estado</th>
+          </thead>
+          <tbody>
+             <tr *ngFor="let item of items2" >
+                <td style="text-align: center; vertical-align:middle;"><img src = "{{item.imagen}}" alt="" height="auto" width="60px"></td>
+                <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
+                <td style="text-align: center; vertical-align:middle;">{{item.establecimiento.nombre}}</td>
+                <td style=" vertical-align:middle;">
+                  <div class="estado" style="display:block; margin:auto">
+                    <label class="theme-switch">
+                      <span class="light">OFF</span>
+                      <div class="switch">
+                        <input type="checkbox" [checked]="item.estado === 'ON'" (change)="cambioSwicheProd(item)" #theme>
+                        <span class="slider"></span>
+                      </div>
+                      <span class="cosmic">ON</span>
+                    </label>
+                  </div>
+                </td> 
+                
+             </tr>
+          </tbody>
+        </table>
+          
+      </nb-card-body>
+      <nb-card-footer>
+        <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+          <div class="btn-group">
+             <label style="margin-top:10px">Página {{currentIndex2}}/{{pageNumber2}} </label>
+          </div>
+          <div class="btn-group pull-right">
+             <ul class="pagination" >
+                <li class="page-item" [ngClass]="{'disabled': (currentIndex2 == 1 || pageNumber2 == 0)}" ><a class="page-link"  (click)="prevPage2()" >Atrás</a></li>
+                   <li class="page-item" *ngFor="let page of pagesIndex2"  [ngClass]="{'active': (currentIndex2 == page)}">
+                      <a class="page-link" (click)="setPage2(page)"  >{{page}} </a>
+                   </li>
+                <li class="page-item" [ngClass]="{'disabled': (currentIndex2 == pageNumber2 || pageNumber2 == 0)}" ><a class="page-link"   (click)="nextPage2()" >Siguiente</a></li>
+             </ul>
+          </div>
+        </div>  
+      </nb-card-footer>
+    </nb-card>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click'); apagarSwiche()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click') ; habilitarSubcat()">Habilitar</button>
+  </div>
+</ng-template>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>

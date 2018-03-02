@@ -40,6 +40,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         //----Pruebas CategoriaController
         Route::get('/categorias','CategoriaController@index');
         Route::get('/categorias/subcats/productos/establecimiento','CategoriaController@catsSubcatsProdsEst');
+        Route::get('/categorias/habilitadas','CategoriaController@categoriasHabilitadas');
         Route::post('/categorias','CategoriaController@store');
         Route::put('/categorias/{id}','CategoriaController@update');
         Route::delete('/categorias/{id}','CategoriaController@destroy');
@@ -49,6 +50,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         //----Pruebas EstablecimientoController
         Route::get('/establecimientos','EstablecimientoController@index');
         Route::get('/establecimientos/productos/subcategoria','EstablecimientoController@establecimientosProdsSubcat');
+        Route::get('/establecimientos/habilitados','EstablecimientoController@stblcmtsHabilitados');
         Route::post('/establecimientos','EstablecimientoController@store');
         Route::put('/establecimientos/{id}','EstablecimientoController@update');
         Route::delete('/establecimientos/{id}','EstablecimientoController@destroy');
@@ -65,10 +67,14 @@ Route::group(  ['middleware' =>'cors'], function(){
         //----Pruebas SubCategoriaController
         Route::get('/subcategorias','SubCategoriaController@index');
         Route::get('/subcategorias/productos/establecimiento','SubCategoriaController@subcatsProdsEst');
+        Route::get('/subcategorias/habilitadas','SubCategoriaController@subcategoriasHabilitadas');
+        Route::get('/subcategorias/categoria','SubCategoriaController@subcategoriasCategoria');
         Route::post('/subcategorias','SubCategoriaController@store');
         Route::put('/subcategorias/{id}','SubCategoriaController@update');
         Route::delete('/subcategorias/{id}','SubCategoriaController@destroy');
         Route::get('/subcategorias/{id}','SubCategoriaController@show');
+        Route::get('/subcategorias/{id}/productos','SubCategoriaController@subcategoriaProductos');
+
 
         //----Pruebas PedidoController
         Route::get('/pedidos','PedidoController@index');

@@ -209,7 +209,7 @@ class EstablecimientoController extends Controller
             return response()->json(['error'=>'No existe el establecimiento con id '.$id], 404);
         }
        
-        /*$pedidos = $establecimiento->pedidos;
+        $pedidos = $establecimiento->pedidos;
 
         if (sizeof($pedidos) > 0)
         {
@@ -225,7 +225,7 @@ class EstablecimientoController extends Controller
             for ($i=0; $i < count($productos); $i++) { 
                 $productos[$i]->delete();
             }
-        }*/
+        }
 
         // Eliminamos la establecimiento.
         $establecimiento->delete();
@@ -243,5 +243,18 @@ class EstablecimientoController extends Controller
         }else{
             return response()->json(['establecimientos'=>$establecimientos], 200);
         } 
+    }
+
+    //Usada en el panel
+    public function stblcmtsHabilitados()
+    {
+        //cargar todos los establecimientos en estado ON
+        $establecimientos = \App\Establecimiento::where('estado', 'ON')->get();
+
+        if(count($establecimientos) == 0){
+            return response()->json(['error'=>'No existen establecimientos habilitados.'], 404);          
+        }else{
+            return response()->json(['establecimientos'=>$establecimientos], 200);
+        }   
     }
 }

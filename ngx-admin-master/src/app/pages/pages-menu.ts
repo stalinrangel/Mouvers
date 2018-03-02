@@ -54,6 +54,36 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
+    title: 'Subcategorías',
+    icon: 'nb-gear',
+    children: [
+      {
+        title: 'Agregar Subcategorías',
+        link: '/pages/subcategorias/agregar',
+      },
+      {
+        title: 'Ver Subcategorías',
+        link: '/pages/subcategorias/ver',
+      },
+     
+    ],
+  },
+  {
+    title: 'Productos',
+    icon: 'nb-gear',
+    children: [
+      {
+        title: 'Agregar Productos',
+        link: '/pages/productos/agregar',
+      },
+      {
+        title: 'Ver Productos',
+        link: '/pages/productos/ver',
+      },
+     
+    ],
+  },
+  {
     title: 'FEATURES',
     group: true,
   },

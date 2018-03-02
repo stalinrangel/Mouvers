@@ -127,6 +127,8 @@ class SubCategoriaController extends Controller
         $nombre=$request->input('nombre');
         $imagen=$request->input('imagen');
         $categoria_id=$request->input('categoria_id');
+        $estado=$request->input('estado');
+        $productos=$request->input('productos');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -174,6 +176,47 @@ class SubCategoriaController extends Controller
 
             $subcategoria->categoria_id = $categoria_id;
             $bandera=true;
+        }
+
+        if ($estado != null && $estado!='')
+        {
+
+            if ($estado == 'OFF') {
+                $productos = $subcategoria->productos;
+
+                if (sizeof($productos) > 0)
+                {
+                    for ($i=0; $i < count($productos) ; $i++) { 
+                        $productos[$i]->estado = $estado;
+                        $productos[$i]->save();
+                    }
+                }
+            }
+
+            $subcategoria->estado = $estado;
+            $bandera=true;
+        }
+
+        if (sizeof($productos) > 0 )
+        {
+            $bandera=true;
+
+            $productos = json_decode($productos);
+            for ($i=0; $i < count($productos) ; $i++) {
+
+                if ($productos[$i]->estado == 'ON') {
+
+                    $producto = \App\Producto::find($productos[$i]->id);
+
+                    if(count($producto) == 0){
+                       // Devolvemos un código 409 Conflict. 
+                        return response()->json(['error'=>'No existe el producto con id '.$productos[$i]->id], 409);
+                    }else{
+                        $producto->estado = $productos[$i]->estado;
+                        $producto->save();
+                    }
+                }  
+            }
         }
 
         if ($bandera)
@@ -236,5 +279,44 @@ class SubCategoriaController extends Controller
         }else{
             return response()->json(['subcategorias'=>$subcategorias], 200);
         } 
+    }
+
+    public function subcategoriasCategoria()
+    {
+        //cargar todos las subcategorias con su categoria
+        $subcategorias = \App\Subcategoria::with('categoria')->get();
+
+        if(count($subcategorias) == 0){
+            return response()->json(['error'=>'No existen subcategorías.'], 404);          
+        }else{
+            return response()->json(['subcategorias'=>$subcategorias], 200);
+        } 
+        
+    }
+
+    public function subcategoriaProductos($id)
+    {
+        //cargar una subcat con sus subcat
+        $subcategoria = \App\Subcategoria::with('productos.establecimiento')->find($id);
+
+        if(count($subcategoria)==0){
+            return response()->json(['error'=>'No existe la subcategoría con id '.$id], 404);          
+        }else{
+
+            return response()->json(['subcategoria'=>$subcategoria], 200);
+        } 
+    }
+
+    //Usada en el panel
+    public function subcategoriasHabilitadas()
+    {
+        //cargar todas las subcat en estado ON
+        $subcategorias = \App\Subcategoria::where('estado', 'ON')->get();
+
+        if(count($subcategorias) == 0){
+            return response()->json(['error'=>'No existen subcategorías habilitadas.'], 404);          
+        }else{
+            return response()->json(['subcategorias'=>$subcategorias], 200);
+        }   
     }
 }

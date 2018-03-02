@@ -43,6 +43,12 @@ const routes: Routes = [{
     path: 'categorias',
     loadChildren: './categorias/categorias.module#CategoriasModule',
   },{
+    path: 'subcategorias',
+    loadChildren: './subcategorias/subcategorias.module#SubcategoriasModule',
+  },{
+    path: 'productos',
+    loadChildren: './productos/productos.module#ProductosModule',
+  },{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

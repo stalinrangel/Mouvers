@@ -297,7 +297,6 @@ class CategoriaController extends Controller
 
     public function categoriaSubcategorias($id)
     {
-
         //cargar una cat con sus subcat
         $categoria = \App\Categoria::with('subcategorias')->find($id);
 
@@ -312,5 +311,18 @@ class CategoriaController extends Controller
 
             return response()->json(['categoria'=>$categoria], 200);
         } 
+    }
+
+    //Usada en el panel
+    public function categoriasHabilitadas()
+    {
+        //cargar todas las cat en estado ON
+        $categorias = \App\Categoria::where('estado', 'ON')->get();
+
+        if(count($categorias) == 0){
+            return response()->json(['error'=>'No existen categorías habilitadas.'], 404);          
+        }else{
+            return response()->json(['categorias'=>$categorias], 200);
+        }   
     }
 }
