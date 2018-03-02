@@ -46,7 +46,7 @@ export class ProductosVerComponent implements OnInit{
   private data:any;
   public productList:any;
   public productos:any;
-  public categorias:any;
+  public subcategorias:any;
 
   objAEditar: any;
   objAEliminar: any;
@@ -86,8 +86,11 @@ export class ProductosVerComponent implements OnInit{
     this.myFormEditar = this.fb.group({
       id: [''],
       nombre: ['', [Validators.required]],
+      precio: [null],
       imagen: ['', [Validators.required]],
-      categoria_id: ['', [Validators.required]]
+      descripcion: [null],
+      subcategoria_id: ['', [Validators.required]],
+      establecimiento_id: ['', [Validators.required]]
     });
   }
 
@@ -99,7 +102,7 @@ export class ProductosVerComponent implements OnInit{
        .then(
          data => { // Success
 
-           this.getCategorias();
+           this.getSubcategorias();
 
            console.log(data);
            this.data=data;
@@ -167,18 +170,18 @@ export class ProductosVerComponent implements OnInit{
     this.modalService.open(modal , { size: 'lg', backdrop: 'static', container: 'nb-layout', keyboard: false});
   }
 
-    getCategorias(): void {
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/categorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
-    
+    getSubcategorias(): void {
+      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
-             //console.log(data);
+             console.log(data);
              this.data = data;
-             this.categorias=this.data.categorias;    
+             this.subcategorias=this.data.subcategorias; 
+            
            },
            msg => { // Error
-             //console.log(msg);
+             console.log(msg);
              console.log(msg.error.error);
 
              //token invalido/ausente o token expiro
@@ -215,8 +218,11 @@ export class ProductosVerComponent implements OnInit{
 
       this.myFormEditar.patchValue({id : this.objAEditar.id});
       this.myFormEditar.patchValue({nombre : this.objAEditar.nombre});
+      this.myFormEditar.patchValue({precio : this.objAEditar.precio});
+      this.myFormEditar.patchValue({descripcion : this.objAEditar.descripcion});
       this.myFormEditar.patchValue({imagen : this.objAEditar.imagen});
-      this.myFormEditar.patchValue({categoria_id : this.objAEditar.categoria_id});
+      this.myFormEditar.patchValue({subcategoria_id : this.objAEditar.subcategoria_id});
+      this.myFormEditar.patchValue({establecimiento_id : this.objAEditar.establecimiento_id});
     }
 
     editar(): void {
@@ -235,11 +241,14 @@ export class ProductosVerComponent implements OnInit{
       var datos= {
         token: localStorage.getItem('mouvers_token'),
         nombre: this.myFormEditar.value.nombre,
+        precio: this.myFormEditar.value.precio,
+        descripcion: this.myFormEditar.value.descripcion,
         imagen: this.myFormEditar.value.imagen,
-        categoria_id: this.myFormEditar.value.categoria_id
+        subcategoria_id: this.myFormEditar.value.subcategoria_id,
+        establecimiento_id: this.myFormEditar.value.establecimiento_id
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+this.myFormEditar.value.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+this.myFormEditar.value.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -249,15 +258,18 @@ export class ProductosVerComponent implements OnInit{
               for (var i = 0; i < this.productList.length; ++i) {
                 if (this.productList[i].id == this.myFormEditar.value.id) {
                    this.productList[i].nombre = this.myFormEditar.value.nombre;
+                   this.productList[i].precio = this.myFormEditar.value.precio;
+                   this.productList[i].descripcion = this.myFormEditar.value.descripcion;
                    this.productList[i].imagen = this.myFormEditar.value.imagen;
-                   this.productList[i].categoria_id = this.myFormEditar.value.categoria_id;
+                   this.productList[i].subcategoria_id = this.myFormEditar.value.subcategoria_id;
+                   this.productList[i].establecimiento_id = this.myFormEditar.value.establecimiento_id;
 
-                   if (this.categorias) {
-                     for (var j = 0; j < this.categorias.length; ++j) {
-                       if (this.myFormEditar.value.categoria_id == this.categorias[j].id ) {
-                         this.productList[i].categoria.id = this.categorias[j].id;
-                         this.productList[i].categoria.nombre = this.categorias[j].nombre;
-                         this.productList[i].categoria.estado = this.categorias[j].estado;
+                   if (this.subcategorias) {
+                     for (var j = 0; j < this.subcategorias.length; ++j) {
+                       if (this.myFormEditar.value.subcategoria_id == this.subcategorias[j].id ) {
+                         this.productList[i].subcategoria.id = this.subcategorias[j].id;
+                         this.productList[i].subcategoria.nombre = this.subcategorias[j].nombre;
+                         this.productList[i].subcategoria.estado = this.subcategorias[j].estado;
                        }
                      }
                    }
@@ -312,7 +324,7 @@ export class ProductosVerComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -349,7 +361,7 @@ export class ProductosVerComponent implements OnInit{
 
                   this.showToast('warning', 'Warning!', msg.error.error);
               }
-              //no encontrada o confilto
+              //no encontrado o conflicto
               else if(msg.status == 404 || msg.status == 409){ 
                   //alert(msg.error.error);
                   this.showToast('error', 'Erro!', msg.error.error);
@@ -359,21 +371,8 @@ export class ProductosVerComponent implements OnInit{
          );
     }
 
-    cambioSwicheSubcat(obj, modal2): void{
-      //console.log(obj.estado);
 
-      this.subcatSelecAux = obj;
-
-      if (obj.estado == 'ON') {
-        //Apagando subcategoria
-        this.cambiarEstado(obj);
-      }else{
-        //Encendiendo subcategoria
-        this.cargarProductos(obj, modal2);
-      }
-    }
-
-    //Para la subcategoria
+    //Para el producto
     cambiarEstado(obj): void {
 
       var v_estado: any;
@@ -391,7 +390,7 @@ export class ProductosVerComponent implements OnInit{
         estado: v_estado
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+obj.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+obj.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -427,123 +426,6 @@ export class ProductosVerComponent implements OnInit{
               }
            }
          );
-    }
-
-    cargarProductos(obj, modal2): void {
-
-      this.loading = true;
-
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+obj.id+'/productos?token='+localStorage.getItem('mouvers_token'))
-         .toPromise()
-         .then(
-           data => { // Success
-              console.log(data);
-              this.data=data;
-              this.productList2 = this.data.subcategoria.productos;
-              this.filteredItems2 = this.productList2;
-              //console.log(this.productList2);
-
-              this.init2();
-              
-              this.loading = false;
-
-              if (this.productList2.length == 0) {
-                //alert('La subcategoria no tiene productos');
-                //Se cambia solo el estado de la subcategoria
-                this.cambiarEstado(obj);
-              }else{
-                //alert('La subcategoria tiene '+this.productList2.length+' productos');
-                //Se muestra la modal para elgir las productos q se quieren habilitar junto con la subcategoria
-                this.habSubcategoria = obj;
-                this.open2(modal2);
-                this.mostrarSwiches = false;
-              }
-           },
-           msg => { // Error
-             console.log(msg);
-             console.log(msg.error.error);
-
-             this.loading = false;
-
-             //token invalido/ausente o token expiro
-             if(msg.status == 400 || msg.status == 401){ 
-                  //alert(msg.error.error);
-                  //ir a login
-                  this.showToast('warning', 'Warning!', msg.error.error);
-              }
-              else { 
-                  //alert(msg.error.error);
-                  this.showToast('error', 'Erro!', msg.error.error);
-              }
-           }
-         );
-    }
-
-    apagarSwiche(): void{
-      this.mostrarSwiches = true;
-    }
-
-    cambioSwicheProd(objProd): void {
-
-      if (objProd.estado == 'ON') {
-        objProd.estado = 'OFF';
-      }else{
-        objProd.estado = 'ON';
-      }
-
-    }
-
-    habilitarSubcat(): void{
-      
-      this.mostrarSwiches = true;
-
-      this.loading = true;
-
-      setTimeout(()=>{
-
-        var datos= {
-          token: localStorage.getItem('mouvers_token'),
-          estado: 'ON',
-          productos: JSON.stringify(this.productList2)
-          //productos: JSON.stringify(auxProductos)
-          //productos: this.productos
-          //productos: JSON.stringify(this.productos)
-          //productos: '[{"id":1,"cantidad":3,"estado":"ON"},{"id":3,"cantidad":3,"estado":"OFF"}]'
-        }
-
-        this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+this.habSubcategoria.id, datos)
-           .toPromise()
-           .then(
-             data => { // Success
-                console.log(data);
-                this.data = data;
-
-                this.habSubcategoria.estado = 'ON';
-
-                this.loading = false;
-                this.showToast('success', 'Success!', this.data.message); 
-             },
-             msg => { // Error
-               console.log(msg);
-               console.log(msg.error.error);
-
-               this.loading = false;
-
-               //token invalido/ausente o token expiro
-               if(msg.status == 400 || msg.status == 401){ 
-                    //alert(msg.error.error);
-                    //ir a login
-
-                    this.showToast('warning', 'Warning!', msg.error.error);
-                }
-                else { 
-                    //alert(msg.error.error);
-                    this.showToast('error', 'Erro!', msg.error.error);
-                }
-             }
-           );
-
-        },300);
     }
 
 
@@ -629,84 +511,5 @@ export class ProductosVerComponent implements OnInit{
          this.refreshItems();
     }
   //----Tabla>
-
-   //Tabla2 Subcategorias de la categoria X----<
-   filteredItems2 : any;
-   pages2 : number = 4;
-   pageSize2 : number = 5;
-   pageNumber2 : number = 0;
-   currentIndex2 : number = 1;
-   items2: any;
-   pagesIndex2 : Array<number>;
-   pageStart2 : number = 1;
-   inputName2 : string = '';
-
-   init2(){
-         this.currentIndex2 = 1;
-         this.pageStart2 = 1;
-         this.pages2 = 4;
-
-         this.pageNumber2 = parseInt(""+ (this.filteredItems2.length / this.pageSize2));
-         if(this.filteredItems2.length % this.pageSize2 != 0){
-            this.pageNumber2 ++;
-         }
-    
-         if(this.pageNumber2  < this.pages2){
-               this.pages2 =  this.pageNumber2;
-         }
-       
-         this.refreshItems2();
-         console.log("this.pageNumber2 :  "+this.pageNumber2);
-   }
-
-   FilterByName2(){
-      this.filteredItems2 = [];
-      if(this.inputName2 != ""){
-            for (var i = 0; i < this.productList2.length; ++i) {
-              if (this.productList2[i].nombre.toUpperCase().indexOf(this.inputName2.toUpperCase())>=0) {
-                 this.filteredItems2.push(this.productList2[i]);
-              }
-            }
-      }else{
-         this.filteredItems2 = this.productList2;
-      }
-      console.log(this.filteredItems2);
-      this.init2();
-   }
-   fillArray2(): any{
-      var obj = new Array();
-      for(var index = this.pageStart2; index< this.pageStart2 + this.pages2; index ++) {
-                  obj.push(index);
-      }
-      return obj;
-   }
-   refreshItems2(){
-       this.items2 = this.filteredItems2.slice((this.currentIndex2 - 1)*this.pageSize2, (this.currentIndex2) * this.pageSize2);
-       this.pagesIndex2 =  this.fillArray2();
-   }
-   prevPage2(){
-      if(this.currentIndex2>1){
-         this.currentIndex2 --;
-      } 
-      if(this.currentIndex2 < this.pageStart2){
-         this.pageStart2 = this.currentIndex2;
-      }
-      this.refreshItems2();
-   }
-   nextPage2(){
-      if(this.currentIndex2 < this.pageNumber2){
-            this.currentIndex2 ++;
-      }
-      if(this.currentIndex2 >= (this.pageStart2 + this.pages2)){
-         this.pageStart2 = this.currentIndex2 - this.pages2 + 1;
-      }
- 
-      this.refreshItems2();
-   }
-    setPage2(index : number){
-         this.currentIndex2 = index;
-         this.refreshItems2();
-    }
-    //Tabla2 Subcategorias de la categoria X---->
 
 }

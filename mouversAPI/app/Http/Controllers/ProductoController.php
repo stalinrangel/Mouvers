@@ -138,6 +138,7 @@ class ProductoController extends Controller
         $imagen=$request->input('imagen');
         $descripcion=$request->input('descripcion');
         $subcategoria_id=$request->input('subcategoria_id');
+        $estado=$request->input('estado');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -199,6 +200,12 @@ class ProductoController extends Controller
             }
 
             $producto->subcategoria_id = $subcategoria_id;
+            $bandera=true;
+        }
+
+        if ($estado != null && $estado!='')
+        {
+            $producto->estado = $estado;
             $bandera=true;
         }
 
