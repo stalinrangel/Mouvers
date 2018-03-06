@@ -20,10 +20,16 @@ import { RutaBaseService } from './services/ruta-base/ruta-base.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
 
+import { AgmCoreModule } from '@agm/core';
+
 
 @NgModule({
   declarations: [AppComponent,  ],
   imports: [
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyCr8zuLtOO7IoK_rC948rLcqyqsIaZOouY',
+      libraries: ["places"]
+    }),
     BrowserModule,
     BrowserAnimationsModule,
     HttpModule,

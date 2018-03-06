@@ -90,6 +90,10 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/calificaciones/{id}','CalificacionController@destroy');
         Route::get('/calificaciones/{id}','CalificacionController@show');
 
+        //----Pruebas UploadImagenController
+        Route::post('/imagenes','UploadImagenController@store');
+
+
 
     Route::group(['middleware' => 'jwt-auth'], function(){
 

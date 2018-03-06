@@ -28,7 +28,7 @@
     "release:changelog": "npm run conventional-changelog -- -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
-    "@agm/core": "1.0.0-beta.2",
+    "@agm/core": "^1.0.0-beta.2",
     "@angular/animations": "~5.1.0",
     "@angular/common": "~5.1.0",
     "@angular/compiler": "~5.1.0",
@@ -58,7 +58,6 @@
     "ng2-ckeditor": "1.1.13",
     "ng2-smart-table": "1.2.2",
     "ng2-tree": "2.0.0-rc.4",
-    "ng2-uploader": "^2.0.0",
     "ngx-echarts": "2.0.0",
     "ngx-loading": "^1.0.14",
     "normalize.css": "6.0.0",

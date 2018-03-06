@@ -5,11 +5,11 @@ export class RutaBaseService {
 
 	//Local freddy
 	public api_base = 'http://localhost/gitHub/Mouvers/';
-	public images_base = 'http://localhost/gitHub/Mouvers/images_uploads/'; //No esta en uso
+	public images_base = 'http://localhost/gitHub/Mouvers/images_uploads/';
 
 	//Remoto
-	//public api_base = 'http://rattios.com/';
-	//public images_base = 'http://rattios.com/images_uploads/'; //No esta en uso
+	//public api_base = 'http://mouvers.mx/';
+	//public images_base = 'http://mouvers.mx/images_uploads/';
 
 	constructor() { }
 

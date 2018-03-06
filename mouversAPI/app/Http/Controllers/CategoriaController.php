@@ -59,7 +59,7 @@ class CategoriaController extends Controller
         if(count($aux)!=0){
            // Devolvemos un código 409 Conflict. 
             return response()->json(['error'=>'Ya existe una categoría con ese nombre.'], 409);
-        }
+        } 
 
         if($nuevaCategoria=\App\Categoria::create($request->all())){
            return response()->json(['message'=>'Categoría creada con éxito.',

@@ -3,6 +3,13 @@
     <nb-card>
       <nb-card-header>Registro de Nueva Categoría</nb-card-header>
       <nb-card-body>
+
+        <!-- <div class="row">
+          <div class="col-md-12">
+              <input placeholder="Buscar dirección por google maps..." autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search  onFocus="geolocate()" >
+           </div>
+        </div> -->
+
         <form [formGroup]="myFormAgregar" novalidate>
           <div class="form-group">
             <label for="exampleInputEmail1">Nombre</label>
@@ -12,11 +19,16 @@
             </div>
           </div>
           <div class="form-group">
+            <br>
             <label for="exampleInputImagen">Imagen</label>
-            <input type="text" class="form-control" id="exampleInputImagen" placeholder="Imagen" formControlName="imagen">
-            <div *ngIf="myFormAgregar.get('imagen').errors && myFormAgregar.get('imagen').dirty">
-              <p *ngIf="myFormAgregar.get('imagen').hasError('required')">Imagen es requerido</p>
-            </div>
+            <input [hidden]="clear" type="file" name="imagen" id="imagen" (change)="onFileChange($event)" #fileInput accept="image/*">
+              <div *ngIf="clear">
+                <br>
+                <output id="list"></output>
+                <br>
+                <br>
+                <button type="button" class="btn btn-danger btn-tn" (click)="clearFile()">clear file</button>
+              </div>
           </div>
           
           <br>

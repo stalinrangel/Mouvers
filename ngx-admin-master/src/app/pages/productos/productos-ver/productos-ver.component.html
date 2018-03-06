@@ -106,12 +106,24 @@
               <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">{{subcategoria.nombre}}</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label for="exampleInputImagen">Imagen</label>
-            <input type="text" class="form-control" id="exampleInputImagen" placeholder="Imagen" formControlName="imagen">
-            <div *ngIf="myFormEditar.get('imagen').errors && myFormEditar.get('imagen').dirty">
-              <p *ngIf="myFormEditar.get('imagen').hasError('required')">Imagen es requerido</p>
+            <br>
+            <div [hidden]="clear">
+              <label for="exampleInputImagen">Imagen</label>
+              <input type="file" name="imagen" id="imagen" (change)="onFileChange($event)" #fileInput accept="image/*">
+              <br>
+              <br>
+              <img src = "{{objAEditar.imagen}}" alt="" height="160px">
             </div>
+              <div *ngIf="clear">
+                <label for="exampleInputImagen">Imagen</label>
+                <br>
+                <output id="list"></output>
+                <br>
+                <br>
+                <button type="button" class="btn btn-danger btn-tn" (click)="clearFile()">clear file</button>
+              </div>
           </div>
           
           <br>
