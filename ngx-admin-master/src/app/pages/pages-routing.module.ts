@@ -49,6 +49,9 @@ const routes: Routes = [{
     path: 'productos',
     loadChildren: './productos/productos.module#ProductosModule',
   },{
+    path: 'establecimientos',
+    loadChildren: './establecimientos/establecimientos.module#EstablecimientosModule',
+  },{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

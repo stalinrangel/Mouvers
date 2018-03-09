@@ -75,10 +75,10 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    /*public function show($id)
     {
         //cargar una cat
-        /*$categoria = \App\Categoria::with('subcategorias.productos.establecimiento')->find($id);*/
+        //$categoria = \App\Categoria::with('subcategorias.productos.establecimiento')->find($id);
 
         $categoria = \App\Categoria::with('subcategorias')->find($id);
 
@@ -114,6 +114,51 @@ class CategoriaController extends Controller
 
             
             return response()->json(['categoria'=>$categoria], 200);
+        } 
+    }*/
+        public function show($id)
+    {
+        //cargar una cat
+        $categoria = \App\Categoria::with(['subcategorias' => function ($query){
+                    $query->where('estado', 'ON');
+                }])->find($id);
+
+        if(count($categoria)==0){
+            return response()->json(['error'=>'No existe la categoría con id '.$id], 404);          
+        }else{
+
+            $aux = [];
+            $subcatAux = [];
+
+            for ($i=0; $i < count($categoria->subcategorias); $i++) { 
+
+                $subcategoria_id = $categoria->subcategorias[$i]->id;
+
+                $estbl = 
+                \App\Establecimiento::with(['productos' => function ($query) use ($subcategoria_id){
+                    $query->where('subcategoria_id', $subcategoria_id)
+                        ->where('estado', 'ON');
+                }])->where('estado', 'ON')->get();     
+
+                $categoria->subcategorias[$i]->establecimientos = [];
+                for ($j=0; $j < count($estbl) ; $j++) { 
+                    if (count($estbl[$j]->productos) > 0) {
+                        array_push($aux, $estbl[$j]);
+                    }
+                }
+
+                $categoria->subcategorias[$i]->establecimientos = $aux;
+
+                $aux = [];
+            }
+
+            for ($i=0; $i < count($categoria->subcategorias); $i++) { 
+                if (count($categoria->subcategorias[$i]->establecimientos)>0) {
+                    array_push($subcatAux,$categoria->subcategorias[$i]);
+                }
+            }
+
+            return response()->json(['subcategorias'=>$subcatAux], 200);
         } 
     }
 

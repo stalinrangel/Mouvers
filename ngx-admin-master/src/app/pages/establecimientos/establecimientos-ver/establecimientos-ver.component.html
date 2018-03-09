@@ -1,0 +1,155 @@
+<nb-card *ngIf="!editando && mostrar">
+  <nb-card-header>
+    <div class="row show-grid">
+          <div class="col-6">
+            <div>Lista de Establecimientos</div>
+          </div>
+          <div class="col-6">
+            <div>
+              <div style="text-align: right;">
+               <strong>Buscar: </strong>
+               <input  type="text"  id="inputName" [(ngModel)]="inputName" (ngModelChange)="FilterByName()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+  </nb-card-header>
+
+  <nb-card-body>
+
+    <table class="table table-striped">
+      <thead>
+         <th></th>
+         <!-- <th style="text-align: center;">ID</th> -->
+         <th style="text-align: center;">Nombre</th>
+         <th style="text-align: center;">Dirección</th>
+         <th style="text-align: center;">Estado</th>
+         <th style="text-align: center;">Acciones</th>
+      </thead>
+      <tbody>
+         <tr *ngFor="let item of items" >
+            <td></td>
+            <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
+            <td style="text-align: center; vertical-align:middle;">{{item.direccion}}</td>
+            <td style=" vertical-align:middle;">
+              <div *ngIf="mostrarSwiches" class="estado" style="display:block; margin:auto">
+                <label class="theme-switch">
+                  <span class="light">OFF</span>
+                  <div class="switch">
+                    <input type="checkbox" [disabled]="" [checked]="item.estado === 'ON'" (change)="cambiarEstado(item)" #theme>
+                    <span class="slider"></span>
+                  </div>
+                  <span class="cosmic">ON</span>
+                </label>
+              </div>
+            </td> 
+            <td style="text-align: center; vertical-align:middle;">
+              <button type="button" class="btn btn-primary btn-icon" title="Editar" (click)="aEditar(item)">
+                <i class="nb-edit"></i>
+              </button>
+              <button type="button" class="btn btn-danger btn-icon" title="Eliminar" (click)="open(modal1); aEliminar(item)">
+                <i class="nb-trash"></i>
+              </button>
+            </td>
+         </tr>
+      </tbody>
+    </table>
+      
+  </nb-card-body>
+  <nb-card-footer>
+    <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+      <div class="btn-group">
+         <label style="margin-top:10px">Página {{currentIndex}}/{{pageNumber}} </label>
+      </div>
+      <div class="btn-group pull-right">
+         <ul class="pagination" >
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == 1 || pageNumber == 0)}" ><a class="page-link"  (click)="prevPage()" >Atrás</a></li>
+               <li class="page-item" *ngFor="let page of pagesIndex"  [ngClass]="{'active': (currentIndex == page)}">
+                  <a class="page-link" (click)="setPage(page)"  >{{page}} </a>
+               </li>
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == pageNumber || pageNumber == 0)}" ><a class="page-link"   (click)="nextPage()" >Siguiente</a></li>
+         </ul>
+      </div>
+    </div>  
+  </nb-card-footer>
+</nb-card>
+
+<div class="row" *ngIf="editando">
+  <div class="col-lg-6" style="display:block; margin:auto">
+    <nb-card>
+      <nb-card-header>Editar Producto</nb-card-header>
+      <nb-card-body>
+        <form [formGroup]="myFormEditar" novalidate>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Nombre</label>
+            <input type="text" class="form-control" id="exampleInputNombre" placeholder="Nombre" formControlName="nombre">
+            <div *ngIf="myFormEditar.get('nombre').errors && myFormEditar.get('nombre').dirty">
+              <p *ngIf="myFormEditar.get('nombre').hasError('required')">Nombre es requerido</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPrecio">Precio</label>
+            <input type="number" class="form-control" id="exampleInputPrecio" placeholder="Precio" formControlName="precio">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputDescripcion">Descripción</label>
+            <textarea class="form-control" id="exampleInputDescripcion" placeholder="Descripción" formControlName="descripcion"></textarea>
+          </div>
+          <div *ngIf="subcategorias" class="form-group">
+            <label for="exampleInputSubcat">Subcategoría</label>
+            <select class="form-control" id="exampleInputSubcat" formControlName="subcategoria_id">
+              <!-- <option disabled selected>Selecciona una categoría</option> -->
+              <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">{{subcategoria.nombre}}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <br>
+            <div [hidden]="clear">
+              <label for="exampleInputImagen">Imagen</label>
+              <input type="file" name="imagen" id="imagen" (change)="onFileChange($event)" #fileInput accept="image/*">
+              <br>
+              <br>
+              <img src = "{{objAEditar.imagen}}" alt="" height="160px">
+            </div>
+              <div *ngIf="clear">
+                <label for="exampleInputImagen">Imagen</label>
+                <br>
+                <output id="list"></output>
+                <br>
+                <br>
+                <button type="button" class="btn btn-danger btn-tn" (click)="clearFile()">clear file</button>
+              </div>
+          </div>
+          
+          <br>
+          <button class="btn btn-secondary" (click)="atras()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" (click)="editar()" [disabled]="myFormEditar.invalid">Editar</button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<ng-template #modal1 let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Eliminar Establecimiento: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>¿Realmente desea eliminar el establecimiento {{eliminar_nombre}}?</p>
+    <p>Nota: Se eliminará el establecimineto y sus productos.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); eliminar()">Eliminar</button>
+  </div>
+</ng-template>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>

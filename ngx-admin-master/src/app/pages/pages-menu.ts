@@ -70,7 +70,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
   },
   {
     title: 'Productos',
-    icon: 'nb-gear',
+    icon: 'nb-snowy-circled',
     children: [
       {
         title: 'Agregar Productos',
@@ -83,6 +83,21 @@ export const MENU_ITEMS: NbMenuItem[] = [
      
     ],
   },
+  {
+    title: 'Establecimientos',
+    icon: 'nb-home',
+    children: [
+      {
+        title: 'Agregar Establecimientos',
+        link: '/pages/establecimientos/agregar',
+      },
+      {
+        title: 'Ver Establecimientos',
+        link: '/pages/establecimientos/ver',
+      },
+     
+    ],
+  }/*,
   {
     title: 'FEATURES',
     group: true,
@@ -231,5 +246,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/auth/reset-password',
       },
     ],
-  },
+  },*/
 ];
