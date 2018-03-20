@@ -130,6 +130,8 @@ class EstablecimientoController extends Controller
         $lat=$request->input('lat');
         $lng=$request->input('lng');
         $num_pedidos=$request->input('num_pedidos');
+        $estado=$request->input('estado');
+        $productos=$request->input('productos');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -173,6 +175,46 @@ class EstablecimientoController extends Controller
             $bandera=true;
         }
 
+        if ($estado != null && $estado!='')
+        {
+            if ($estado == 'OFF') {
+                $productos = $establecimiento->productos;
+
+                if (sizeof($productos) > 0)
+                {
+                    for ($i=0; $i < count($productos) ; $i++) { 
+                        $productos[$i]->estado = $estado;
+                        $productos[$i]->save();
+                    }
+                }
+            }
+
+            $establecimiento->estado = $estado;
+            $bandera=true;
+        }
+
+        if (sizeof($productos) > 0 )
+        {
+            $bandera=true;
+
+            $productos = json_decode($productos);
+            for ($i=0; $i < count($productos) ; $i++) {
+
+                if ($productos[$i]->estado == 'ON') {
+
+                    $prod = \App\Producto::find($productos[$i]->id);
+
+                    if(count($prod) == 0){
+                       // Devolvemos un código 409 Conflict. 
+                        return response()->json(['error'=>'No existe el producto con id '.$productos[$i]->id], 409);
+                    }else{
+                        $prod->estado = $productos[$i]->estado;
+                        $prod->save();
+                    }
+                }  
+            }
+        }
+
         if ($bandera)
         {
             // Almacenamos en la base de datos el registro.
@@ -208,16 +250,24 @@ class EstablecimientoController extends Controller
             // Devolvemos error codigo http 404
             return response()->json(['error'=>'No existe el establecimiento con id '.$id], 404);
         }
-       
-        $pedidos = $establecimiento->pedidos;
-
-        if (sizeof($pedidos) > 0)
-        {
-            // Devolvemos un código 409 Conflict. 
-            return response()->json(['error'=>'Este establecimiento no puede ser eliminado porque posee pedidos asociados.'], 409);
-        }
 
         $productos = $establecimiento->productos;
+
+        if (sizeof($productos) > 0)
+        {
+            //Verificar si los productos del establecimineto estan en pedidos
+            for ($i=0; $i < count($productos); $i++) { 
+                $productos[$i]->delete();
+
+                $pedidos = $productos[$i]->pedidos;
+
+                if (sizeof($pedidos) > 0)
+                {
+                    // Devolvemos un código 409 Conflict. 
+                    return response()->json(['error'=>'Este establecimiento no puede ser eliminado porque su productos están asociados a pedidos.'], 409);
+                }
+            }
+        }
 
         if (sizeof($productos) > 0)
         {
@@ -256,5 +306,27 @@ class EstablecimientoController extends Controller
         }else{
             return response()->json(['establecimientos'=>$establecimientos], 200);
         }   
+    }
+
+    /*Retorna productos del establecimiento.
+    donde la subcat a la que pertenece el producto este ON*/
+    public function establecimientoProductos($id)
+    {
+        $establecimiento = \App\Establecimiento::with('productos.subcategoria')->find($id);
+
+        if(count($establecimiento)==0){
+            return response()->json(['error'=>'No existe el establecimiento con id '.$id], 404);          
+        }else{
+
+            $aux = [];
+
+            for ($i=0; $i < count($establecimiento->productos) ; $i++) { 
+                if ($establecimiento->productos[$i]->subcategoria->estado == 'ON') {
+                    array_push($aux, $establecimiento->productos[$i]);
+                }
+            }
+
+            return response()->json(['productos'=>$aux], 200);
+        } 
     }
 }

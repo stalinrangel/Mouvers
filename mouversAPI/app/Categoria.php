@@ -33,7 +33,7 @@ class Categoria extends Model
      */
     protected $hidden = ['created_at','updated_at'];
 
-     // Relación de categoria con subcategorias:
+    // Relación de categoria con subcategorias:
     public function subcategorias()
     {
         // 1 categoria puede tener varias subcategorias

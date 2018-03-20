@@ -46,4 +46,11 @@ class User extends Model implements AuthenticatableContract,
      */
     protected $hidden = ['password'];
 
+    // Relación de usuario con pedidos:
+    public function pedidos()
+    {
+        // 1 usuario puede tener varios pedidos
+        return $this->hasMany('App\Pedido', 'usuario_id');
+    }
+
 }

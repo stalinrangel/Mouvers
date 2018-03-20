@@ -26,7 +26,8 @@ class Pedido extends Model
      */
     protected $fillable = ['estado', 'lat', 'lng',
         'direccion', 'distancia', 'tiempo',
-        'costo', 'usuario_id', 'repartidor_id'];
+        'costo_envio', 'subtotal', 'costo', 'usuario_id',
+        'repartidor_id', 'repartidor_nom', 'estado_pago', 'api_tipo_pago'];
 
     /**
      * The attributes excluded from the model's JSON form.

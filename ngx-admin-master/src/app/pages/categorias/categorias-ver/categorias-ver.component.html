@@ -19,7 +19,6 @@
 
     <table class="table table-striped">
       <thead>
-         <th></th>
          <!-- <th style="text-align: center;">ID</th> -->
          <th style="text-align: center;">Imagen</th>
          <th style="text-align: center;">Nombre</th>
@@ -28,7 +27,6 @@
       </thead>
       <tbody>
          <tr *ngFor="let item of items" >
-            <td></td>
             <td style="text-align: center; vertical-align:middle;"><img src = "{{item.imagen}}" alt="" height="auto" width="60px"></td>
             <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
             <td style=" vertical-align:middle;">
@@ -169,8 +167,8 @@
              <tr *ngFor="let item of items2" >
                 <td style="text-align: center; vertical-align:middle;"><img src = "{{item.imagen}}" alt="" height="auto" width="60px"></td>
                 <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
-                <td style=" vertical-align:middle;">
-                  <div class="estado" style="display:block; margin:auto">
+                <td style="text-align: center; vertical-align:middle;">
+                  <!-- <div class="estado" style="display:block; margin:auto">
                     <label class="theme-switch">
                       <span class="light">OFF</span>
                       <div class="switch">
@@ -179,7 +177,8 @@
                       </div>
                       <span class="cosmic">ON</span>
                     </label>
-                  </div>
+                  </div> -->
+                  <nb-checkbox [value]="item.estado === 'ON'" (change)="cambioSwicheSubCat(item)">{{item.estado}}</nb-checkbox>
                 </td> 
                 
              </tr>
@@ -207,7 +206,7 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="c('Close click'); apagarSwiche()">Cancelar</button>
-    <button type="button" class="btn btn-danger" (click)="c('Close click') ; habilitarCat()">Habilitar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click') ; habilitarCat()">Aceptar</button>
   </div>
 </ng-template>
 

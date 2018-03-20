@@ -52,6 +52,9 @@ const routes: Routes = [{
     path: 'establecimientos',
     loadChildren: './establecimientos/establecimientos.module#EstablecimientosModule',
   },{
+    path: 'pedidos',
+    loadChildren: './pedidos/pedidos.module#PedidosModule',
+  },{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

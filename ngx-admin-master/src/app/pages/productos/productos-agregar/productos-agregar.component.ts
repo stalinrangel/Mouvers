@@ -62,7 +62,7 @@ export class ProductosAgregarComponent implements OnInit{
   	this.myFormAgregar = this.fb.group({
         nombre: ['', [Validators.required]],
         precio: [null],
-        imagen: ['', [Validators.required]],
+        //imagen: ['', [Validators.required]],
         descripcion: [null],
         subcategoria_id: ['', [Validators.required]],
         establecimiento_id: ['', [Validators.required]]
@@ -168,7 +168,7 @@ export class ProductosAgregarComponent implements OnInit{
         token: localStorage.getItem('mouvers_token'),
         nombre: this.myFormAgregar.value.nombre,
         precio: this.myFormAgregar.value.precio,
-        imagen: this.myFormAgregar.value.imagen,
+        //imagen: this.myFormAgregar.value.imagen,
         descripcion: this.myFormAgregar.value.descripcion,
         estado: 'ON',
         subcategoria_id: this.myFormAgregar.value.subcategoria_id,
@@ -187,7 +187,7 @@ export class ProductosAgregarComponent implements OnInit{
               this.showToast('success', 'Success!', this.data.message);
 
               this.myFormAgregar.reset();
-              this.clearFile();
+              //this.clearFile();
   
            },
            msg => { // Error

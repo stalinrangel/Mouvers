@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use DB;
 
 class PedidoController extends Controller
 {
@@ -17,10 +18,14 @@ class PedidoController extends Controller
     public function index()
     {
         //cargar todos los pedidos
-        $pedidos = \App\Pedido::all();
+        $pedidos = \App\Pedido::with('usuario')
+            ->with('repartidor')
+            ->with('productos.establecimiento')
+            ->orderBy('id', 'desc')
+            ->get();
 
         if(count($pedidos) == 0){
-            return response()->json(['error'=>'No existen pedidos.'], 404);          
+            return response()->json(['error'=>'No existen pedidos en el historial.'], 404);          
         }else{
             return response()->json(['pedidos'=>$pedidos], 200);
         } 
@@ -48,6 +53,8 @@ class PedidoController extends Controller
         if (!$request->input('lat') ||
             !$request->input('lng') ||
             !$request->input('direccion') ||
+            !$request->input('costo_envio') ||
+            !$request->input('subtotal') ||
             !$request->input('costo') ||
             !$request->input('usuario_id') ||
             /*!$request->input('establecimiento_id') ||*/
@@ -93,10 +100,13 @@ class PedidoController extends Controller
             'lng'=>$request->input('lng'),
             'direccion'=>$dir, 
             'distancia'=>$request->input('distancia'), 
-            'tiempo'=>$request->input('tiempo'), 
+            'tiempo'=>$request->input('tiempo'),
+            'costo_envio'=>$request->input('costo_envio'), 
+            'subtotal'=>$request->input('subtotal'),
             'costo'=>$request->input('costo'),
-            'usuario_id'=>$request->input('usuario_id')
+            'usuario_id'=>$request->input('usuario_id'),
             /*'establecimiento_id'=>$request->input('establecimiento_id')*/
+            'estado_pago'=>'pendiente'
             ])){
 
             //Crear las relaciones en la tabla pivote
@@ -171,9 +181,13 @@ class PedidoController extends Controller
         $direccion=$request->input('direccion'); 
         $distancia=$request->input('distancia'); 
         $tiempo=$request->input('tiempo'); 
+        $costo_envio=$request->input('costo_envio');
+        $subtotal=$request->input('subtotal');
         $costo=$request->input('costo');
         $repartidor_id=$request->input('repartidor_id');
         //$productos=$request->input('productos');
+        $estado_pago=$request->input('estado_pago');
+        $api_tipo_pago=$request->input('api_tipo_pago');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -215,6 +229,18 @@ class PedidoController extends Controller
             $bandera=true;
         }
 
+        if ($costo_envio != null && $costo_envio!='')
+        {
+            $pedido->costo_envio = $costo_envio;
+            $bandera=true;
+        }
+
+        if ($subtotal != null && $subtotal!='')
+        {
+            $pedido->subtotal = $subtotal;
+            $bandera=true;
+        }
+
         if ($costo != null && $costo!='')
         {
             $pedido->costo = $costo;
@@ -224,7 +250,7 @@ class PedidoController extends Controller
         if ($repartidor_id != null && $repartidor_id!='')
         {
             // Comprobamos si el repartidor que nos están pasando existe o no.
-            $repartidor=\App\Repartidor::find($repartidor_id);
+            $repartidor=\App\Repartidor::with('usuario')->find($repartidor_id);
 
             if (count($repartidor)==0)
             {
@@ -233,6 +259,19 @@ class PedidoController extends Controller
             }
 
             $pedido->repartidor_id = $repartidor_id;
+            $pedido->repartidor_nom = $repartidor->usuario->nombre;
+            $bandera=true;
+        }
+
+        if ($estado_pago != null && $estado_pago!='')
+        {
+            $pedido->estado_pago = $estado_pago;
+            $bandera=true;
+        }
+
+        if ($api_tipo_pago != null && $api_tipo_pago!='')
+        {
+            $pedido->api_tipo_pago = $api_tipo_pago;
             $bandera=true;
         }
 
@@ -278,5 +317,60 @@ class PedidoController extends Controller
         $pedido->delete();
 
         return response()->json(['message'=>'Se ha eliminado correctamente el pedido.'], 200);
+    }
+
+    public function pedidosHoy()
+    {
+        //cargar todos los pedidos de hoy
+        $pedidos = \App\Pedido::with('usuario')
+            ->with('repartidor')
+            ->with('productos.establecimiento')
+            ->where(DB::raw('DAY(created_at)'),DB::raw('DAY(now())'))
+            ->where(DB::raw('MONTH(created_at)'),DB::raw('MONTH(now())'))
+            ->where(DB::raw('YEAR(created_at)'),DB::raw('YEAR(now())'))
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No existen pedidos para hoy.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
+    }
+
+    public function pedidosEncurso()
+    {
+        //cargar todos los pedidos en curso (Estado 1, 2, 3)
+        $pedidos = \App\Pedido::with('usuario')
+            ->with('repartidor')
+            ->with('productos.establecimiento')
+            ->where('estado',1)
+            ->orWhere('estado',2)
+            ->orWhere('estado',3)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No existen pedidos en curso.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
+    }
+
+    public function pedidosFinalizados()
+    {
+        //cargar todos los pedidos en curso (Estado 1, 2, 3)
+        $pedidos = \App\Pedido::with('usuario')
+            ->with('repartidor')
+            ->with('productos.establecimiento')
+            ->where('estado',4)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No existen pedidos finalizados.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
     }
 }

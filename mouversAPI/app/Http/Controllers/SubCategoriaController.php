@@ -294,6 +294,8 @@ class SubCategoriaController extends Controller
         
     }
 
+    /*Retorna productos de la subcategoria.
+    donde el estable al que pertenece el producto esta ON*/
     public function subcategoriaProductos($id)
     {
         //cargar una subcat con sus subcat
@@ -303,7 +305,15 @@ class SubCategoriaController extends Controller
             return response()->json(['error'=>'No existe la subcategoría con id '.$id], 404);          
         }else{
 
-            return response()->json(['subcategoria'=>$subcategoria], 200);
+            $aux = [];
+
+            for ($i=0; $i < count($subcategoria->productos) ; $i++) { 
+                if ($subcategoria->productos[$i]->establecimiento->estado == 'ON') {
+                    array_push($aux, $subcategoria->productos[$i]);
+                }
+            }
+
+            return response()->json(['productos'=>$aux], 200);
         } 
     }
 

@@ -11,13 +11,13 @@
               <p *ngIf="myFormAgregar.get('nombre').hasError('required')">Nombre es requerido</p>
             </div>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="exampleInputDireccion">Dirección</label>
             <input type="text" class="form-control" id="exampleInputDireccion" placeholder="Dirección" formControlName="direccion">
             <div *ngIf="myFormAgregar.get('direccion').errors && myFormAgregar.get('direccion').dirty">
               <p *ngIf="myFormAgregar.get('direccion').hasError('required')">Dirección es requerido</p>
             </div>
-          </div>
+          </div> 
           <div class="form-group">
             <label for="exampleInputlat">lat</label>
             <input type="text" class="form-control" id="exampleInputDireccion" placeholder="lat" formControlName="lat">
@@ -31,10 +31,31 @@
             <div *ngIf="myFormAgregar.get('lng').errors && myFormAgregar.get('lng').dirty">
               <p *ngIf="myFormAgregar.get('lng').hasError('required')">lng es requerido</p>
             </div>
+          </div> -->
+
+          <div class="form-group">
+            <label for="exampleInputDireccion">Dirección</label>
+            <input type="text" name="direccion" class="form-control" id="exampleInputDireccion" placeholder="Dirección" formControlName="direccion" (blur)="setDireccion()">
+            <div *ngIf="myFormAgregar.get('direccion').errors && myFormAgregar.get('direccion').dirty">
+              <p *ngIf="myFormAgregar.get('direccion').hasError('required')">Dirección es requerido</p>
+            </div>
           </div>
 
-
+          <div class="row">
+            <div class="col-md-12">
+                <input placeholder="Buscar dirección por google maps..." autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search  onFocus="geolocate()" >
+            </div>
+          </div>
           
+          <br>
+          <div class="row">  
+            <div class="col-md-12">
+                <agm-map style="height: 300px;" [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
+                  <agm-marker style="height: 300px;" [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true" (dragEnd)="markerDragEnd($event)"></agm-marker>
+                </agm-map>
+            </div>   
+          </div>
+
           <br>
           <button type="submit" class="btn btn-info" (click)="crear()" [disabled]="myFormAgregar.invalid">Agregar</button>
         </form>

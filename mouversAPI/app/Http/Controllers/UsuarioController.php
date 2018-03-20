@@ -128,10 +128,10 @@ class UsuarioController extends Controller
 
         if($usuario->save()){
 
-            /*//Si es un registro con normal con email y password enviar correo de verificacion
+            //Si es un registro con normal con email y password enviar correo de verificacion
             if ($usuario->tipo_registro == 1) {
                 $this->emailDeValidacion($usuario->email);
-            }*/
+            }
 
            return response()->json(['message'=>'Usuario creado con éxito.', 'usuario'=>$usuario], 200);
         }else{
@@ -308,6 +308,14 @@ class UsuarioController extends Controller
             return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
         }
 
+        $pedidos = $usuario->pedidos;
+
+        if (sizeof($pedidos) > 0)
+        {
+            // Devolvemos un código 409 Conflict. 
+            return response()->json(['error'=>'Este usuario no puede ser eliminado porque posee pedidos asociados.'], 409);
+        }
+
         // Eliminamos el usuario.
         $usuario->delete();
 
@@ -343,7 +351,9 @@ class UsuarioController extends Controller
 
     public function emailDeValidacion($email)
     {
-        $enlace = 'http://localhost/gitHub/Mouvers/mouversAPI/public/usuarios/validar/'.$email;
+        //$enlace = 'http://localhost/gitHub/Mouvers/mouversAPI/public/usuarios/validar/'.$email;
+
+        $enlace = 'http://mouvers.mx/mouversAPI/public/usuarios/validar/'.$email;
 
         //return response()->view('emails.validar_cuenta', ['enlace' => $enlace], 200);
 
@@ -352,7 +362,115 @@ class UsuarioController extends Controller
         //Enviamos el correo con el enlace para validar
         Mail::send('emails.validar_cuenta', $data, function($msj) use ($email){
             $msj->subject('Validar cuenta Mouvers');
+            $msj->from('info@mouvers.mx', 'mouvers');
             $msj->to($email);
         });
+    }
+
+    public function misPedidosHistorial($id)
+    {
+        // Comprobamos si el usuario que nos están pasando existe o no.
+        $usuario=\App\User::find($id);
+
+        if (count($usuario)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
+        }
+
+        //cargar todos los pedidos
+        $pedidos = \App\Pedido::where('usuario_id', $id)
+            ->with('productos.establecimiento')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No tienes pedidos registrados en historial.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
+    }
+
+    public function misPedidosHoy($id)
+    {
+        // Comprobamos si el usuario que nos están pasando existe o no.
+        $usuario=\App\User::find($id);
+
+        if (count($usuario)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
+        }
+
+        //cargar los pedidos de hoy
+        $pedidos = \App\Pedido::where('usuario_id', $usuario->id)
+            ->where(DB::raw('DAY(created_at)'),DB::raw('DAY(now())'))
+            ->where(DB::raw('MONTH(created_at)'),DB::raw('MONTH(now())'))
+            ->where(DB::raw('YEAR(created_at)'),DB::raw('YEAR(now())'))
+            ->with('productos.establecimiento')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No tienes pedidos registrados hoy.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
+    }
+
+    public function misPedidosEncurso($id)
+    {
+
+        // Comprobamos si el usuario que nos están pasando existe o no.
+        $usuario=\App\User::find($id);
+
+        if (count($usuario)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
+        }
+
+        //cargar todos los pedidos en curso (Estado 1, 2, 3)
+        $pedidos = \App\Pedido::with('productos.establecimiento')
+            ->where('usuario_id', $id)
+            ->where(function ($query) {
+                $query->where('estado',1)
+                    ->orWhere('estado',2)
+                    ->orWhere('estado',3);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No tienes pedidos en curso.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
+    }
+
+    public function misPedidosFinalizados($id)
+    {
+
+        // Comprobamos si el usuario que nos están pasando existe o no.
+        $usuario=\App\User::find($id);
+
+        if (count($usuario)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
+        }
+
+        //cargar todos los pedidos en curso (Estado 1, 2, 3)
+        $pedidos = \App\Pedido::with('productos.establecimiento')
+            ->where('usuario_id', $id)
+            ->where('estado',4)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No tienes pedidos finalizados.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
     }
 }

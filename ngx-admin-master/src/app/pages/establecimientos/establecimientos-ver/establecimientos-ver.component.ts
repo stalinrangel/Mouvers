@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener, NgZone } from '@angular/core';
 
 //Mis imports
 import { RouterModule, Routes, Router, ActivatedRoute } from '@angular/router';
@@ -7,12 +7,18 @@ import 'rxjs/add/operator/toPromise';
 
 import { RutaBaseService } from '../../../services/ruta-base/ruta-base.service';
 
-import { FormBuilder, FormArray, FormGroup, Validators  } from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup, Validators, FormControl  } from '@angular/forms';
 
 import { ToasterService, ToasterConfig, Toast, BodyOutputType } from 'angular2-toaster';
 import 'style-loader!angular2-toaster/toaster.css';
 
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+
+import { AgmCoreModule, MapsAPILoader } from '@agm/core';
+import { Observable, Observer } from 'rxjs';
+
+declare const $: any;
+declare var google: any;
 
 @Component({
   selector: 'ngx-ver-prod',
@@ -46,7 +52,6 @@ export class EstablecimientosVerComponent implements OnInit{
   private data:any;
   public productList:any;
   public productos:any;
-  public subcategorias:any;
 
   objAEditar: any;
   objAEliminar: any;
@@ -65,42 +70,52 @@ export class EstablecimientosVerComponent implements OnInit{
 
   public productList2:any;
 
-  public habSubcategoria:any;
+  public habEstablecimiento:any;
 
-  public subcatSelecAux:any;
+  public estableSelecAux:any;
 
   public mostrarSwiches = true;
 
   public admin = false;
 
-  closeResult: string;
+  //Mapa
+  private zone: NgZone;
 
-  @ViewChild('fileInput') fileInput: ElementRef;
-  clear = false; //puedo borrar?
-  fileIMG = null;
-  imgUpload = null;
-  loadinImg = false;
+  lat: number = -38.938771;
+  lng: number = -67.995493;
+  zoom: number = 16;
+
+  public searchControl: FormControl;
+  public latitude: number;
+  public longitude: number;
+
+  @ViewChild("search")
+  public searchElementRef: ElementRef;
+
+  mapa = false;
 
   constructor( private modalService: NgbModal,
                private toasterService: ToasterService,
                private http: HttpClient,
                private router: Router,
                private rutaService: RutaBaseService,
-               public fb: FormBuilder)
+               public fb: FormBuilder,
+               private mapsAPILoader: MapsAPILoader,
+               private ngZone: NgZone)
   {
     
     this.myFormEditar = this.fb.group({
       id: [''],
       nombre: ['', [Validators.required]],
-      precio: [null],
-      imagen: ['', [Validators.required]],
-      descripcion: [null],
-      subcategoria_id: ['', [Validators.required]],
-      establecimiento_id: ['', [Validators.required]]
+      direccion: ['', [Validators.required]],
+      lat: ['', [Validators.required]],
+      lng: ['', [Validators.required]]
     });
   }
 
   ngOnInit() {
+
+    this.inicializarMapa();
     
     this.loading = true;
     this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos?token='+localStorage.getItem('mouvers_token'))
@@ -132,7 +147,7 @@ export class EstablecimientosVerComponent implements OnInit{
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
             }
-            //sin usuarios
+            //sin establecimientos
             else if(msg.status == 404){ 
                 //alert(msg.error.error);
                 this.showToast('info', 'Info!', msg.error.error);
@@ -142,6 +157,118 @@ export class EstablecimientosVerComponent implements OnInit{
          }
        );
   }
+
+  public inicializarMapa(){
+          this.zone = new NgZone({ enableLongStackTrace: false });
+    
+          //create search FormControl
+          this.searchControl = new FormControl();
+          
+          //set current position
+          this.setCurrentPosition();
+          
+          //load Places Autocomplete
+          this.mapsAPILoader.load().then(() => {
+
+          var defaultBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(-38.512445, -70.482788),
+            new google.maps.LatLng(-37.673767, -67.692261),
+            new google.maps.LatLng(-38.778443, -62.616577),
+            new google.maps.LatLng(-40.009472, -68.076782)
+          );
+
+          var options = { 
+            bounds: defaultBounds,
+            //componentRestrictions: {country: "AR"}
+            //types: ['(cities)'],
+            //componentRestrictions: {country: 'fr'}
+          };
+          let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+            types: ["address"]
+          }, options);
+           var circle = new google.maps.Circle({
+                  center: {lat:  -38.938771, lng: -67.995493},
+                  radius: 10*1000
+                });
+                autocomplete.setBounds(circle.getBounds());
+            autocomplete.addListener("place_changed", () => {
+            this.ngZone.run(() => {
+              //get the place result
+              let place = autocomplete.getPlace();
+
+              //verify result
+              if (place.geometry === undefined || place.geometry === null) {
+                return;
+              }
+              console.log(place.formatted_address);
+              
+            });
+          });
+        });
+  }
+
+  public setDir(dir){
+    return Observable.create(observer => {
+      let geocoder = new google.maps.Geocoder();
+      geocoder.geocode({'location': dir}, function(results, status) {
+            if (status === 'OK') {
+              if (results[1]) {
+                console.log(results[1]);
+                //alert(JSON.stringify(results[1].formatted_address));
+                //this.setDir(results[1].formatted_address);
+                 observer.next(results[1].formatted_address);
+                 observer.complete();
+                
+              } else {
+                alert('No results found');
+                observer.next({});
+                observer.complete();
+              }
+            } else {
+              console.log('Geocoder failed due to: ' + status);
+              observer.next({});
+              observer.complete();
+            }
+          });
+       })
+  }
+
+  markerDragEnd($event: MouseEvent) {
+    console.log($event);
+    var latlng:any;
+    
+    latlng=$event;
+    latlng=latlng.coords;
+    this.myFormEditar.patchValue({lat: latlng.lat });
+    this.myFormEditar.patchValue({lng: latlng.lng });
+
+    this.setDir(latlng).subscribe(result => {
+      this.myFormEditar.patchValue({direccion: result });
+      },error => console.log(error),() => console.log('Geocoding completed!')
+    );
+    
+  }
+
+  private setCurrentPosition() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+        this.zoom = 12;
+      });
+    }
+  }
+
+  uppercase(value: string) {
+    //console.log(value);
+    return value.toUpperCase();
+  }
+
+  setDireccion(){
+      setTimeout(()=>{
+        this.myFormEditar.patchValue({direccion: this.myFormEditar.value.direccion });
+      },500)
+    }
 
   private showToast(type: string, title: string, body: string) {
       this.config = new ToasterConfig({
@@ -181,47 +308,43 @@ export class EstablecimientosVerComponent implements OnInit{
 
       //this.uploadFile = null;
       this.myFormEditar.reset();
+      this.mapa = false;
 
     }
 
     aEditar(obj): void {
-      this.editando = true;
+      //this.editando = true;
       this.objAEditar = Object.assign({},obj);
       console.log(this.objAEditar);
 
       this.myFormEditar.patchValue({id : this.objAEditar.id});
       this.myFormEditar.patchValue({nombre : this.objAEditar.nombre});
-      this.myFormEditar.patchValue({precio : this.objAEditar.precio});
-      this.myFormEditar.patchValue({descripcion : this.objAEditar.descripcion});
-      this.myFormEditar.patchValue({imagen : this.objAEditar.imagen});
-      this.myFormEditar.patchValue({subcategoria_id : this.objAEditar.subcategoria_id});
-      this.myFormEditar.patchValue({establecimiento_id : this.objAEditar.establecimiento_id});
+      this.myFormEditar.patchValue({direccion : this.objAEditar.direccion});
+      this.myFormEditar.patchValue({lat : this.objAEditar.lat});
+      this.myFormEditar.patchValue({lng : this.objAEditar.lng});
+
+      setTimeout(()=>{
+        //this.inicializarMapa();
+        this.editando = true;
+        this.latitude = parseFloat(this.myFormEditar.value.lat);
+        this.longitude = parseFloat(this.myFormEditar.value.lng);
+        this.mapa = true;       
+      },500)
     }
 
     editar(): void {
       
       this.loading = true;
 
-      var imgAux: any;
-      
-      if(this.imgUpload){
-        imgAux = this.imgUpload; 
-      }
-      else{
-        imgAux = this.myFormEditar.value.imagen;
-      }
-
       var datos= {
         token: localStorage.getItem('mouvers_token'),
         nombre: this.myFormEditar.value.nombre,
-        precio: this.myFormEditar.value.precio,
-        descripcion: this.myFormEditar.value.descripcion,
-        imagen: imgAux,
-        subcategoria_id: this.myFormEditar.value.subcategoria_id,
-        establecimiento_id: this.myFormEditar.value.establecimiento_id
+        direccion: this.myFormEditar.value.direccion,
+        lat: this.myFormEditar.value.lat,
+        lng: this.myFormEditar.value.lng
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+this.myFormEditar.value.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+this.myFormEditar.value.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -231,21 +354,9 @@ export class EstablecimientosVerComponent implements OnInit{
               for (var i = 0; i < this.productList.length; ++i) {
                 if (this.productList[i].id == this.myFormEditar.value.id) {
                    this.productList[i].nombre = this.myFormEditar.value.nombre;
-                   this.productList[i].precio = this.myFormEditar.value.precio;
-                   this.productList[i].descripcion = this.myFormEditar.value.descripcion;
-                   this.productList[i].imagen = imgAux;
-                   this.productList[i].subcategoria_id = this.myFormEditar.value.subcategoria_id;
-                   this.productList[i].establecimiento_id = this.myFormEditar.value.establecimiento_id;
-
-                   if (this.subcategorias) {
-                     for (var j = 0; j < this.subcategorias.length; ++j) {
-                       if (this.myFormEditar.value.subcategoria_id == this.subcategorias[j].id ) {
-                         this.productList[i].subcategoria.id = this.subcategorias[j].id;
-                         this.productList[i].subcategoria.nombre = this.subcategorias[j].nombre;
-                         this.productList[i].subcategoria.estado = this.subcategorias[j].estado;
-                       }
-                     }
-                   }
+                   this.productList[i].direccion = this.myFormEditar.value.direccion;
+                   this.productList[i].lat = this.myFormEditar.value.lat;
+                   this.productList[i].lng = this.myFormEditar.value.lng;
                 }
               }
 
@@ -257,6 +368,7 @@ export class EstablecimientosVerComponent implements OnInit{
 
               this.loading = false;
               this.editando = false;
+              this.mapa = false;
               this.showToast('success', 'Success!', this.data.message); 
            },
            msg => { // Error
@@ -344,8 +456,22 @@ export class EstablecimientosVerComponent implements OnInit{
          );
     }
 
+    cambioSwicheEstable(obj, modal2): void{
+      //console.log(obj.estado);
 
-    //Para el producto
+      this.estableSelecAux = obj;
+
+      if (obj.estado == 'ON') {
+        //Apagando categoria
+        this.cambiarEstado(obj);
+      }else{
+        //Encendiendo categoria
+        this.cargarProductos(obj, modal2);
+      }
+    }
+
+
+    //Para el establecimiento
     cambiarEstado(obj): void {
 
       var v_estado: any;
@@ -363,7 +489,7 @@ export class EstablecimientosVerComponent implements OnInit{
         estado: v_estado
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+obj.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+obj.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -401,6 +527,122 @@ export class EstablecimientosVerComponent implements OnInit{
          );
     }
 
+    cargarProductos(obj, modal2): void {
+
+      this.loading = true;
+
+      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+obj.id+'/productos?token='+localStorage.getItem('mouvers_token'))
+         .toPromise()
+         .then(
+           data => { // Success
+              console.log(data);
+              this.data=data;
+              this.productList2 = this.data.productos;
+              this.filteredItems2 = this.productList2;
+              //console.log(this.productList2);
+
+              this.init2();
+              
+              this.loading = false;
+
+              if (this.productList2.length == 0) {
+                //alert('La categoria no tiene subcategorias');
+                //Se cambia solo el estado del estable
+                this.cambiarEstado(obj);
+              }else{
+                //alert('La categoria tiene '+this.productList2.length+' subcategorias');
+                //Se muestra la modal para elgir los productos q se quieren habilitar junto con el estable
+                this.habEstablecimiento = obj;
+                this.open2(modal2);
+                this.mostrarSwiches = false;
+              }
+           },
+           msg => { // Error
+             console.log(msg);
+             console.log(msg.error.error);
+
+             this.loading = false;
+
+             //token invalido/ausente o token expiro
+             if(msg.status == 400 || msg.status == 401){ 
+                  //alert(msg.error.error);
+                  //ir a login
+                  this.showToast('warning', 'Warning!', msg.error.error);
+              }
+              else { 
+                  //alert(msg.error.error);
+                  this.showToast('error', 'Erro!', msg.error.error);
+              }
+           }
+         );
+    }
+
+    apagarSwiche(): void{
+      this.mostrarSwiches = true;
+    }
+
+    cambioSwicheProd(objProd): void {
+
+      if (objProd.estado == 'ON') {
+        objProd.estado = 'OFF';
+      }else{
+        objProd.estado = 'ON';
+      }
+
+    }
+
+    habilitarEstable(): void{
+      
+      this.mostrarSwiches = true;
+
+      this.loading = true;
+
+      setTimeout(()=>{
+
+        var datos= {
+          token: localStorage.getItem('mouvers_token'),
+          estado: 'ON',
+          productos: JSON.stringify(this.productList2)
+          //productos: JSON.stringify(auxProductos)
+          //productos: this.productos
+          //productos: JSON.stringify(this.productos)
+          //productos: '[{"id":1,"cantidad":3,"estado":"ON"},{"id":3,"cantidad":3,"estado":"OFF"}]'
+        }
+
+        this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+this.habEstablecimiento.id, datos)
+           .toPromise()
+           .then(
+             data => { // Success
+                console.log(data);
+                this.data = data;
+
+                this.habEstablecimiento.estado = 'ON';
+
+                this.loading = false;
+                this.showToast('success', 'Success!', this.data.message); 
+             },
+             msg => { // Error
+               console.log(msg);
+               console.log(msg.error.error);
+
+               this.loading = false;
+
+               //token invalido/ausente o token expiro
+               if(msg.status == 400 || msg.status == 401){ 
+                    //alert(msg.error.error);
+                    //ir a login
+
+                    this.showToast('warning', 'Warning!', msg.error.error);
+                }
+                else { 
+                    //alert(msg.error.error);
+                    this.showToast('error', 'Erro!', msg.error.error);
+                }
+             }
+           );
+
+        },300);
+    }
 
    //----Tabla<
    filteredItems : any;
@@ -482,5 +724,84 @@ export class EstablecimientosVerComponent implements OnInit{
          this.refreshItems();
     }
   //----Tabla>
+
+   //Tabla2 Productos del Estable X----<
+   filteredItems2 : any;
+   pages2 : number = 4;
+   pageSize2 : number = 5;
+   pageNumber2 : number = 0;
+   currentIndex2 : number = 1;
+   items2: any;
+   pagesIndex2 : Array<number>;
+   pageStart2 : number = 1;
+   inputName2 : string = '';
+
+   init2(){
+         this.currentIndex2 = 1;
+         this.pageStart2 = 1;
+         this.pages2 = 4;
+
+         this.pageNumber2 = parseInt(""+ (this.filteredItems2.length / this.pageSize2));
+         if(this.filteredItems2.length % this.pageSize2 != 0){
+            this.pageNumber2 ++;
+         }
+    
+         if(this.pageNumber2  < this.pages2){
+               this.pages2 =  this.pageNumber2;
+         }
+       
+         this.refreshItems2();
+         console.log("this.pageNumber2 :  "+this.pageNumber2);
+   }
+
+   FilterByName2(){
+      this.filteredItems2 = [];
+      if(this.inputName2 != ""){
+            for (var i = 0; i < this.productList2.length; ++i) {
+              if (this.productList2[i].nombre.toUpperCase().indexOf(this.inputName2.toUpperCase())>=0) {
+                 this.filteredItems2.push(this.productList2[i]);
+              }
+            }
+      }else{
+         this.filteredItems2 = this.productList2;
+      }
+      console.log(this.filteredItems2);
+      this.init2();
+   }
+   fillArray2(): any{
+      var obj = new Array();
+      for(var index = this.pageStart2; index< this.pageStart2 + this.pages2; index ++) {
+                  obj.push(index);
+      }
+      return obj;
+   }
+   refreshItems2(){
+       this.items2 = this.filteredItems2.slice((this.currentIndex2 - 1)*this.pageSize2, (this.currentIndex2) * this.pageSize2);
+       this.pagesIndex2 =  this.fillArray2();
+   }
+   prevPage2(){
+      if(this.currentIndex2>1){
+         this.currentIndex2 --;
+      } 
+      if(this.currentIndex2 < this.pageStart2){
+         this.pageStart2 = this.currentIndex2;
+      }
+      this.refreshItems2();
+   }
+   nextPage2(){
+      if(this.currentIndex2 < this.pageNumber2){
+            this.currentIndex2 ++;
+      }
+      if(this.currentIndex2 >= (this.pageStart2 + this.pages2)){
+         this.pageStart2 = this.currentIndex2 - this.pages2 + 1;
+      }
+ 
+      this.refreshItems2();
+   }
+    setPage2(index : number){
+         this.currentIndex2 = index;
+         this.refreshItems2();
+    }
+    //Tabla2 Productos del Estable X---->
 
 }

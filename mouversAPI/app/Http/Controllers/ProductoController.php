@@ -77,7 +77,41 @@ class ProductoController extends Controller
             return response()->json(['error'=>'Ya existe un producto con ese nombre asociado al establecimiento.'], 409);
         }
 
-        if($nuevoProducto=\App\Producto::create($request->all())){
+        //Generar código alatorio
+        $salt = 'abcdefghijklmnopqrstuvwxyz1234567890';
+
+        $true = true;
+        while ($true) {
+            $rand = '';
+            $i = 0;
+            $length = 10;
+
+            while ($i < $length) {
+                //Loop hasta que el string aleatorio contenga la longitud ingresada.
+                $num = rand() % strlen($salt);
+                $tmp = substr($salt, $num, 1);
+                $rand = $rand . $tmp;
+                $i++;
+            }
+
+            $codigo = $rand;
+
+            $auxProd = \App\Producto::where('codigo', $codigo)->get();
+            if(count($auxProd)==0){
+               $true = false; //romper el bucle
+            }
+        }
+
+        if($nuevoProducto=\App\Producto::create([
+            'nombre' => $request->input('nombre'),
+            'estado' => $request->input('estado'),
+            //'imagen' => $request->input('imagen'),
+            'precio' => $request->input('precio'),
+            'descripcion' => $request->input('descripcion'),
+            'subcategoria_id' => $request->input('subcategoria_id'),
+            'establecimiento_id' => $request->input('establecimiento_id'),
+            'codigo' => $codigo
+        ])){
            return response()->json(['message'=>'Producto creado con éxito.',
              'producto'=>$nuevoProducto], 200);
         }else{
@@ -135,7 +169,7 @@ class ProductoController extends Controller
         // Listado de campos recibidos teóricamente.
         $nombre=$request->input('nombre');
         $precio=$request->input('precio');
-        $imagen=$request->input('imagen');
+        //$imagen=$request->input('imagen');
         $descripcion=$request->input('descripcion');
         $subcategoria_id=$request->input('subcategoria_id');
         $estado=$request->input('estado');
@@ -166,11 +200,11 @@ class ProductoController extends Controller
             $bandera=true;
         }
 
-        if ($imagen != null && $imagen!='')
+        /*if ($imagen != null && $imagen!='')
         {
             $producto->imagen = $imagen;
             $bandera=true;
-        }
+        }*/
 
         if ($descripcion != null && $descripcion!='')
         {
@@ -267,5 +301,31 @@ class ProductoController extends Controller
         }else{
             return response()->json(['productos'=>$productos], 200);
         } 
+    }
+
+    public function buscarCodigos(Request $request)
+    {
+        // Primero comprobaremos si estamos recibiendo todos los campos obligatorios.
+        if (!$request->input('codigos'))
+        {
+            // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
+            return response()->json(['error'=>'Falta el parametro codigos.'],422);
+        }
+
+        $codigos = json_decode($request->input('codigos'));
+
+        $productos = [];
+
+        for ($i=0; $i < count($codigos) ; $i++) { 
+            $prod = \App\Producto::where('codigo', $codigos[$i]->codigo)
+                ->where('estado', 'ON')->with('subcategoria')->get();
+            if(count($prod) != 0){
+               array_push($productos, $prod[0]);
+            }   
+        }    
+
+        
+        return response()->json(['productos'=>$productos], 200);
+        
     }
 }

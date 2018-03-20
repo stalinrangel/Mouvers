@@ -19,7 +19,6 @@
 
     <table class="table table-striped">
       <thead>
-         <th></th>
          <!-- <th style="text-align: center;">ID</th> -->
          <th style="text-align: center;">Nombre</th>
          <th style="text-align: center;">Dirección</th>
@@ -28,7 +27,6 @@
       </thead>
       <tbody>
          <tr *ngFor="let item of items" >
-            <td></td>
             <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
             <td style="text-align: center; vertical-align:middle;">{{item.direccion}}</td>
             <td style=" vertical-align:middle;">
@@ -36,7 +34,7 @@
                 <label class="theme-switch">
                   <span class="light">OFF</span>
                   <div class="switch">
-                    <input type="checkbox" [disabled]="" [checked]="item.estado === 'ON'" (change)="cambiarEstado(item)" #theme>
+                    <input type="checkbox" [checked]="item.estado === 'ON'" (change)="cambioSwicheEstable(item, modal2)" #theme>
                     <span class="slider"></span>
                   </div>
                   <span class="cosmic">ON</span>
@@ -74,7 +72,7 @@
   </nb-card-footer>
 </nb-card>
 
-<div class="row" *ngIf="editando">
+<div class="row" [hidden]="!editando">
   <div class="col-lg-6" style="display:block; margin:auto">
     <nb-card>
       <nb-card-header>Editar Producto</nb-card-header>
@@ -88,38 +86,26 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="exampleInputPrecio">Precio</label>
-            <input type="number" class="form-control" id="exampleInputPrecio" placeholder="Precio" formControlName="precio">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputDescripcion">Descripción</label>
-            <textarea class="form-control" id="exampleInputDescripcion" placeholder="Descripción" formControlName="descripcion"></textarea>
-          </div>
-          <div *ngIf="subcategorias" class="form-group">
-            <label for="exampleInputSubcat">Subcategoría</label>
-            <select class="form-control" id="exampleInputSubcat" formControlName="subcategoria_id">
-              <!-- <option disabled selected>Selecciona una categoría</option> -->
-              <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">{{subcategoria.nombre}}</option>
-            </select>
+            <label for="exampleInputDireccion">Dirección</label>
+            <input type="text" name="direccion" class="form-control" id="exampleInputDireccion" placeholder="Dirección" formControlName="direccion" (blur)="setDireccion()">
+            <div *ngIf="myFormEditar.get('direccion').errors && myFormEditar.get('direccion').dirty">
+              <p *ngIf="myFormEditar.get('direccion').hasError('required')">Dirección es requerido</p>
+            </div>
           </div>
 
-          <div class="form-group">
-            <br>
-            <div [hidden]="clear">
-              <label for="exampleInputImagen">Imagen</label>
-              <input type="file" name="imagen" id="imagen" (change)="onFileChange($event)" #fileInput accept="image/*">
-              <br>
-              <br>
-              <img src = "{{objAEditar.imagen}}" alt="" height="160px">
+          <div class="row">
+            <div class="col-md-12">
+                <input placeholder="Buscar dirección por google maps..." autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search  onFocus="geolocate()" >
             </div>
-              <div *ngIf="clear">
-                <label for="exampleInputImagen">Imagen</label>
-                <br>
-                <output id="list"></output>
-                <br>
-                <br>
-                <button type="button" class="btn btn-danger btn-tn" (click)="clearFile()">clear file</button>
-              </div>
+          </div>
+          
+          <br>
+          <div class="row">  
+            <div class="col-md-12">
+                <agm-map *ngIf="mapa" style="height: 300px;" [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
+                  <agm-marker style="height: 300px;" [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true" (dragEnd)="markerDragEnd($event)"></agm-marker>
+                </agm-map>
+            </div>   
           </div>
           
           <br>
@@ -145,6 +131,87 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
     <button type="button" class="btn btn-danger" (click)="c('Close click'); eliminar()">Eliminar</button>
+  </div>
+</ng-template>
+
+<ng-template #modal2 let-c="close" let-d="dismiss" size="lg">
+  <div class="modal-header">
+    <h4 class="modal-title">Productos del Establecimiento {{habEstablecimiento.nombre}}: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click'); apagarSwiche()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <nb-card >
+      <nb-card-header>
+        <div class="row show-grid">
+              <div class="col-6">
+                <div>Lista de Productos</div>
+              </div>
+              <div class="col-6">
+                <div>
+                  <div style="text-align: right;">
+                   <strong>Buscar: </strong>
+                   <input  type="text"  id="inputName2" [(ngModel)]="inputName2" (ngModelChange)="FilterByName2()"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </nb-card-header>
+
+      <nb-card-body>
+
+        <table class="table table-striped">
+          <thead>
+             <!-- <th style="text-align: center;">ID</th> -->
+             <!-- <th style="text-align: center;">Imagen</th> -->
+             <th style="text-align: center;">Nombre</th>
+             <th style="text-align: center;">Estado</th>
+          </thead>
+          <tbody>
+             <tr *ngFor="let item of items2" >
+                <!-- <td style="text-align: center; vertical-align:middle;"><img src = "{{item.imagen}}" alt="" height="auto" width="60px"></td> -->
+                <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
+                <td style="text-align: center; vertical-align:middle;">
+                  <!-- <div class="estado" style="display:block; margin:auto">
+                    <label class="theme-switch">
+                      <span class="light">OFF</span>
+                      <div class="switch">
+                        <input type="checkbox" [checked]="item.estado === 'ON'" (change)="cambioSwicheProd(item)" #theme>
+                        <span class="slider"></span>
+                      </div>
+                      <span class="cosmic">ON</span>
+                    </label>
+                  </div> -->
+                  <nb-checkbox [value]="item.estado === 'ON'" (change)="cambioSwicheProd(item)">{{item.estado}}</nb-checkbox>
+                </td> 
+                
+             </tr>
+          </tbody>
+        </table>
+          
+      </nb-card-body>
+      <nb-card-footer>
+        <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+          <div class="btn-group">
+             <label style="margin-top:10px">Página {{currentIndex2}}/{{pageNumber2}} </label>
+          </div>
+          <div class="btn-group pull-right">
+             <ul class="pagination" >
+                <li class="page-item" [ngClass]="{'disabled': (currentIndex2 == 1 || pageNumber2 == 0)}" ><a class="page-link"  (click)="prevPage2()" >Atrás</a></li>
+                   <li class="page-item" *ngFor="let page of pagesIndex2"  [ngClass]="{'active': (currentIndex2 == page)}">
+                      <a class="page-link" (click)="setPage2(page)"  >{{page}} </a>
+                   </li>
+                <li class="page-item" [ngClass]="{'disabled': (currentIndex2 == pageNumber2 || pageNumber2 == 0)}" ><a class="page-link"   (click)="nextPage2()" >Siguiente</a></li>
+             </ul>
+          </div>
+        </div>  
+      </nb-card-footer>
+    </nb-card>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click'); apagarSwiche()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click') ; habilitarEstable()">Aceptar</button>
   </div>
 </ng-template>
 

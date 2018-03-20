@@ -28,6 +28,8 @@ Route::group(  ['middleware' =>'cors'], function(){
     Route::get('/password/cliente/{correo}','PasswordController@generarCodigo');
     Route::get('/password/codigo/{codigo}','PasswordController@validarCodigo'); 
 
+    Route::get('/productos/buscar/codigos','ProductoController@buscarCodigos');
+
         //----Pruebas UsuarioController
         Route::get('/usuarios','UsuarioController@index');
         Route::post('/usuarios','UsuarioController@store');
@@ -36,6 +38,10 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/usuarios/{id}','UsuarioController@show');
         Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
         Route::get('/usuarios/email/validar/{email}','UsuarioController@emailDeValidacion');
+        //Route::get('/usuarios/{id}/pedidos/historial','UsuarioController@misPedidosHistorial');
+        //Route::get('/usuarios/{id}/pedidos/hoy','UsuarioController@misPedidosHoy');
+        Route::get('/usuarios/{id}/pedidos/encurso','UsuarioController@misPedidosEncurso');
+        Route::get('/usuarios/{id}/pedidos/finalizados','UsuarioController@misPedidosFinalizados');
 
         //----Pruebas CategoriaController
         Route::get('/categorias','CategoriaController@index');
@@ -55,6 +61,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/establecimientos/{id}','EstablecimientoController@update');
         Route::delete('/establecimientos/{id}','EstablecimientoController@destroy');
         Route::get('/establecimientos/{id}','EstablecimientoController@show');
+        Route::get('/establecimientos/{id}/productos','EstablecimientoController@establecimientoProductos');
 
         //----Pruebas ProductoController
         Route::get('/productos','ProductoController@index');
@@ -82,6 +89,10 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/pedidos/{id}','PedidoController@update');
         Route::delete('/pedidos/{id}','PedidoController@destroy');
         Route::get('/pedidos/{id}','PedidoController@show');
+        //Route::get('/pedidos/fecha/hoy','PedidoController@pedidosHoy');
+        Route::get('/pedidos/estado/curso','PedidoController@pedidosEncurso');
+        Route::get('/pedidos/estado/finalizados','PedidoController@pedidosFinalizados');
+
 
         //----Pruebas CalificacionController
         Route::get('/calificaciones','CalificacionController@index');
@@ -93,6 +104,15 @@ Route::group(  ['middleware' =>'cors'], function(){
         //----Pruebas UploadImagenController
         Route::post('/imagenes','UploadImagenController@store');
 
+        //----Pruebas RepartidorController
+        Route::get('/repartidores','RepartidorController@index');
+        Route::post('/repartidores','RepartidorController@store');
+        Route::put('/repartidores/{id}','RepartidorController@update');
+        Route::delete('/repartidores/{id}','RepartidorController@destroy');
+        Route::get('/repartidores/{id}','RepartidorController@show');
+
+        //----Pruebas EntidadMunicipioController
+        Route::get('/entidades/municipios','EntidadMunicipioController@index');
 
 
     Route::group(['middleware' => 'jwt-auth'], function(){

@@ -524,7 +524,7 @@ export class SubcategoriasVerComponent implements OnInit{
            data => { // Success
               console.log(data);
               this.data=data;
-              this.productList2 = this.data.subcategoria.productos;
+              this.productList2 = this.data.productos;
               this.filteredItems2 = this.productList2;
               //console.log(this.productList2);
 

@@ -93,7 +93,7 @@ export class ProductosVerComponent implements OnInit{
       id: [''],
       nombre: ['', [Validators.required]],
       precio: [null],
-      imagen: ['', [Validators.required]],
+      //imagen: ['', [Validators.required]],
       descripcion: [null],
       subcategoria_id: ['', [Validators.required]],
       establecimiento_id: ['', [Validators.required]]
@@ -214,7 +214,7 @@ export class ProductosVerComponent implements OnInit{
 
       //this.uploadFile = null;
       this.myFormEditar.reset();
-      this.clearFile()
+      //this.clearFile()
 
     }
 
@@ -227,7 +227,7 @@ export class ProductosVerComponent implements OnInit{
       this.myFormEditar.patchValue({nombre : this.objAEditar.nombre});
       this.myFormEditar.patchValue({precio : this.objAEditar.precio});
       this.myFormEditar.patchValue({descripcion : this.objAEditar.descripcion});
-      this.myFormEditar.patchValue({imagen : this.objAEditar.imagen});
+      //this.myFormEditar.patchValue({imagen : this.objAEditar.imagen});
       this.myFormEditar.patchValue({subcategoria_id : this.objAEditar.subcategoria_id});
       this.myFormEditar.patchValue({establecimiento_id : this.objAEditar.establecimiento_id});
     }
@@ -236,21 +236,21 @@ export class ProductosVerComponent implements OnInit{
       
       this.loading = true;
 
-      var imgAux: any;
+      /*var imgAux: any;
       
       if(this.imgUpload){
         imgAux = this.imgUpload; 
       }
       else{
         imgAux = this.myFormEditar.value.imagen;
-      }
+      }*/
 
       var datos= {
         token: localStorage.getItem('mouvers_token'),
         nombre: this.myFormEditar.value.nombre,
         precio: this.myFormEditar.value.precio,
         descripcion: this.myFormEditar.value.descripcion,
-        imagen: imgAux,
+        //imagen: imgAux,
         subcategoria_id: this.myFormEditar.value.subcategoria_id,
         establecimiento_id: this.myFormEditar.value.establecimiento_id
       }
@@ -267,7 +267,7 @@ export class ProductosVerComponent implements OnInit{
                    this.productList[i].nombre = this.myFormEditar.value.nombre;
                    this.productList[i].precio = this.myFormEditar.value.precio;
                    this.productList[i].descripcion = this.myFormEditar.value.descripcion;
-                   this.productList[i].imagen = imgAux;
+                   //this.productList[i].imagen = imgAux;
                    this.productList[i].subcategoria_id = this.myFormEditar.value.subcategoria_id;
                    this.productList[i].establecimiento_id = this.myFormEditar.value.establecimiento_id;
 
@@ -291,7 +291,7 @@ export class ProductosVerComponent implements OnInit{
 
               this.loading = false;
               this.editando = false;
-              this.clearFile();
+              //this.clearFile();
               this.showToast('success', 'Success!', this.data.message); 
            },
            msg => { // Error

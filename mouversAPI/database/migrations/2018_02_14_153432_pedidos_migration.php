@@ -14,12 +14,14 @@ class PedidosMigration extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('estado'); //1=pendiente 2=asignado 3=en camino 4=cancelado 5=entregado 6=pagado 
+            $table->integer('estado'); //1=no asignado 2=asignado 3=en camino 4=entregado  
             $table->string('lat');
             $table->string('lng');
             $table->string('direccion');
             $table->float('distancia')->nullable(); //Km desde el establecimiento hasta el destino
-            $table->float('tiempo')->nullable(); //minutos desde el establecimiento hasta el destino 
+            $table->float('tiempo')->nullable(); //minutos desde el establecimiento hasta el destino
+            $table->float('costo_envio'); //costo del envio
+            $table->float('subtotal'); //suma del costo de los prods solicitados 
             $table->float('costo'); //costo total
 
             $table->integer('usuario_id')->unsigned();
@@ -30,6 +32,11 @@ class PedidosMigration extends Migration
 
             $table->integer('repartidor_id')->unsigned()->nullable();
             $table->foreign('repartidor_id')->references('id')->on('usuarios');
+
+            $table->string('repartidor_nom');
+
+            $table->string('estado_pago')->nullable();
+            $table->string('api_tipo_pago')->nullable();
 
             $table->timestamps();
         });

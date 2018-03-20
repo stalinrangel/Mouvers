@@ -16,9 +16,10 @@ class ProductosMigration extends Migration
             $table->increments('id');
             $table->string('nombre');
             $table->float('precio')->nullable();
-            $table->string('imagen')->nullable();
+            //$table->string('imagen')->nullable();
             $table->text('descripcion')->nullable();
             $table->string('estado'); // ON/OFF
+            $table->string('codigo'); //Codigo aleatorio unico
 
             $table->integer('subcategoria_id')->unsigned();
             $table->foreign('subcategoria_id')->references('id')->on('subcategorias');

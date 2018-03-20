@@ -3,7 +3,7 @@ import { NbMenuItem } from '@nebular/theme';
 export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Dashboard',
-    icon: 'nb-home',
+    icon: 'ion-home',
     link: '/pages/dashboard',
     home: true,
   },
@@ -14,22 +14,8 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true,
   },
   {
-    title: 'Socios',
-    icon: 'nb-person',
-    children: [
-      {
-        title: 'Agregar Socios',
-        link: '/pages/socios/agregar',
-      },
-      {
-        title: 'Ver Socios',
-        link: '/pages/socios/ver',
-      },
-    ],
-  },
-  {
     title: 'Clientes',
-    icon: 'nb-person',
+    icon: 'ion-ios-people-outline',
     children: [
       {
         title: 'Ver Clientes',
@@ -70,7 +56,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
   },
   {
     title: 'Productos',
-    icon: 'nb-snowy-circled',
+    icon: 'ion-ios-box-outline',
     children: [
       {
         title: 'Agregar Productos',
@@ -97,7 +83,38 @@ export const MENU_ITEMS: NbMenuItem[] = [
       },
      
     ],
-  }/*,
+  },
+  {
+    title: 'Pedidos',
+    icon: 'nb-compose',
+    children: [
+      {
+        title: 'En curso',
+        link: '/pages/pedidos/encurso',
+      },
+      {
+        title: 'Finalizados',
+        link: '/pages/pedidos/finalizados',
+      },
+      
+    ],
+  },
+  {
+    title: 'Socios',
+    icon: 'ion-android-bicycle',
+    children: [
+      {
+        title: 'Agregar Socios',
+        link: '/pages/socios/agregar',
+      },
+      {
+        title: 'Ver Socios',
+        link: '/pages/socios/ver',
+      },
+    ],
+  },
+
+ /*
   {
     title: 'FEATURES',
     group: true,
