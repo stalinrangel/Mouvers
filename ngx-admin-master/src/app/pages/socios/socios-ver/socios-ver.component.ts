@@ -166,7 +166,6 @@ export class SociosVerComponent implements OnInit{
   }
 
   setEstado1(estado): void {
-    alert('setEstado1');
     console.log(estado);
     for (var i = 0; i < this.estados.length; ++i) {
       if (estado == this.estados[i].nom_ent) {
@@ -176,7 +175,6 @@ export class SociosVerComponent implements OnInit{
   }  
 
   setEstado2(estado): void {
-    alert('setEstado2');
     console.log(estado);
     for (var i = 0; i < this.estados.length; ++i) {
       if (estado == this.estados[i].nom_ent) {

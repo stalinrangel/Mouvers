@@ -1,44 +1,70 @@
 <div class="row">
-  <div class="col-lg-6">
+  <div class="col-lg-6" style="display:block; margin:auto">
     <nb-card>
-      <nb-card-header>Registro de Socio Nuevo</nb-card-header>
+      <nb-card-header>Registro de Nuevo Socio</nb-card-header>
       <nb-card-body>
-        <div class="input-group has-person-icon">
-          <input type="text" placeholder="Nombre completo del Socio" class="form-control"/>
-        </div>
-        <div class="input-group has-map-marker">
-          <input type="text" placeholder="Dirección" class="form-control"/>
-        </div>
-        <div class="input-group has-phone-icon input-group-rounded">
-          <input type="number" placeholder="Numero Telefonico" class="form-control"/>
-        </div>
-        <div class="input-group mail-btn-group">
-          <span class="input-group-btn">
-            <button class="btn btn-primary btn-icon">
-              <i class="ion-ios-email-outline"></i>
-            </button>
-          </span>
-          <input type="email" class="form-control" placeholder="Correo electronico">
-          <span class="input-group-btn">
-            <button class="btn btn-primary">
-              @ejemplo.com
-            </button>
-          </span>
-        </div>
-       <div class="form-group">
-          <select class="form-control" placeholder="Estado">
-          <option disabled selected>Selecciona tu estado
-          </option>
-          </select>
-        </div>
-         <div class="form-group">
-          <select class="form-control" placeholder="Ciudad">
-          <option disabled selected>Selecciona tu ciudad
-          </option>
-          </select>
-        </div>
-           <button type="submit" align="center" class="btn btn-info">Agregar</button>
+        <form [formGroup]="myFormAgregar" novalidate>
+          <div class="form-group">
+            <label for="exampleInputNombre">Nombre</label>
+            <input type="text" class="form-control" id="exampleInputNombre" placeholder="Nombre" formControlName="nombre">
+            <div *ngIf="myFormAgregar.get('nombre').errors && myFormAgregar.get('nombre').dirty">
+              <p *ngIf="myFormAgregar.get('nombre').hasError('required')">Nombre es requerido</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail">Email</label>
+            <input type="email" class="form-control" id="exampleInputEmail" placeholder="Email" formControlName="email">
+            <div *ngIf="myFormAgregar.get('email').errors && myFormAgregar.get('email').dirty">
+              <p *ngIf="myFormAgregar.get('email').hasError('required')">Email es requerido</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password" formControlName="password">
+            <div *ngIf="myFormAgregar.get('password').errors && myFormAgregar.get('password').dirty">
+              <p *ngIf="myFormAgregar.get('password').hasError('required')">Password es requerido</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword2">Confirmar Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" formControlName="password2">
+            <div *ngIf="myFormAgregar.get('password2').errors && myFormAgregar.get('password2').dirty">
+              <p *ngIf="myFormAgregar.get('password2').hasError('required')">Password es requerido</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputTelefono">Teléfono</label>
+            <input type="text" class="form-control" id="exampleInputTelefono" placeholder="Telefono" formControlName="telefono">
+            <div *ngIf="myFormAgregar.get('telefono').errors && myFormAgregar.get('telefono').dirty">
+              <p *ngIf="myFormAgregar.get('telefono').hasError('required')">Teléfono es requerido</p>
+            </div>
+          </div>
+          <div *ngIf="estados" class="form-group">
+            <label for="exampleInputEstado">Estado</label>
+            <select class="form-control" id="exampleInputEstado" formControlName="estado"
+            (change)="setEstado2($event.target.value)">
+              <!-- <option disabled selected>Selecciona una categoría</option> -->
+              <option *ngFor="let estado of estados" [value]="estado.nom_ent">{{estado.nom_ent}}</option>
+            </select>
+          </div>
+          <div *ngIf="estados" class="form-group">
+            <label for="exampleInputCiudad">Ciudad</label>
+            <select class="form-control" id="exampleInputCiudad" formControlName="ciudad">
+              <!-- <option disabled selected>Selecciona una categoría</option> -->
+              <option *ngFor="let ciudad of ciudades" [value]="ciudad.nom_mun">{{ciudad.nom_mun}}</option>
+            </select>
+          </div>
+          
+          <br>
+          <button type="submit" class="btn btn-info" (click)="crear()" [disabled]="myFormAgregar.invalid">Agregar</button>
+        </form>
       </nb-card-body>
     </nb-card>
   </div>
+</div>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
 </div>

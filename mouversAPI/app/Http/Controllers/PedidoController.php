@@ -106,7 +106,7 @@ class PedidoController extends Controller
             'costo'=>$request->input('costo'),
             'usuario_id'=>$request->input('usuario_id'),
             /*'establecimiento_id'=>$request->input('establecimiento_id')*/
-            'estado_pago'=>'pendiente'
+            'estado_pago'=>'Pendiente'
             ])){
 
             //Crear las relaciones en la tabla pivote

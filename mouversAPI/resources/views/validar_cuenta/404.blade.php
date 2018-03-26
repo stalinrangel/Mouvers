@@ -1,51 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>Mouvers</title>
-
-	<!-- <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css"> -->
-
-    <style>
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Email</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <style type="text/css" media="screen">
+        img{
+            margin: auto;
+            display: block;
             width: 100%;
-            display: table;
-            font-weight: 100;
-            /* font-family: 'Lato'; */
         }
-
-        .container {
+        .content{
+            border: 25px solid #04213e;
+            padding: 0px;
+            width: 85%;
+            min-width: 400px;
+            margin: auto;
+            background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.9)),url(http://mouvers.mx/terminos/imgs/edificios.png) #fff;
+            background-size: 100%;
+            background-position-y: bottom;
+            background-repeat: no-repeat;
+            font-family: 'Roboto', sans-serif;
+            margin-top: 4%;
+        }
+        .title{
             text-align: center;
-            display: table-cell;
-            vertical-align: middle;
+            margin: 0px;
+            color: #FF9800;
         }
-
-        .content {
+        .content-text{
+            margin-top: 20px;
+            padding: 30px;
+        }
+        .user-img{
+            height: 200px;
+            width: auto;
+            margin: 25px auto;
+        }
+        .center{
             text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 96px;
         }
     </style>
-
 </head>
 <body>
-
-	<div class="container">
-        <div class="content">
-            <!-- <div class="title">Laravel 5</div> -->
-
-            <img src="https://arquitecturate.files.wordpress.com/2015/11/page-not-found-688965_640.png?w=736&h=413" alt="404">
+    <div class="content">
+        <div class="content-text">
+            <h2 class="title">USUARIO NO ENCONTRADO</h2>
+            <br>
+            <img src="http://mouvers.mx/terminos/imgs/user-search.png" class="user-img">
+            <p class="center">¡Lo sentimos! tu usuario no ha sido encontrado en nuestro sistema.</p>
+            <p class="center">Debes registrarte para disfrutar de nuestros servicios.</p>
+        <br>
+        <p>Saludos cordiales, el equipo de Möuvers.</p>
         </div>
     </div>
-	
 </body>
 </html>
