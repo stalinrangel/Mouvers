@@ -473,4 +473,45 @@ class UsuarioController extends Controller
             return response()->json(['pedidos'=>$pedidos], 200);
         } 
     }
+
+    public function setTokenNotificaion(Request $request, $id)
+    {
+        // Comprobamos si el usuario que nos están pasando existe o no.
+        $usuario=\App\User::find($id);
+
+        if (count($usuario)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el usuario con id '.$id], 404);
+        }
+
+        $token_notificacion=$request->input('token_notificacion');
+
+        // Creamos una bandera para controlar si se ha modificado algún dato.
+        $bandera = false;
+
+        // Actualización parcial de campos.
+        if ($token_notificacion != null && $token_notificacion!='')
+        {
+            $usuario->token_notificacion = $token_notificacion;
+            $bandera=true;
+        }
+
+        if ($bandera)
+        {
+            // Almacenamos en la base de datos el registro.
+            if ($usuario->save()) {
+                return response()->json(['message'=>'Toke de notificación actualizado con éxito.', 'usuario'=>$usuario], 200);
+            }else{
+                return response()->json(['error'=>'Error al actualizar el usuario.'], 500);
+            }
+            
+        }
+        else
+        {
+            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
+            return response()->json(['error'=>'No se ha modificado ningún dato del usuario.'],409);
+        }
+    }
 }

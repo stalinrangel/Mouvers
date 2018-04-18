@@ -18,10 +18,12 @@ Route::get('/', function () {
 
 Route::group(  ['middleware' =>'cors'], function(){
 
+    Route::get('/test/google/maps','PedidoController@googleMaps2');
 
     //----Pruebas LoginController
     Route::post('/login/web','LoginController@loginWeb');
     Route::post('/login/app','LoginController@loginApp');
+    Route::post('/login/repartidores','LoginController@loginRepartidores');
     //Route::post('/validar/token','LoginController@validarToken');
 
     //----Pruebas PasswordController
@@ -29,6 +31,9 @@ Route::group(  ['middleware' =>'cors'], function(){
     Route::get('/password/codigo/{codigo}','PasswordController@validarCodigo'); 
 
     Route::get('/productos/buscar/codigos','ProductoController@buscarCodigos');
+
+    //----Pruebas CoordenadasController
+    Route::get('/coordenadas','CoordenadasController@index');
 
         //----Pruebas UsuarioController
         Route::get('/usuarios','UsuarioController@index');
@@ -92,6 +97,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::get('/pedidos/fecha/hoy','PedidoController@pedidosHoy');
         Route::get('/pedidos/estado/curso','PedidoController@pedidosEncurso');
         Route::get('/pedidos/estado/finalizados','PedidoController@pedidosFinalizados');
+        Route::get('/pedidos/localizar/repartidores/pedido_id/{id}','PedidoController@localizarRepartidores');
 
 
         //----Pruebas CalificacionController
@@ -110,9 +116,24 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/repartidores/{id}','RepartidorController@update');
         Route::delete('/repartidores/{id}','RepartidorController@destroy');
         Route::get('/repartidores/{id}','RepartidorController@show');
+        Route::post('/repartidores/{id}/set/posicion','RepartidorController@setPosicion');
 
         //----Pruebas EntidadMunicipioController
         Route::get('/entidades/municipios','EntidadMunicipioController@index');
+
+        //----Pruebas BlogController
+        Route::get('/blogs','BlogController@index');
+        Route::post('/blogs','BlogController@store');
+        Route::put('/blogs/{id}','BlogController@update');
+        Route::delete('/blogs/{id}','BlogController@destroy');
+        Route::get('/blogs/{id}','BlogController@show');
+
+        //----Pruebas MsgBlogController
+        //Route::get('/mensajes/blogs','MsgBlogController@index');
+        Route::post('/mensajes/blogs','MsgBlogController@store');
+        Route::put('/mensajes/blogs/{id}','MsgBlogController@update');
+        Route::delete('/mensajes/blogs/{id}','MsgBlogController@destroy');
+        //Route::get('/mensajes/blogs/{id}','MsgBlogController@show');
 
 
     Route::group(['middleware' => 'jwt-auth'], function(){

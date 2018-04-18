@@ -57,6 +57,13 @@ class LoginController extends Controller
                 return response()->json(['error' => 'Password inválido.'], 401);
             }
 
+            if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+                if ($request->input('token_notificacion') != $user->token_notificacion) {
+                    $user->token_notificacion = $request->input('token_notificacion');
+                    $user->save();
+                } 
+            }
+
             $user = JWTAuth::toUser($token);
             
 
@@ -204,7 +211,13 @@ class LoginController extends Controller
                 $token = JWTAuth::fromUser($user);
                 $bandera=true;
             }
-            
+
+            if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+                if ($request->input('token_notificacion') != $user->token_notificacion) {
+                    $user->token_notificacion = $request->input('token_notificacion');
+                    $user->save();
+                } 
+            }
             
             $user = JWTAuth::toUser($token);
             
@@ -214,6 +227,65 @@ class LoginController extends Controller
         }
 
         //return response()->json(compact('token', 'user'));
+
+        return response()
+            ->json([
+                'token' => $token,
+                'user' => $user
+            ]);
+    }
+
+    public function loginRepartidores(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        $token = null;
+        $user = null;
+
+        try {
+
+            $user = User::where('email', $request->input('email'))->first();
+            if (empty($user)) {
+                return response()->json(['error' => 'Email inválido.'], 401);
+            }
+
+            //Login solo para los repartidores
+            if ($user->tipo_usuario != 3) {
+                return response()->json(['error' => 'Credenciales inválidas.'], 401);
+            }
+
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Password inválido.'], 401);
+            }
+
+            if ($request->input('token_notificacion')) {
+                $user->token_notificacion = $request->input('token_notificacion');
+                $user->save();
+            }
+
+            if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+                if ($request->input('token_notificacion') != $user->token_notificacion) {
+                    $user->token_notificacion = $request->input('token_notificacion');
+                    $user->save();
+                } 
+            }
+
+            if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+                if ($request->input('token_notificacion') != $user->token_notificacion) {
+                    $user->token_notificacion = $request->input('token_notificacion');
+                    $user->save();
+                } 
+            }
+
+            $user = JWTAuth::toUser($token);
+            
+
+        } catch (JWTException $ex) {
+            return response()->json(['error' => 'could_not_create_token'], 500);
+        }
+
+        //return response()->json(compact('token', 'user'));
+
+        $user->repartidor = $user->repartidor;
 
         return response()
             ->json([

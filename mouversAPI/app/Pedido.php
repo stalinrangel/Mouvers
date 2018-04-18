@@ -70,4 +70,11 @@ class Pedido extends Model
         // 1 pedido tiene una calificacion
         return $this->hasOne('App\Calificacion', 'pedido_id');
     }
+
+    // Relación de pedidos con ruta:
+    public function ruta()
+    {
+        // 1 pedido tiene una ruta
+        return $this->hasMany('App\Ruta', 'pedido_id');
+    }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DB;
+use Exception;
 
 class PedidoController extends Controller
 {
@@ -58,7 +59,8 @@ class PedidoController extends Controller
             !$request->input('costo') ||
             !$request->input('usuario_id') ||
             /*!$request->input('establecimiento_id') ||*/
-            !$request->input('productos'))
+            !$request->input('productos') ||
+            !$request->input('ruta'))
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
             return response()->json(['error'=>'Faltan datos necesarios para el proceso de alta.'],422);
@@ -118,6 +120,19 @@ class PedidoController extends Controller
                     'observacion' => $productos[$i]->observacion]);
                    
             }
+
+            //Registrar la ruta
+            $ruta = json_decode($request->input('ruta'));
+            for ($i=0; $i < count($ruta) ; $i++) { 
+                   $nuevoPunto=\App\Ruta::create([
+                        'pedido_id'=>$nuevoPedido->id,
+                        'posicion'=>$ruta[$i]->posicion,
+                        'estado'=>1,
+                        'lat'=>$ruta[$i]->lat,
+                        'lng'=>$ruta[$i]->lng
+                    ]);
+            }
+
             return response()->json(['pedido'=>$nuevoPedido, 'message'=>'Pedido creado con éxito.'], 200);
         }else{
             return response()->json(['error'=>'Error al crear el pedido.'], 500);
@@ -372,5 +387,273 @@ class PedidoController extends Controller
         }else{
             return response()->json(['pedidos'=>$pedidos], 200);
         } 
+    }
+
+    public function localizarRepartidores(Request $request, $id)
+    {
+        //cargar un pedido y el el punto en la ruta del establecimineto mas lejano
+        $pedido = \App\Pedido::with(['ruta' => function ($query){
+                    $query->where('posicion', 1);
+                }])->find($id);
+
+        if(count($pedido)==0){
+
+            return response()->json(['error'=>'No existe el pedido con id '.$id], 404);   
+
+        }else{
+
+            $usuario = \App\User::select('token_notificacion')->find($pedido->usuario_id);
+
+            set_time_limit(500);
+
+            //cargar todos los repartidores en ON, Trabajando y Disponibles
+            $repartidores = \App\Repartidor::with('usuario')
+                    ->where('estado', 'ON')
+                    ->where('activo', 1)
+                    ->where('ocupado', 2)
+                    ->get();
+
+            if(count($repartidores) == 0){
+                //Enviar notificacion al cliente (pedido no asignado)
+                if ($usuario->token_notificacion) {
+                    $this->enviarNotificacion($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
+                }
+
+                return response()->json(['error'=>'No hay repartidores disponibles.'], 404);          
+            }
+
+            //Calcular distancia(km) aproximada de los repartidores al establecimiento
+            for ($i=0; $i < count($repartidores) ; $i++) { 
+                $repartidores[$i]->distancia_calculada = $this->haversine($repartidores[$i]->lat, $repartidores[$i]->lng, $pedido->ruta[0]->lat, $pedido->ruta[0]->lng);
+            }
+
+            if (count($repartidores) > 1) {
+                //Ordenar los repartidores de menor a mayor por distancia aproximada
+                for ($i=0; $i < count($repartidores)-1 ; $i++) { 
+                    for ($j=$i+1; $j < count($repartidores); $j++) { 
+                        if ($repartidores[$i]->distancia_calculada > $repartidores[$j]->distancia_calculada) {
+                            $aux = $repartidores[$i];
+                            $repartidores[$i] = $repartidores[$j];
+                            $repartidores[$j] = $aux; 
+                        }
+                    }
+                }
+
+                //Calcular distancia(m) real de los repartidores al establecimiento
+                //destino
+                $coordsEstablecimiento = $pedido->ruta[0]->lat.','.$pedido->ruta[0]->lng;
+
+                $repSeleccionados = [];
+
+                for ($i=0; $i < count($repartidores) ; $i++) { 
+                    
+                    //origen
+                    $coordsRepartidor = $repartidores[$i]->lat.','.$repartidores[$i]->lng;
+
+                    $distancia = $this->googleMaps($coordsRepartidor, $coordsEstablecimiento);
+                    if ($distancia) {
+                        $repartidores[$i]->distancia_real = $distancia;
+
+                        array_push($repSeleccionados, $repartidores[$i]);
+                    }else{
+                        /*Si google maps no pudo calcular la distancia real,
+                        se asume como distancia real la distancia calculada en metros*/
+                        $repartidores[$i]->distancia_real = $repartidores[$i]->distancia_calculada * 1000;
+
+                        array_push($repSeleccionados, $repartidores[$i]);
+                    }
+
+                    //Seleccionar solo 5 repartidores
+                    if ($i == 4) {
+                        break;
+                    }   
+                }
+
+                //Ordenar los repartidores seleccionados de menor a mayor por distancia real
+                for ($i=0; $i < count($repSeleccionados)-1 ; $i++) { 
+                    for ($j=$i+1; $j < count($repSeleccionados); $j++) { 
+                        if ($repSeleccionados[$i]->distancia_real > $repSeleccionados[$j]->distancia_real) {
+                            $aux = $repSeleccionados[$i];
+                            $repSeleccionados[$i] = $repSeleccionados[$j];
+                            $repSeleccionados[$j] = $aux; 
+                        }
+                    }
+                }
+
+                $bandera = false; 
+
+                //Enviar notificacion a los repartidores seleccionados
+                for ($i=0; $i < count($repSeleccionados); $i++) { 
+                    //Enviar notificacion a repartidor de pedido pendiente
+                    if ($repSeleccionados[$i]->usuario->token_notificacion) {
+                        $this->enviarNotificacion($repSeleccionados[$i]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id);
+                    }
+
+                    //esperar
+                    sleep(30);
+
+                    //verificar
+                    $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
+                    if ($pedidoAux->repartidor_id) {
+                        //Enviar notificacion al cliente (pedido asignado)
+                        if ($usuario->token_notificacion) {
+                            $this->enviarNotificacion($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                        }
+
+                        $bandera = true;
+
+                        //break;
+
+                        return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+
+                    }
+                }
+
+                if (!$bandera) {
+                    //Enviar notificacion al cliente (pedido no asignado)
+                    if ($usuario->token_notificacion) {
+                        $this->enviarNotificacion($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                    }
+
+                    return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                }
+
+            }else{
+                $bandera = false; 
+
+                //Enviar notificacion a unico repartidor disponible
+                if ($repartidores[0]->usuario->token_notificacion) {
+                    $this->enviarNotificacion($repartidores[0]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id);
+                }
+
+                //esperar
+                sleep(30);
+
+                //verificar
+                $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
+                if ($pedidoAux->repartidor_id) {
+                    //Enviar notificacion al cliente (pedido asignado)
+                    if ($usuario->token_notificacion) {
+                        $this->enviarNotificacion($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                    }
+
+                    $bandera = true;
+
+                    return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+                }
+
+                if (!$bandera) {
+                    //Enviar notificacion al cliente (pedido no asignado)
+                    if ($usuario->token_notificacion) {
+                        $this->enviarNotificacion($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                    }
+
+                    return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                }
+            }
+            
+
+            //return response()->json(['repSeleccionados'=>$repSeleccionados, 'repartidores'=>$repartidores], 200);
+            return response()->json(['error'=>'Pedido no asignado!'], 500);
+        }
+
+    }
+
+    //Enviar notificacion a un dispositivo mediante su token_notificacion
+    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = null)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
+
+    //Calculo de distancia real entre dos coordenadas con google maps
+    public function googleMaps($origen, $destino)
+    {
+        try{ 
+            $response = null;
+            $response = \GoogleMaps::load('directions')
+                ->setParam([
+                    'origin'          => [$origen], 
+                    'destination'     => [$destino], 
+                ])->get();
+
+            //dd( $response );  
+            $response = json_decode( $response );
+
+            if ( property_exists($response, 'status')) {
+                if ($response->status == 'OK') {
+
+                    //Distancia en metros
+                    $distance_value=$response->routes[0]->legs[0]->distance->value;
+
+                    return $distance_value;
+
+                } 
+            }
+
+        } catch (Exception $e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    //Peticion a google maps con coordenadas por defecto para pruebas
+    public function googleMaps2()
+    {
+        try {
+
+            $destino = "8.625395,-71.14731"; //destino
+            $origen = '8.628430,-71.14147'; //origen
+
+            $response = null;
+            $response = \GoogleMaps::load('directions')
+                ->setParam([
+                    'origin'          => [$origen], 
+                    'destination'     => [$destino], 
+                ])->get();
+
+            //dd( $response );  
+            $response = json_decode( $response );
+
+            if ( property_exists($response, 'status')) {
+                if ($response->status == 'OK') {
+
+                    //Distancia en metros
+                    $distance_value=$response->routes[0]->legs[0]->distance->value;
+
+                } 
+            }
+
+            return response()->json(['response'=>$response], 200);
+            
+        } catch (Exception $e) {
+
+            return response()->json(['Error'=>'Exception capturada', 'response'=>$response], 500);
+            
+        }
+        
+    }
+
+    //Calculo de distancia entre dos puntos geograficos
+    public function haversine($point1_lat, $point1_lng, $point2_lat, $point2_lng, $decimals = 4  )
+    {
+        //calculo de la distancia en grados
+        $degrees = rad2deg(acos((sin(deg2rad($point1_lat))*sin(deg2rad($point2_lat))) + (cos(deg2rad($point1_lat))*cos(deg2rad($point2_lat))*cos(deg2rad($point1_lng-$point2_lng)))));
+
+        //conversion de la distancia a kilometros
+        $distance = $degrees * 111.13384; // 1 grado = 111.13384, basandose en el diametro promedio de la tierra (12.735 km)
+
+        return round($distance, $decimals);
     }
 }

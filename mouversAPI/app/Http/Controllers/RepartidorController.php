@@ -309,4 +309,53 @@ class RepartidorController extends Controller
 
         return response()->json(['message'=>'Se ha eliminado correctamente el repartidor.'], 200);
     }
+
+    public function setPosicion(Request $request, $id)
+    {
+        // Comprobamos si el repartidor que nos están pasando existe o no.
+        $repartidor = \App\Repartidor::find($id);
+
+        if (count($repartidor)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el repartidor con id '.$id], 404);
+        }      
+
+        // Listado de campos recibidos teóricamente.
+        $lat=$request->input('lat');
+        $lng=$request->input('lng');
+
+        // Creamos una bandera para controlar si se ha modificado algún dato.
+        $bandera = false;
+
+        // Actualización parcial de campos.
+        if ($lat != null && $lat!='')
+        {
+            $repartidor->lat = $lat;
+            $bandera=true;
+        }
+
+        if ($lng != null && $lng!='')
+        {
+            $repartidor->lng = $lng;
+            $bandera=true;
+        }
+
+        if ($bandera)
+        {
+            // Almacenamos en la base de datos el registro.
+            if ($repartidor->save()) {
+                return response()->json(['message'=>'ok.'], 200);
+            }else{
+                return response()->json(['error'=>'Error al actualizar el repartidor.'], 500);
+            }
+        }
+        else
+        {
+            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
+            return response()->json(['error'=>'No se ha modificado ningún dato del repartidor.'],409);
+        }
+    }
+
 }

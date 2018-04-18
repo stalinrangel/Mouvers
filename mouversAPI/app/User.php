@@ -37,7 +37,7 @@ class User extends Model implements AuthenticatableContract,
          'ciudad', 'estado', 'telefono',
          'imagen', 'tipo_usuario', 'tipo_registro',
          'id_facebook', 'id_twitter', 'id_instagram',
-         'codigo_verificacion', 'validado'];
+         'codigo_verificacion', 'validado', 'token_notificacion'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -51,6 +51,13 @@ class User extends Model implements AuthenticatableContract,
     {
         // 1 usuario puede tener varios pedidos
         return $this->hasMany('App\Pedido', 'usuario_id');
+    }
+
+    // Relación de usuario con repartidor:
+    public function repartidor()
+    {
+        // 1 usuario puede tener(ser) un repartidor
+        return $this->hasOne('App\Repartidor', 'usuario_id');
     }
 
 }
