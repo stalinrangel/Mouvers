@@ -60,6 +60,37 @@ export class LoginfComponent implements OnInit {
 	ngOnInit() {
 		this.themeService.changeTheme('cosmic');
 		//this.themeService.changeTheme('default');
+
+		let OneSignal = window['OneSignal'] || [];
+    	
+    	//Subscripcion a las notificaciones
+	    OneSignal.push(["init", {
+	      appId: "a75f81f0-b531-45c1-b7bf-fc41a11191b9",
+	      autoRegister: true, // Set to true to automatically prompt visitors
+	      subdomainName: 'https://mouvers.OS.TC',
+
+	      httpPermissionRequest: {
+	        enable: true,
+	        modalTitle: 'Mouvers',
+	        modalMessage: 'Gracias por suscribirse a las notificaciones!',
+	        modalButtonText:'OK'
+
+	      },
+	      welcomeNotification:{
+	        "title": "Mouvers",
+	        "message": "Gracias por suscribirse a las notificaciones!"
+	      },
+	      notifyButton: {
+	          enable: false 
+	      }
+	    }]);
+
+	    OneSignal.push(function() {
+	      /* These examples are all valid */
+	      OneSignal.getUserId(function(userId) {
+	        localStorage.setItem('mouvers_token_notificacion', userId);
+	      });
+	    });
 	}
 
 	private showToast(type: string, title: string, body: string) {
@@ -90,7 +121,8 @@ export class LoginfComponent implements OnInit {
 	   
 	    var datos= {
 	    	email: this.email,
-	    	password: this.password
+	    	password: this.password,
+	    	token_notificacion: localStorage.getItem('mouvers_token_notificacion')
 	    }
 	    
 		//this.http.post('http://rattios.com/mouversAPI/public/login/web', datos)
@@ -104,6 +136,7 @@ export class LoginfComponent implements OnInit {
 		    localStorage.setItem('mouvers_user_id', this.data.user.id);
 		    localStorage.setItem('mouvers_user_nombre', this.data.user.nombre);
 		    localStorage.setItem('mouvers_user_tipo', this.data.user.tipo_usuario);
+		    localStorage.setItem('mouvers_token_notificacion', this.data.user.token_notificacion);
 		    
 		    this.router.navigateByUrl('/pages');
 			//this.router.navigate(['pages']);

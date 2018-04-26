@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MsgBlog extends Model
 {
-    	/**
+    /**
      * The database table used by the model.
      *
      * @var string

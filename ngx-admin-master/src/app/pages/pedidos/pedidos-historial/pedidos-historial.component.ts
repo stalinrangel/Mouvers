@@ -57,6 +57,10 @@ export class PedidosHistorialComponent implements OnInit{
 
   selectedObj: any;
 
+  public productList2:any;
+  public repartidor:any;
+  public repartidor_id = null;
+
   constructor( private modalService: NgbModal,
                private toasterService: ToasterService,
                private http: HttpClient,
@@ -183,6 +187,7 @@ export class PedidosHistorialComponent implements OnInit{
       this.viendo = false;
       this.selectedObj = null;
       this.objAEliminar = null; 
+      this.repartidor_id = null;
     }
 
     aEliminar(obj): void {
@@ -244,6 +249,111 @@ export class PedidosHistorialComponent implements OnInit{
                   this.showToast('error', 'Erro!', msg.error.error);
               }
 
+           }
+         );
+    }
+
+    /*Cargar los repartidores disponibles*/
+    getRepDisponibles(obj, modal): void {
+
+      this.repartidor_id = null;
+      this.selectedObj = Object.assign({},obj);
+      console.log(this.selectedObj);
+
+      this.loading = true;
+      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/disponibles?token='+localStorage.getItem('mouvers_token'))
+       .toPromise()
+       .then(
+         data => { // Success
+
+           console.log(data);
+           this.data=data;
+           this.productList2 = this.data.repartidores;
+           this.filteredItems2 = this.productList2;
+           //console.log(this.productList);
+
+           this.init2();
+
+           this.loading = false;
+
+           this.open2(modal);
+
+         },
+         msg => { // Error
+           console.log(msg);
+           console.log(msg.error.error);
+
+           this.loading = false;
+
+           //token invalido/ausente o token expiro
+           if(msg.status == 400 || msg.status == 401){ 
+                //alert(msg.error.error);
+
+                this.showToast('warning', 'Warning!', msg.error.error);
+                this.mostrar = false;
+            }
+            //sin repartidores disponibles
+            else if(msg.status == 404){ 
+                //alert(msg.error.error);
+                this.showToast('info', 'Info!', msg.error.error);
+            }
+            
+
+         }
+       );
+    }
+
+    setRepartidor(repartidor): void {
+      this.repartidor_id = repartidor.id;
+    }
+
+    asignar(): void {
+      this.loading = true;
+
+      var datos= {
+        token: localStorage.getItem('mouvers_token'),
+        pedido_id: this.selectedObj.id,
+      }
+
+      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/'+this.repartidor_id+'/asignar/pedido', datos)
+         .toPromise()
+         .then(
+           data => { // Success
+              console.log(data);
+              this.data = data;
+              this.repartidor = this.data.repartidor;
+
+              for (var i = 0; i < this.productList.length; ++i) {
+                if (this.productList[i].id == this.selectedObj.id) {
+                   this.productList[i].estado = 'Asignado';
+                   this.productList[i].repartidor_id = this.repartidor.id;
+                   this.productList[i].repartidor_nom = this.repartidor.usuario.nombre;
+                   this.productList[i].repartidor = this.repartidor;
+                }
+              }
+
+              this.filteredItems = this.productList;
+              this.init();
+
+              this.loading = false;
+              this.showToast('success', 'Success!', this.data.message); 
+           },
+           msg => { // Error
+             console.log(msg);
+             console.log(msg.error.error);
+
+             this.loading = false;
+
+             //token invalido/ausente o token expiro
+             if(msg.status == 400 || msg.status == 401){ 
+                  //alert(msg.error.error);
+                  //ir a login
+                  this.showToast('warning', 'Warning!', msg.error.error);
+              }
+              else { 
+                  //alert(msg.error.error);
+                  this.showToast('error', 'Erro!', msg.error.error);
+              }
            }
          );
     }
@@ -350,5 +460,88 @@ export class PedidosHistorialComponent implements OnInit{
          this.refreshItems();
     }
   //----Tabla>
+
+     //Tabla2 repartidores disponibles----<
+   filteredItems2 : any;
+   pages2 : number = 4;
+   pageSize2 : number = 5;
+   pageNumber2 : number = 0;
+   currentIndex2 : number = 1;
+   items2: any;
+   pagesIndex2 : Array<number>;
+   pageStart2 : number = 1;
+   inputName2 : string = '';
+
+   init2(){
+         this.currentIndex2 = 1;
+         this.pageStart2 = 1;
+         this.pages2 = 4;
+
+         this.pageNumber2 = parseInt(""+ (this.filteredItems2.length / this.pageSize2));
+         if(this.filteredItems2.length % this.pageSize2 != 0){
+            this.pageNumber2 ++;
+         }
+    
+         if(this.pageNumber2  < this.pages2){
+               this.pages2 =  this.pageNumber2;
+         }
+       
+         this.refreshItems2();
+         console.log("this.pageNumber2 :  "+this.pageNumber2);
+   }
+
+   FilterByName2(){
+      this.filteredItems2 = [];
+      if(this.inputName2 != ""){
+            for (var i = 0; i < this.productList2.length; ++i) {
+              if (this.productList2[i].usuario.nombre.toUpperCase().indexOf(this.inputName2.toUpperCase())>=0) {
+                 this.filteredItems2.push(this.productList2[i]);
+              }else if (this.productList2[i].usuario.email.toUpperCase().indexOf(this.inputName2.toUpperCase())>=0) {
+                 this.filteredItems2.push(this.productList2[i]);
+              }else if (this.productList2[i].usuario.telefono.toUpperCase().indexOf(this.inputName2.toUpperCase())>=0) {
+                 this.filteredItems2.push(this.productList2[i]);
+              }
+            }
+      }else{
+         this.filteredItems2 = this.productList2;
+      }
+      console.log(this.filteredItems2);
+      this.init2();
+   }
+   fillArray2(): any{
+      var obj = new Array();
+      for(var index = this.pageStart2; index< this.pageStart2 + this.pages2; index ++) {
+                  obj.push(index);
+      }
+      return obj;
+   }
+   refreshItems2(){
+       this.items2 = this.filteredItems2.slice((this.currentIndex2 - 1)*this.pageSize2, (this.currentIndex2) * this.pageSize2);
+       this.pagesIndex2 =  this.fillArray2();
+   }
+   prevPage2(){
+      if(this.currentIndex2>1){
+         this.currentIndex2 --;
+      } 
+      if(this.currentIndex2 < this.pageStart2){
+         this.pageStart2 = this.currentIndex2;
+      }
+      this.refreshItems2();
+   }
+   nextPage2(){
+      if(this.currentIndex2 < this.pageNumber2){
+            this.currentIndex2 ++;
+      }
+      if(this.currentIndex2 >= (this.pageStart2 + this.pages2)){
+         this.pageStart2 = this.currentIndex2 - this.pages2 + 1;
+      }
+ 
+      this.refreshItems2();
+   }
+    setPage2(index : number){
+         this.currentIndex2 = index;
+         this.refreshItems2();
+    }
+    //Tabla2 repartidores disponibles---->
 
 }

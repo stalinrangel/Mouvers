@@ -149,7 +149,8 @@ class PedidoController extends Controller
     {
         //cargar un pedido
         $pedido = \App\Pedido::with('usuario')->with('productos.establecimiento')
-            /*->with('establecimiento')*/->with('calificacion')->find($id);
+            /*->with('establecimiento')*/->with('calificacion')
+            ->with('ruta')->find($id);
 
         if(count($pedido)==0){
             return response()->json(['error'=>'No existe el pedido con id '.$id], 404);          
@@ -402,6 +403,10 @@ class PedidoController extends Controller
 
         }else{
 
+            if ($pedido->estado_pago == null || $pedido->estado_pago == 'declinado') {
+                return response()->json(['error'=>'Para poder asignar un repartidor el pedido debe tener un pago registrado.'],409);
+            }
+
             $usuario = \App\User::select('token_notificacion')->find($pedido->usuario_id);
 
             set_time_limit(500);
@@ -416,7 +421,7 @@ class PedidoController extends Controller
             if(count($repartidores) == 0){
                 //Enviar notificacion al cliente (pedido no asignado)
                 if ($usuario->token_notificacion) {
-                    $this->enviarNotificacion($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
+                    $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
                 }
 
                 return response()->json(['error'=>'No hay repartidores disponibles.'], 404);          
@@ -486,7 +491,7 @@ class PedidoController extends Controller
                 for ($i=0; $i < count($repSeleccionados); $i++) { 
                     //Enviar notificacion a repartidor de pedido pendiente
                     if ($repSeleccionados[$i]->usuario->token_notificacion) {
-                        $this->enviarNotificacion($repSeleccionados[$i]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id);
+                        $this->enviarNotificacion($repSeleccionados[$i]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id, 1);
                     }
 
                     //esperar
@@ -497,7 +502,7 @@ class PedidoController extends Controller
                     if ($pedidoAux->repartidor_id) {
                         //Enviar notificacion al cliente (pedido asignado)
                         if ($usuario->token_notificacion) {
-                            $this->enviarNotificacion($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
                         }
 
                         $bandera = true;
@@ -512,7 +517,7 @@ class PedidoController extends Controller
                 if (!$bandera) {
                     //Enviar notificacion al cliente (pedido no asignado)
                     if ($usuario->token_notificacion) {
-                        $this->enviarNotificacion($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
                     }
 
                     return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
@@ -523,7 +528,7 @@ class PedidoController extends Controller
 
                 //Enviar notificacion a unico repartidor disponible
                 if ($repartidores[0]->usuario->token_notificacion) {
-                    $this->enviarNotificacion($repartidores[0]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id);
+                    $this->enviarNotificacion($repartidores[0]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id, 1);
                 }
 
                 //esperar
@@ -534,7 +539,7 @@ class PedidoController extends Controller
                 if ($pedidoAux->repartidor_id) {
                     //Enviar notificacion al cliente (pedido asignado)
                     if ($usuario->token_notificacion) {
-                        $this->enviarNotificacion($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
                     }
 
                     $bandera = true;
@@ -545,7 +550,7 @@ class PedidoController extends Controller
                 if (!$bandera) {
                     //Enviar notificacion al cliente (pedido no asignado)
                     if ($usuario->token_notificacion) {
-                        $this->enviarNotificacion($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
                     }
 
                     return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
@@ -560,10 +565,27 @@ class PedidoController extends Controller
     }
 
     //Enviar notificacion a un dispositivo mediante su token_notificacion
-    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = null)
+    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id);
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
+
+    //Enviar notificacion a un dispositivo cliente mediante su token_notificacion
+    public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null')
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);

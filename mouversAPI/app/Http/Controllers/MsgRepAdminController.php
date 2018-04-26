@@ -37,7 +37,24 @@ class MsgRepAdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Primero comprobaremos si estamos recibiendo todos los campos.
+        if ( !$request->input('emisor_id') )
+        {
+            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
+            return response()->json(['error'=>'Falta el parametro emisor_id.'],422);
+        }
+        if ( !$request->input('receptor_id') )
+        {
+            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
+            return response()->json(['error'=>'Falta el parametro receptor_id.'],422);
+        }
+
+        if($msg=\App\MsgRepAdmin::create($request->all())){
+           return response()->json(['message'=>'Mensaje creado con éxito.',
+             'mensaje'=>$msg], 200);
+        }else{
+            return response()->json(['error'=>'Error al crear el mensaje.'], 500);
+        }
     }
 
     /**
@@ -71,7 +88,45 @@ class MsgRepAdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Comprobamos si el mensaje que nos están pasando existe o no.
+        $mensaje=\App\MsgRepAdmin::find($id);
+
+        if (count($mensaje)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el mensaje con id '.$id], 404);
+        }      
+
+        // Listado de campos recibidos teóricamente.
+        $msg=$request->input('msg');
+
+        // Creamos una bandera para controlar si se ha modificado algún dato.
+        $bandera = false;
+
+        // Actualización parcial de campos.
+        if ($msg != null && $msg!='')
+        {
+            $mensaje->msg = $msg;
+            $bandera=true;
+        }
+
+        if ($bandera)
+        {
+            // Almacenamos en la base de datos el registro.
+            if ($mensaje->save()) {
+                return response()->json(['message'=>'Mensaje editado con éxito.',
+                    'mensaje'=>$mensaje], 200);
+            }else{
+                return response()->json(['error'=>'Error al actualizar el mensaje.'], 500);
+            }
+            
+        }
+        else
+        {
+            // Se devuelve un array errors con los errores encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
+            return response()->json(['error'=>'No se ha modificado ningún dato al mensaje.'],409);
+        }
     }
 
     /**
@@ -82,6 +137,35 @@ class MsgRepAdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Comprobamos si el msg existe o no.
+        $msg=\App\MsgRepAdmin::find($id);
+
+        if (count($msg)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el mensaje con id '.$id], 404);
+        }
+
+        // Eliminamos la msg si no tiene relaciones.
+        $msg->delete();
+
+        return response()->json(['message'=>'Se ha eliminado correctamente el mensaje.'], 200);
+    }
+
+    /*Retorna el chat de un repartidor*/
+    public function miChat($repartidor_id)
+    {
+        // Comprobamos si el msg existe o no.
+        $chat=\App\MsgRepAdmin::where('emisor_id', $repartidor_id)
+            ->orWhere('receptor_id', $repartidor_id)
+            ->get();
+
+        if (count($chat)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No tienes un chat.'], 404);
+        }
+
+        return response()->json(['chat'=>$chat], 200);
     }
 }

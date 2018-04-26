@@ -57,7 +57,7 @@ class LoginController extends Controller
                 return response()->json(['error' => 'Password inválido.'], 401);
             }
 
-            if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+            if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != 'null') {
                 if ($request->input('token_notificacion') != $user->token_notificacion) {
                     $user->token_notificacion = $request->input('token_notificacion');
                     $user->save();

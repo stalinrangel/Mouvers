@@ -358,4 +358,216 @@ class RepartidorController extends Controller
         }
     }
 
+    /*Un repartidor id acepta un pedido*/
+    public function aceptarPedido(Request $request, $id)
+    {
+        // Comprobamos si el repartidor que nos están pasando existe o no.
+        $repartidor = \App\Repartidor::with('usuario')->find($id);
+
+        if (count($repartidor)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el repartidor con id '.$id], 404);
+        }      
+
+        // Listado de campos recibidos teóricamente.
+        $pedido_id=$request->input('pedido_id');
+
+        // Creamos una bandera para controlar si se ha modificado algún dato.
+        $bandera = false;
+
+        // Actualización parcial de campos.
+        if ($pedido_id != null && $pedido_id!='')
+        {
+            // Comprobamos si el pedido que nos están pasando existe o no.
+            $pedido = \App\Pedido::find($pedido_id);
+
+            if (count($pedido)==0)
+            {
+                // Devolvemos error codigo http 404
+                return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
+            }
+
+            if ($pedido->estado == 2 || $pedido->repartidor_id != null) {
+                return response()->json(['error'=>'El pedido ya tiene un repartidor asignado.'],409);
+            }
+
+            $pedido->repartidor_id = $repartidor->id;
+            $pedido->repartidor_nom = $repartidor->usuario->nombre;
+            $pedido->estado = 2;
+            $bandera=true;
+        }
+
+        $repartidor->ocupado = 1;
+
+        if ($bandera)
+        {
+            // Almacenamos en la base de datos el registro.
+            if ($pedido->save() && $repartidor->save()) {
+                return response()->json(['message'=>'Pedido aceptado.'], 200);
+            }else{
+                return response()->json(['error'=>'Error al aceptar el pedido.'], 500);
+            }
+        }
+        else
+        {
+            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
+            return response()->json(['error'=>'No se ha modificado ningún dato.'],409);
+        }
+    }
+
+    /*Asignar un pedido a un repartidor id*/
+    public function asignarPedido(Request $request, $id)
+    {
+        // Comprobamos si el repartidor que nos están pasando existe o no.
+        $repartidor = \App\Repartidor::with('usuario')->find($id);
+
+        if (count($repartidor)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el repartidor con id '.$id], 404);
+        }      
+
+        // Listado de campos recibidos teóricamente.
+        $pedido_id=$request->input('pedido_id');
+
+        // Creamos una bandera para controlar si se ha modificado algún dato.
+        $bandera = false;
+        $notificarCliente = false;
+        $notificarRepAntiguo = false;
+
+
+        // Actualización parcial de campos.
+        if ($pedido_id != null && $pedido_id!='')
+        {
+            // Comprobamos si el pedido que nos están pasando existe o no.
+            $pedido = \App\Pedido::with('usuario')->find($pedido_id);
+
+            if (count($pedido)==0)
+            {
+                // Devolvemos error codigo http 404
+                return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
+            }
+
+            if ($pedido->estado_pago == null || $pedido->estado_pago == 'declinado') {
+                return response()->json(['error'=>'Para poder asignar un repartidor el pedido debe tener un pago registrado.'],409);
+            }
+
+            if ($pedido->estado == 4) {
+                return response()->json(['error'=>'Este pedido ya está marcado como finalizado.'],409);
+            }
+
+            if ($pedido->repartidor_id != null) {
+
+                $rep = \App\Repartidor::with('usuario')->find($pedido->repartidor_id);
+
+                if ($rep)
+                {
+                    //Se cambia a desocupado
+                    $rep->ocupado = 2;
+                    $rep->save();
+
+                    $notificarRepAntiguo = true;
+                }
+            }else{
+                $notificarCliente = true;
+            }
+
+            $pedido->repartidor_id = $repartidor->id;
+            $pedido->repartidor_nom = $repartidor->usuario->nombre;
+            $pedido->estado = 2;
+            $bandera=true;
+        }
+
+        $repartidor->ocupado = 1;
+
+        if ($bandera)
+        {
+            // Almacenamos en la base de datos el registro.
+            if ($pedido->save() && $repartidor->save()) {
+
+                //Enviar notificacion al repartidor (nuevo pedido asignado)
+                if ($repartidor->usuario->token_notificacion) {
+                    $this->enviarNotificacion($repartidor->usuario->token_notificacion, 'Se%20te%20ha%20asignado%20un%20pedido.', $pedido->id);
+                }
+
+                if ($notificarCliente) {
+                    //Enviar notificacion al cliente (pedido asignado)
+                    if ($pedido->usuario->token_notificacion) {
+                        $this->enviarNotificacionCliente($pedido->usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                    }
+                }
+
+                if ($notificarRepAntiguo) {
+                    //Enviar notificacion al repartidor que se le quita el pedido
+                    if ($rep->usuario->token_notificacion) {
+                        $this->enviarNotificacion($rep->usuario->token_notificacion, 'Se%20te%20ha%20eliminado%20un%20pedido.', $pedido->id);
+                    }
+                }
+
+                return response()->json(['message'=>'Pedido asignado.', 'pedido'=>$pedido, 'repartidor'=>$repartidor], 200);
+
+            }else{
+                return response()->json(['error'=>'Error al asignar el pedido.'], 500);
+            }
+        }
+        else
+        {
+            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
+            return response()->json(['error'=>'No se ha modificado ningún dato.'],409);
+        }
+    }
+
+    //Enviar notificacion a un dispositivo mediante su token_notificacion
+    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
+
+    //Enviar notificacion a un dispositivo cliente mediante su token_notificacion
+    public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null')
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
+
+    public function repDisponibles()
+    {
+        //cargar todos los repartidores en ON, Trabajando y Disponibles
+        $repartidores = \App\Repartidor::with('usuario')
+                ->where('estado', 'ON')
+                ->where('activo', 1)
+                ->where('ocupado', 2)
+                ->get();
+
+        if(count($repartidores) == 0){
+            return response()->json(['error'=>'No hay repartidores disponibles.'], 404);          
+        }else{
+            return response()->json(['repartidores'=>$repartidores], 200);
+        } 
+    }
+
 }

@@ -31,9 +31,9 @@ class PedidosMigration extends Migration
             //$table->foreign('establecimiento_id')->references('id')->on('establecimientos');
 
             $table->integer('repartidor_id')->unsigned()->nullable();
-            $table->foreign('repartidor_id')->references('id')->on('usuarios');
+            $table->foreign('repartidor_id')->references('id')->on('repartidores');
 
-            $table->string('repartidor_nom');
+            $table->string('repartidor_nom')->nullable();
 
             $table->string('estado_pago')->nullable();
             $table->string('api_tipo_pago')->nullable();

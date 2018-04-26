@@ -40,6 +40,9 @@
               <button type="button" class="btn btn-primary btn-icon" title="Ver" (click)="ver(item)">
                 <i class="fa fa-eye"></i>
               </button>
+              <button type="button" class="btn btn-info btn-icon" title="Asignar repartidor" (click)="getRepDisponibles(item, modal1)">
+                <i class="ion-android-bicycle"></i>
+              </button>
             </td>
          </tr>
       </tbody>
@@ -223,17 +226,77 @@
 
 <ng-template #modal1 let-c="close" let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Eliminar Producto: </h4>
-    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+    <h4 class="modal-title">Repartidores disponibles: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click'); atras()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <p>¿Realmente desea eliminar el producto {{eliminar_nombre}}?</p>
+    <nb-card>
+      <nb-card-header>
+        <div class="row show-grid">
+              <div class="col-6">
+                <div>Lista de Socios</div>
+              </div>
+              <div class="col-6">
+                <div>
+                  <div style="text-align: right;">
+                   <strong>Buscar: </strong>
+                   <input  type="text"  id="inputName2" [(ngModel)]="inputName2" (ngModelChange)="FilterByName2()"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </nb-card-header>
+
+      <nb-card-body>
+
+        <table class="table table-striped">
+          <thead>
+             <!-- <th style="text-align: center;">ID</th> -->
+             <th style="text-align: center;">Nombre</th>
+             <th style="text-align: center;">Email</th>
+             <th style="text-align: center;">Teléfono</th>
+             <th style="text-align: center;">Acción</th>
+          </thead>
+          <tbody>
+             <tr *ngFor="let item of items2" >
+                <td style="text-align: center; vertical-align:middle;">{{item.usuario.nombre}}</td>
+                <td style="text-align: center; vertical-align:middle;">{{item.usuario.email}}</td>
+                <td style="text-align: center; vertical-align:middle;">{{item.usuario.telefono}}</td>
+                <td style="text-align: center; vertical-align:middle;">
+                  <label class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" name="customRadio" (change)="setRepartidor(item)">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Asignar</span>
+                  </label>
+                </td>
+             </tr>
+          </tbody>
+        </table>
+          
+      </nb-card-body>
+      <nb-card-footer>
+        <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+          <div class="btn-group">
+             <label style="margin-top:10px">Página {{currentIndex2}}/{{pageNumber2}} </label>
+          </div>
+          <div class="btn-group pull-right">
+             <ul class="pagination" >
+                <li class="page-item" [ngClass]="{'disabled': (currentIndex2 == 1 || pageNumber2 == 0)}" ><a class="page-link"  (click)="prevPage2()" >Atrás</a></li>
+                   <li class="page-item" *ngFor="let page of pagesIndex2"  [ngClass]="{'active': (currentIndex2 == page)}">
+                      <a class="page-link" (click)="setPage2(page)"  >{{page}} </a>
+                   </li>
+                <li class="page-item" [ngClass]="{'disabled': (currentIndex2 == pageNumber2 || pageNumber2 == 0)}" ><a class="page-link"   (click)="nextPage2()" >Siguiente</a></li>
+             </ul>
+          </div>
+        </div>  
+      </nb-card-footer>
+    </nb-card>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
-    <button type="button" class="btn btn-danger" (click)="c('Close click'); eliminar()">Eliminar</button>
+    <button type="button" class="btn btn-secondary" (click)="c('Close click'); atras()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); asignar()" [disabled]="!repartidor_id">Aceptar</button>
   </div>
 </ng-template>
 
