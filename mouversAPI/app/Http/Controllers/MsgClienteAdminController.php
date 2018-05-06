@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class MsgClienteAdminController extends Controller
 {
@@ -14,9 +15,35 @@ class MsgClienteAdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    /*Retorna el chat entre un cliente y un admin*/
+    public function index(Request $request)
     {
-        //
+        // Cargar el chat.
+        $chat=\App\MsgClienteAdmin::
+            where(function ($query) use ($request) {
+                $query->where('emisor_id', $request->input('admin_id'))
+                      ->where('receptor_id', $request->input('cliente_id'));
+            })
+            ->orWhere(function ($query) use ($request) {
+                $query->where('emisor_id', $request->input('cliente_id'))
+                      ->where('receptor_id', $request->input('admin_id'));
+            })
+            ->with(['emisor' => function ($query) {
+                $query->select('id', 'imagen');
+            }])
+            ->with(['receptor' => function ($query) {
+                $query->select('id', 'imagen');
+            }])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        if (count($chat)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No hay mesajes en el chat.'], 404);
+        }
+
+        return response()->json(['chat'=>$chat], 200);
     }
 
     /**
@@ -155,7 +182,7 @@ class MsgClienteAdminController extends Controller
     /*Retorna el chat de un cliente*/
     public function miChat($cliente_id)
     {
-        // Comprobamos si el msg existe o no.
+        // Cargar el chat.
         $chat=\App\MsgClienteAdmin::where('emisor_id', $cliente_id)
             ->orWhere('receptor_id', $cliente_id)
             ->get();
@@ -167,5 +194,17 @@ class MsgClienteAdminController extends Controller
         }
 
         return response()->json(['chat'=>$chat], 200);
+    }
+
+    /*Actualiza los mensajes de un receptor_id a leidos (estado=2)*/
+    public function leerMensajes(Request $request)
+    {
+        DB::table('msgs_cliente_admin')
+                ->where('receptor_id', $request->input('receptor_id'))
+                ->where('emisor_id', $request->input('emisor_id'))
+                ->where('estado', 1)
+                ->update(['estado' => 2]);
+
+        return response()->json(['status'=>'ok'], 200);
     }
 }

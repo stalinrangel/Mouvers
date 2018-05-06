@@ -23,7 +23,7 @@ class UsuarioController extends Controller
     public function index()
     {
         //cargar todos los usuarios
-        $usuarios = \App\User::all();
+        $usuarios = \App\User::where('tipo_usuario', 2)->get();
 
         if(count($usuarios) == 0){
             return response()->json(['message'=>'No existen usuarios.'], 404);          

@@ -76,6 +76,7 @@ export class SociosVerComponent implements OnInit{
                private toasterService: ToasterService,
                private http: HttpClient,
                private router: Router,
+               private route: ActivatedRoute,
                private rutaService: RutaBaseService,
                public fb: FormBuilder)
   {
@@ -133,6 +134,16 @@ export class SociosVerComponent implements OnInit{
 
          }
        );
+  }
+
+  //Redirigir al chat
+  chat(repartidor) {
+    console.log(repartidor);
+    localStorage.setItem('mouvers_chat_id', repartidor.usuario.id);
+    localStorage.setItem('mouvers_chat_nombre', repartidor.usuario.nombre);
+    localStorage.setItem('mouvers_chat_tipo_usuario', repartidor.usuario.tipo_usuario);
+
+    this.router.navigateByUrl('/pages/chat-box');
   }
 
   getEstados(): void {

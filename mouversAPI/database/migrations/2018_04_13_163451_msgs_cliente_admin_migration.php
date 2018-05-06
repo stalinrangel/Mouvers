@@ -15,6 +15,7 @@ class MsgsClienteAdminMigration extends Migration
         Schema::create('msgs_cliente_admin', function (Blueprint $table) {
             $table->increments('id');
             $table->text('msg')->nullable();
+            $table->integer('estado')->nullable(); //1=sin leer 2=leido
 
             $table->integer('emisor_id')->unsigned();
             $table->foreign('emisor_id')->references('id')->on('usuarios');

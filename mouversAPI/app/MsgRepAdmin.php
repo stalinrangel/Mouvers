@@ -24,7 +24,7 @@ class MsgRepAdmin extends Model
      *
      * @var array
      */
-    protected $fillable = ['msg', 'emisor_id', 'receptor_id'];
+    protected $fillable = ['msg', 'estado', 'emisor_id', 'receptor_id'];
 
     /**
      * The attributes excluded from the model's JSON form.

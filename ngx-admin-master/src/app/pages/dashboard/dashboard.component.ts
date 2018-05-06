@@ -11,6 +11,8 @@ import { NbJSThemeOptions } from '@nebular/theme/services/js-themes/theme.option
 })
 export class DashboardComponent {
 
+	items = [{ title: 'Profile' }, { title: 'Log out' }];
+	
 	constructor(public themeService:NbThemeService){
 
 	}

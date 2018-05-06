@@ -138,20 +138,22 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::get('/mensajes/blogs/{id}','MsgBlogController@show');
 
         //----Pruebas MsgClienteAdminController
-        //Route::get('/mensajes/cliente','MsgClienteAdminController@index');
+        Route::get('/mensajes/cliente','MsgClienteAdminController@index');
         Route::post('/mensajes/cliente','MsgClienteAdminController@store');
-        Route::put('/mensajes/cliente/{id}','MsgClienteAdminController@update');
+        //Route::put('/mensajes/cliente/{id}','MsgClienteAdminController@update');
         Route::delete('/mensajes/cliente/{id}','MsgClienteAdminController@destroy');
         //Route::get('/mensajes/cliente/{id}','MsgClienteAdminController@show');
         Route::get('/mensajes/cliente/chat/{cliente_id}','MsgClienteAdminController@miChat');
+        Route::put('/mensajes/cliente/leer','MsgClienteAdminController@leerMensajes');
 
         //----Pruebas MsgRepAdminController
-        //Route::get('/mensajes/repartidor','MsgRepAdminController@index');
+        Route::get('/mensajes/repartidor','MsgRepAdminController@index');
         Route::post('/mensajes/repartidor','MsgRepAdminController@store');
-        Route::put('/mensajes/repartidor/{id}','MsgRepAdminController@update');
+        //Route::put('/mensajes/repartidor/{id}','MsgRepAdminController@update');
         Route::delete('/mensajes/repartidor/{id}','MsgRepAdminController@destroy');
         //Route::get('/mensajes/repartidor/{id}','MsgRepAdminController@show');
         Route::get('/mensajes/repartidor/chat/{cliente_id}','MsgRepAdminController@miChat');
+        Route::put('/mensajes/repartidor/leer','MsgRepAdminController@leerMensajes');
 
 
     Route::group(['middleware' => 'jwt-auth'], function(){

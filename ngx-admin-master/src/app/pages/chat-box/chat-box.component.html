@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-md-6" style="display:block; margin:auto">
+    <nb-card>
+      <nb-card-header>
+      	<div class="header">
+          {{chat_nombre}}
+        </div>
+    </nb-card-header>
+      <nb-card-body>
+		<div class="chatbox">
+			<div class="chatlogs">
+				<div *ngFor="let item of chat">
+					<div *ngIf="item.emisor_id == admin_id" class="chat friend">
+						<div class="user-photo"><img src="{{item.emisor.imagen}}"></div>
+						<p class="chat-message">{{item.msg}}</p>
+					</div>
+					<div *ngIf="item.emisor_id != admin_id" class="chat self">
+						<div class="user-photo"><img src="{{item.emisor.imagen}}"></div>
+						<p class="chat-message">{{item.msg}}</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="chat-form">
+				<textarea name="msg" [(ngModel)]="msg" id="msg"></textarea>
+				<button [disabled]="!msg || msg == ''" (click)="enviarMensaje()">Enviar</button>
+			</div>
+
+		</div>        
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>
+
+

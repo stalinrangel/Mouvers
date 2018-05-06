@@ -56,6 +56,7 @@ export class ClientesVerComponent implements OnInit{
   constructor(private toasterService: ToasterService,
               private http: HttpClient,
               private router: Router,
+              private route: ActivatedRoute,
               private rutaService: RutaBaseService)
   {
 
@@ -124,6 +125,16 @@ export class ClientesVerComponent implements OnInit{
       bodyOutputType: BodyOutputType.TrustedHtml,
     };
     this.toasterService.popAsync(toast);
+  }
+
+  //Redirigir al chat
+  chat(cliente) {
+    console.log(cliente);
+    localStorage.setItem('mouvers_chat_id', cliente.id);
+    localStorage.setItem('mouvers_chat_nombre', cliente.nombre);
+    localStorage.setItem('mouvers_chat_tipo_usuario', cliente.tipo_usuario);
+
+    this.router.navigateByUrl('/pages/chat-box');
   }
 
   //----Tabla<

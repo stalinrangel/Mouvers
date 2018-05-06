@@ -55,6 +55,9 @@ const routes: Routes = [{
     path: 'pedidos',
     loadChildren: './pedidos/pedidos.module#PedidosModule',
   },{
+    path: 'chat-box',
+    loadChildren: './chat-box/chat-box.module#ChatBoxModule',
+  },{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

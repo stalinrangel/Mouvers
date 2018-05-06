@@ -20,7 +20,6 @@ import { PlayerComponent } from './rooms/player/player.component';
 import { TrafficComponent } from './traffic/traffic.component';
 import { TrafficChartComponent } from './traffic/traffic-chart.component';
 
-
 @NgModule({
   imports: [
     ThemeModule,

@@ -390,7 +390,7 @@ class PedidoController extends Controller
         } 
     }
 
-    public function localizarRepartidores(Request $request, $id)
+    public function localizarRepartidores(Request $request, $id, $intento=1)
     {
         //cargar un pedido y el el punto en la ruta del establecimineto mas lejano
         $pedido = \App\Pedido::with(['ruta' => function ($query){
@@ -546,6 +546,11 @@ class PedidoController extends Controller
 
                     return response()->json(['message'=>'Tu pedido va en camino.'], 200);
                 }
+
+                /*$intento = $intento + 1;
+                if ($intento <= 2) {
+                    $this->localizarRepartidores($request, $id, $intento);
+                }*/
 
                 if (!$bandera) {
                     //Enviar notificacion al cliente (pedido no asignado)

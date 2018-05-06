@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class MsgRepAdminController extends Controller
 {
@@ -14,9 +15,34 @@ class MsgRepAdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // Cargar el chat.
+        $chat=\App\MsgRepAdmin::
+            where(function ($query) use ($request) {
+                $query->where('emisor_id', $request->input('admin_id'))
+                      ->where('receptor_id', $request->input('repartidor_id'));
+            })
+            ->orWhere(function ($query) use ($request) {
+                $query->where('emisor_id', $request->input('repartidor_id'))
+                      ->where('receptor_id', $request->input('admin_id'));
+            })
+            ->with(['emisor' => function ($query) {
+                $query->select('id', 'imagen');
+            }])
+            ->with(['receptor' => function ($query) {
+                $query->select('id', 'imagen');
+            }])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        if (count($chat)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No hay mesajes en el chat.'], 404);
+        }
+
+        return response()->json(['chat'=>$chat], 200);
     }
 
     /**
@@ -167,5 +193,17 @@ class MsgRepAdminController extends Controller
         }
 
         return response()->json(['chat'=>$chat], 200);
+    }
+
+    /*Actualiza los mensajes de un receptor_id a leidos (estado=2)*/
+    public function leerMensajes(Request $request)
+    {
+        DB::table('msgs_rep_admin')
+                ->where('receptor_id', $request->input('receptor_id'))
+                ->where('emisor_id', $request->input('emisor_id'))
+                ->where('estado', 1)
+                ->update(['estado' => 2]);
+
+        return response()->json(['status'=>'ok'], 200);
     }
 }
