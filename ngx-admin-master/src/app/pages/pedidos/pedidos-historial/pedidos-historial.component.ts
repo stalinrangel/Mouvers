@@ -315,7 +315,7 @@ export class PedidosHistorialComponent implements OnInit{
         pedido_id: this.selectedObj.id,
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/'+this.repartidor_id+'/asignar/pedido', datos)
+      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/notificaciones/'+this.repartidor_id+'/asignar/pedido', datos)
          .toPromise()
          .then(
            data => { // Success

@@ -18,8 +18,6 @@ Route::get('/', function () {
 
 Route::group(  ['middleware' =>'cors'], function(){
 
-    Route::get('/test/google/maps','PedidoController@googleMaps2');
-
     //----Pruebas LoginController
     Route::post('/login/web','LoginController@loginWeb');
     Route::post('/login/app','LoginController@loginApp');
@@ -97,7 +95,6 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::get('/pedidos/fecha/hoy','PedidoController@pedidosHoy');
         Route::get('/pedidos/estado/curso','PedidoController@pedidosEncurso');
         Route::get('/pedidos/estado/finalizados','PedidoController@pedidosFinalizados');
-        Route::get('/pedidos/localizar/repartidores/pedido_id/{id}','PedidoController@localizarRepartidores');
 
         //----Pruebas CalificacionController
         Route::get('/calificaciones','CalificacionController@index');
@@ -118,7 +115,8 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/repartidores/{id}','RepartidorController@show');
         Route::post('/repartidores/{id}/set/posicion','RepartidorController@setPosicion');
         Route::put('/repartidores/{id}/aceptar/pedido','RepartidorController@aceptarPedido');
-        Route::put('/repartidores/{id}/asignar/pedido','RepartidorController@asignarPedido');
+        Route::get('/repartidores/{id}/pedido/encurso','RepartidorController@miPedidoEnCurso');
+        Route::get('/repartidores/{id}/historial/pedidos','RepartidorController@historialPedidos');
 
         //----Pruebas EntidadMunicipioController
         Route::get('/entidades/municipios','EntidadMunicipioController@index');
@@ -154,6 +152,13 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::get('/mensajes/repartidor/{id}','MsgRepAdminController@show');
         Route::get('/mensajes/repartidor/chat/{cliente_id}','MsgRepAdminController@miChat');
         Route::put('/mensajes/repartidor/leer','MsgRepAdminController@leerMensajes');
+
+        //----Pruebas NotificacionController
+        Route::get('/notificaciones/localizar/repartidores/pedido_id/{id}','NotificacionController@localizarRepartidores');
+        Route::put('/notificaciones/{repartidor_id}/asignar/pedido','NotificacionController@asignarPedido');
+        Route::post('/notificaciones/establecimiento/visitado','NotificacionController@notificarVisita');
+
+
 
 
     Route::group(['middleware' => 'jwt-auth'], function(){
