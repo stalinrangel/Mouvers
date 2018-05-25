@@ -1,0 +1,104 @@
+page-way-order {
+	.title-text{
+		text-align: center;
+    	padding: 40% 0px 30px 0px;
+	}
+	ion-title {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  padding: 0 90px 1px;
+	  width: 100%;
+	  height: 100%;
+	  text-align: center;
+	}
+	.icon-menu{
+		width: 24px;
+		height: 24px;
+    	margin-right: 5px;
+    	position: relative;
+    	top: 2px;
+	}
+	.icon-cart{
+		color: #ffffff;
+	}
+	.title-menu{
+		position: relative;
+		top: -3px;
+	}
+	.card-content{
+	    left: 0;
+	    right: 0;
+	    top: 30px;
+	    bottom: 0;
+	    position: absolute;
+	    z-index: 1;
+	    display: block;
+	    overflow: auto;
+	    contain: size style layout;
+	    padding: 0px;
+	    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.8)), to(rgba(255, 255, 255, 0.8))), url(../assets/imgs/edificios.png) #fff;
+	    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url(../assets/imgs/edificios.png) #fff;
+		background-size: 100%;
+	    background-position-y: bottom;
+	    background-repeat: no-repeat;
+	}
+	.content-text{
+		text-align: center;
+		margin: 30px 0px 10px 0px;
+	}
+	.content-center{
+		text-align: center;
+	}
+	.orderStatus { padding: 15px 0px 0px 0px; overflow: hidden; }
+	.orderStatus .row { padding: 0; margin: 0; display: flex; padding: 5px; width: 100%; }
+	.orderStatus .row .col { display: block; flex: 1 1 0; padding: 5px; width: 100%; position: relative; text-align: center; padding-top: 60px; color: #424242; font-size: 13px}
+	.orderStatus .row .col:before { content: ''; width: 100%; height: 10px; background: #bdbdbd; top: 8px; left: 0; position: absolute; margin: 0 0 0 -50%; }
+	.orderStatus .row .col.done:before { background: #8bc34a; }
+	.orderStatus .row .col:first-child:before { background: none; }
+	.orderStatus .row .col:after { position: absolute; width: 45px; height: 45px; content: ''; color: #eee; font-size: 24px; line-height: 20px; background: #bdbdbd; left: 50%; top: 0; z-index: 999; border-radius: 50%; margin: -10px 0 0 -20px; }
+	.orderStatus .row .col.done:after { position: absolute; width: 45px; height: 45px; color: #fff; font-size: 24px; line-height: 20px; background: #8bc34a; left: 50%; top: 0; z-index: 999; border-radius: 50%; margin: -10px 0 0 -20px;}
+	.orderStatus .row .col.status:after { position: absolute; width: 65px; height: 65px; color: #fff; font-size: 24px; line-height: 20px; background: #8bc34a; left: 50%; top: 0; z-index: 999; border-radius: 50%; margin: -20px 0 0 -30px;}
+	//.orderStatus .row .col.done { color: #3d8f10 }
+	.img1:after{
+		background-image: url('../assets/imgs/checked.png') !important;
+		background-size: 18px !important;
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+	}
+	.imgS1:after{
+		background-image: url('../assets/imgs/checked.png') !important;
+		background-size: 25px !important;
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+	}
+	.img2:after{
+		background-image: url('../assets/imgs/motorbike.png') !important;
+		background-size: 25px !important;
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+	}
+	.imgS2:after{
+		background-image: url('../assets/imgs/motorbike.png') !important;
+		background-size: 38px !important;
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+	}
+	.img3:after{
+		background-image: url('../assets/imgs/flag.png') !important;
+		background-size: 18px !important;
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+	}
+	.imgS3:after{
+		background-image: url('../assets/imgs/flag.png') !important;
+		background-size: 25px !important;
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+	}
+	.button-ok{
+		float: right;
+    	margin-right: 15px;
+    	background-color: #04213e;
+	}
+}

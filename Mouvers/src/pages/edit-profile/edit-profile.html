@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><ion-icon ios="md-create" md="md-create" class="icon-menu"></ion-icon><span class="title-menu"> EDITAR PERFIL</span></ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+	<div class="content-header">
+		<div class="align-right">
+			<ion-icon ios="md-camera" md="md-camera" class="icon-edit" (click)="presentActionSheet()"></ion-icon>
+			<img src="{{image_user}}" class="img-social" (click)="presentActionSheet()">
+		</div>
+	</div>
+	<div class="content-form">
+		<form [formGroup]="registerUserForm">
+			<ion-list>
+			  <ion-item>
+			    <ion-label stacked>Nombre y Apellido</ion-label>
+			    <ion-input type="text" formControlName="nombre" [ngClass]="{'danger': formErrors.nombre}"></ion-input>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Teléfono</ion-label>
+			    <ion-input type="number" formControlName="telefono" [ngClass]="{'danger': formErrors.telefono}"></ion-input>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Correo Electrónico</ion-label>
+			    <ion-input type="email" formControlName="email" [ngClass]="{'danger': formErrors.email}"></ion-input>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>Estado</ion-label>
+			    <ion-select interface="popover" formControlName="estado" [ngClass]="{'danger': formErrors.estado}" (ionChange)="setEstado($event)">
+					<ion-option [value]="estado.nom_ent" *ngFor = "let estado of estados">{{estado.nom_ent}}</ion-option>
+				</ion-select>
+			  </ion-item>
+			  <ion-item>
+			    <ion-label stacked>{{city}}</ion-label>
+			    <ion-select interface="popover" formControlName="ciudad" [ngClass]="{'danger': formErrors.ciudad}">
+					<ion-option [value]="ciudad.nom_mun" *ngFor = "let ciudad of ciudades">{{ciudad.nom_mun}}</ion-option>
+				</ion-select>
+			  </ion-item>
+			</ion-list>
+			<div class="content-button" (click)="editProfile(registerUserForm)">
+				<div class="img-button back-blue">
+					<img src="assets/imgs/checked.png">
+				</div>
+				<div class="div-button back-blue">
+					Actualizar Datos
+				</div>
+			</div>
+		</form>
+	</div>
+</ion-content>

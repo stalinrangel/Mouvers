@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><ion-icon ios="md-cash" md="md-cash" class="icon-menu"></ion-icon><span class="title-menu"> CONFIRMAR PAGO</span></ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card class="card-content">
+	<ion-grid class="header-table">
+	  <ion-row class="row-header">
+	    <ion-col col-12>
+	      Resumen Pago
+	    </ion-col>
+	  </ion-row>
+	</ion-grid>
+	<ion-grid>
+	  <ion-row class="row-details">
+	    <ion-col col-6 class="content-center">
+	    	Costo Productos
+	    </ion-col>
+	    <ion-col col-6 class="content-center1 text-l">
+	      $ {{subtotal}} MXN
+	    </ion-col>
+	  </ion-row>
+	  <ion-row class="row-details">
+	    <ion-col col-6 class="content-center">
+	    	Costo Envío
+	    </ion-col>
+	    <ion-col col-6 class="content-center1 text-l">
+	      $ {{delivery}} MXN
+	    </ion-col>
+	  </ion-row>
+	  <ion-row class="row-details1">
+	    <ion-col col-6 class="content-center bold">
+	    	Total
+	    </ion-col>
+	    <ion-col col-6 class="bold content-center1 text-l">
+	      $ {{total}} MXN
+	    </ion-col>
+	  </ion-row>
+	</ion-grid>
+	<br>
+	<div class="content-button" (click)="openpay()">
+		<div class="img-button back-blue">
+			<ion-icon ios="md-card" md="md-card" class="icon-pay"></ion-icon>
+		</div>
+		<div class="div-button back-blue">
+			Paga con Tarjeta de Débito/Crédito
+		</div>
+	</div>
+	<div class="content-button" (click)="payments()">
+		<div class="img-button dark-blue">
+			<img src="assets/imgs/paypal.png">
+		</div>
+		<div class="div-button dark-blue">
+			Paga con PayPal
+		</div>
+	</div>
+	<!--<div class="content-address">
+		<p class="title-address">Dirección de envío</p>
+		<p class="content-address1">Urb la linda casa #30</p>
+	</div>-->
+  </ion-card>
+</ion-content>

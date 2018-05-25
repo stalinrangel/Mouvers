@@ -18,7 +18,7 @@
 			  </ion-item>
 
 			  <ion-item>
-			    <ion-label stacked>Constraseña</ion-label>
+			    <ion-label stacked>Contraseña</ion-label>
 			    <ion-input type="password" formControlName="password"></ion-input>
 			  </ion-item>
 			</ion-list>
@@ -55,7 +55,7 @@
 				Iniciar sesión con Instagram
 			</div>
 		</div>
-		<p class="olvido-password">¿Olvido contraseña?</p>
+		<p class="olvido-password" (click)="forgetPassword()">¿Olvido contraseña?</p>
 		<div class="link-register" (click)="register()">
 			REGISTRATE
 		</div>

@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><ion-icon ios="md-cart" md="md-cart" class="icon-menu"></ion-icon><span class="title-menu"> PEDIDO</span></ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only>
+        <ion-badge item-end *ngIf="itemsInCart > 0">{{itemsInCart}}</ion-badge>
+        <ion-icon ios="md-cart" md="md-cart" class="icon-cart"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card class="card-content">
+    <ion-grid class="header-table">
+	  <ion-row class="row-header">
+	    <ion-col col-3>
+	      Cantidad
+	    </ion-col>
+	    <ion-col col-4>
+	      Producto
+	    </ion-col>
+	    <ion-col col-3>
+	      Precio
+	    </ion-col>
+	    <ion-col col-2>
+	      
+		</ion-col>
+	  </ion-row>
+	</ion-grid>
+	<ion-grid>
+	  <ion-row *ngFor="let item of items" class="row-details">
+	    <ion-col col-3>
+	    	<ion-input type="number" name="cantidad" class="input-cant" [(ngModel)]="item.cantidad" (ionChange)="updateCant(item)"></ion-input>
+	    </ion-col>
+	    <ion-col col-4 class="content-center">
+	      {{item.nombre}}
+	    </ion-col>
+	    <ion-col col-3 class="content-center text-l">
+	      $ {{item.precio}}
+	    </ion-col>
+	    <ion-col col-2 class="content-center">
+	      <ion-icon ios="md-backspace" md="md-backspace" class="icon-delete" (click)="removeItem(item)"></ion-icon>
+		</ion-col>
+	  </ion-row>
+	</ion-grid>
+	<ion-grid *ngIf="itemsInCart > 0">
+	  <ion-row class="row-details1">
+		<ion-col col-1>
+	    	
+	    </ion-col>
+	    <ion-col col-6 class="content-center bold">
+	      Costo Productos
+	    </ion-col>
+	    <ion-col col-5 class="content-center bold text-l">
+	      $ {{total}} MXN
+	    </ion-col>
+	  </ion-row>
+	</ion-grid>
+	<div padding *ngIf="itemsInCart > 0">
+		<div class="content-button" (click)="gotoMap()">
+			<div class="img-button back-blue">
+				<ion-icon ios="md-map" md="md-map" class="icon-map"></ion-icon>
+			</div>
+			<div class="div-button back-blue">
+				Confirmar Ubicación
+			</div>
+		</div>
+		<div class="content-button" (click)="goBack()">
+			<div class="img-button back-blue">
+				<img src="assets/imgs/arrow-left.png">
+			</div>
+			<div class="div-button back-blue">
+				Seguir Comprando
+			</div>
+		</div>
+	</div>
+  </ion-card>
+</ion-content>

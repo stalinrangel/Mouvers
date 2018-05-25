@@ -12,7 +12,9 @@ import { HttpClient } from '@angular/common/http';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import * as firebase from 'firebase/app';
-
+import { OneSignal } from '@ionic-native/onesignal';
+import { StorageProvider } from '../../providers/storage/storage';
+import { EmailPasswordPage } from '../email-password/email-password';
 
 @Component({
   selector: 'page-login',
@@ -37,15 +39,16 @@ export class LoginPage {
   public apiuser = {
     nombre: '',
     email: null,
-    imagen: 'assets/imgs/male-user.png',
+    imagen: 'assets/imgs/user-white.png',
     telefono: '',
     id_facebook: null,
     id_twitter: null,
     id_instagram: null,
-    tipo_registro: 0
+    tipo_registro: 0,
+    token_notificacion: ''
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private http: HttpClient, private loadingCtrl: LoadingController, private facebook: Facebook, private twitter: TwitterConnect, public afAuth: AngularFireAuth, private builder: FormBuilder, public alertCtrl: AlertController, private auth: AuthServiceProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private http: HttpClient, private loadingCtrl: LoadingController, private facebook: Facebook, private twitter: TwitterConnect, public afAuth: AngularFireAuth, private builder: FormBuilder, public alertCtrl: AlertController, private auth: AuthServiceProvider,private oneSignal: OneSignal, public storage: StorageProvider) {
     this.apiResponse = [];
     this.initForm();
   }
@@ -54,10 +57,17 @@ export class LoginPage {
     //setTimeout(() => this.splash = false, 4000);
   }
 
+  ionViewDidEnter() {  
+    this.oneSignal.getIds().then((ids) => {
+      this.storage.set('token_notificacion',ids.userId);
+    });
+  }
+
   initForm() {
     this.loginUserForm = this.builder.group({
       email: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
+      token_notificacion: ['']
     });
   }
 
@@ -69,6 +79,7 @@ export class LoginPage {
   login(){
     if (this.loginUserForm.valid) {
       this.showLoading('Iniciando sesión...');
+      this.loginUserForm.patchValue({token_notificacion: this.storage.get('token_notificacion')});
       this.auth.login(this.loginUserForm.value).subscribe(allowed => {
         if (allowed) {        
           this.navCtrl.setRoot(TabsPage);
@@ -117,6 +128,7 @@ export class LoginPage {
         this.apiuser.id_facebook = this.user.id;
       }
       this.apiuser.tipo_registro = 2;
+      this.apiuser.token_notificacion = this.storage.get('token_notificacion');
       this.auth.loginSocial(this.apiuser).subscribe(allowed => {
         if (allowed) {        
           this.navCtrl.setRoot(TabsPage);
@@ -126,6 +138,7 @@ export class LoginPage {
         }
       },
       error => {
+        this.apiuser.token_notificacion = this.storage.get('token_notificacion');
         this.navCtrl.push(ConfirmInfoPage, {user: this.apiuser});
       });
     })
@@ -161,6 +174,7 @@ export class LoginPage {
           this.apiuser.telefono = this.user.phoneNumber;
         }
         this.apiuser.tipo_registro = 3;
+        this.apiuser.token_notificacion = this.storage.get('token_notificacion');
         this.auth.loginSocial(this.apiuser).subscribe(allowed => {
           if (allowed) {        
             this.navCtrl.setRoot(TabsPage);
@@ -170,6 +184,7 @@ export class LoginPage {
           }
         },
         error => {
+          this.apiuser.token_notificacion = this.storage.get('token_notificacion');
           this.navCtrl.push(ConfirmInfoPage, {user: this.apiuser});
         });
       })
@@ -209,6 +224,7 @@ export class LoginPage {
             this.apiuser.id_instagram = this.user.id;
           }
           this.apiuser.tipo_registro = 4;
+          this.apiuser.token_notificacion = this.storage.get('token_notificacion');
           this.auth.loginSocial(this.apiuser).subscribe(allowed => {
             if (allowed) {        
               this.navCtrl.setRoot(TabsPage);
@@ -218,6 +234,7 @@ export class LoginPage {
             }
           },
           error => {
+            this.apiuser.token_notificacion = this.storage.get('token_notificacion');
             this.navCtrl.push(ConfirmInfoPage, {user: this.apiuser});
           });
         },
@@ -231,9 +248,14 @@ export class LoginPage {
     });
   }
 
+  forgetPassword(){
+    this.navCtrl.push(EmailPasswordPage);
+  }
+
   showLoading(text) {
     this.loading = this.loadingCtrl.create({
       content: text,
+      spinner: 'ios',
       dismissOnPageChange: true
     });
     this.loading.present();

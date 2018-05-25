@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>RECUPERAR CONTRASEÑA</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+	<div class="content-form">
+		<div class="align-right">
+			<img src="assets/imgs/logo4.png" width="68%">
+		</div>
+		<div>
+			<p class="info-password">Ingrese su nueva contraseña.</p>
+		</div>
+		<form [formGroup]="UpdatePassword">
+			<ion-list>
+				<ion-item>
+			      <ion-label stacked>Contraseña</ion-label>
+			      <ion-input clearInput type="password" name="password" formControlName="password"></ion-input>
+			    </ion-item>
+			    <div *ngIf="formErrors.password" class="alert-danger">
+		          {{ formErrors.password }}
+		        </div>
+		        <ion-item>
+		          <ion-label stacked>Confirmar Contraseña</ion-label>
+			      <ion-input clearInput type="password" name="rpassword" formControlName="rpassword"></ion-input>
+			    </ion-item>
+			    <div *ngIf="formErrors.rpassword" class="alert-danger">
+		          {{ formErrors.rpassword }}
+		        </div>
+		  	</ion-list>
+		</form>
+		<div class="content-button" (click)="updatePassword(UpdatePassword)">
+			<div class="img-button back-blue">
+				<img src="assets/imgs/checked.png">
+			</div>
+			<div class="div-button back-blue">
+				Actualizar Contraseña
+			</div>
+		</div>
+	</div>
+</ion-content>

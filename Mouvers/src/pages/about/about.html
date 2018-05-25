@@ -2,17 +2,75 @@
   <ion-navbar>
     <ion-title><img src="assets/imgs/motorbike.png" class="icon-menu"><span class="title-menu"> PEDIDOS</span></ion-title>
     <ion-buttons end>
-      <button ion-button icon-only>
-        <ion-badge item-end>6</ion-badge>
+      <button ion-button icon-only (click)="gotoCart()">
+        <ion-badge item-end *ngIf="itemsInCart > 0">{{itemsInCart}}</ion-badge>
         <ion-icon ios="md-cart" md="md-cart" class="icon-cart"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
+  <ion-segment [(ngModel)]="type" color="primary">
+    <ion-segment-button value="hoy">
+      <ion-icon ios="md-paper-plane" md="md-paper-plane"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="historial">
+      <ion-icon ios="md-clock" md="md-clock"></ion-icon>
+    </ion-segment-button>
+  </ion-segment>
 </ion-header>
 
 <ion-content padding>
-  <ion-card>
-    <h1 class="title-text">En construcción...</h1>
-    <button ion-button class="button-salir" (click)="salir()">Cerrar sesión</button>
+  <ion-card class="card-content">
+    <ion-list *ngIf="type === 'hoy'">
+      <ion-item text-wrap *ngFor="let item of orders; let i = index" detail-none>
+        <h2><ion-icon item-left name="pin" class="icon-address"></ion-icon>{{item.direccion}}</h2>
+        <p text-lowercase><span class="price-text">$ {{item.costo}} MXN</span> - {{item.api_tipo_pago}}</p>
+        <!-- Direct Add Button -->
+        <button ion-button outline item-end class="button-view" (click)="viewOrder($event,item)">Estado</button>
+      </ion-item>
+      <p [hidden]="orders.length > 0" class="title-curso">No tienes pedidos en curso</p>
+    </ion-list>
+    <ion-list *ngIf="type === 'historial'">
+      <ion-list-header class="list-history" *ngFor="let item of history; let i = index" no-lines no-padding>
+          <div class="content-blockH">
+            <button ion-item class="button-history" (click)="toggleSection(i)" detail-none>
+              <ion-icon item-right class="icon-arrow" ios="ios-arrow-forward" md="ios-arrow-forward" *ngIf="!item.open"></ion-icon>
+              <ion-icon item-right class="icon-arrow" ios="ios-arrow-down" md="ios-arrow-down" *ngIf="item.open"></ion-icon>
+              <ion-item class="content-history">
+                <h2 class="text-normal"><ion-icon item-left name="pin" class="icon-address"></ion-icon>{{item.direccion}}</h2>
+                <p text-lowercase><span class="price-text">$ {{item.costo}} MXN</span> - {{item.api_tipo_pago}}</p>
+              </ion-item>
+            </button>
+            <div *ngIf="item.calificacion != null">
+              <p text-lowercase><rating [(ngModel)]="item.calificacion.puntaje"
+                name="rate"  
+                readOnly="true"
+                max="5"
+                emptyStarIconName="star-outline"
+                halfStarIconName="star-half"
+                starIconName="star"
+                nullable="false">
+              </rating> - {{item.calificacion.comentario}}</p>
+            </div>
+            <button *ngIf="item.calificacion == null" ion-button outline class="button-view btn-calification" (click)="viewCalification($event,item)">Calificar Pedido</button>
+          </div>
+     
+          <ion-list *ngIf="item.productos && item.open" no-lines>
+              <ion-item *ngFor="let product of item.productos;" ion-item detail-none class="child-item" text-wrap>
+                <h2 style="margin-top:5px">{{ product.establecimiento.nombre }}</h2>
+                <p class="dir-history"><ion-icon name="pin" class="icon-address"></ion-icon> {{ product.establecimiento.direccion }}</p>
+                <div>
+                  <h2>- {{product.pivot.cantidad}} {{product.nombre}}</h2>
+                </div>
+              </ion-item>
+              <ion-item class="content-repartidor">
+                <ion-avatar item-start>
+                  <img src="{{item.repartidor.usuario.imagen}}" class="img-repartidor">
+                </ion-avatar>
+                <h2 class="color-white">Repartidor: {{ item.repartidor.usuario.nombre }}</h2>
+              </ion-item>
+          </ion-list>     
+      </ion-list-header>
+      <p [hidden]="history.length > 0" class="title-curso">No tienes pedidos finalizados</p>
+    </ion-list>
   </ion-card>
 </ion-content>

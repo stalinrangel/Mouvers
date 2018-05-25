@@ -50,8 +50,9 @@ page-products {
     .section {
         background: #0b417a;
         color: #fff;
-        margin-bottom: 4px;
+        margin-bottom: 5px;
         text-align: center;
+        border-radius: 3px;
     }
     .item-name{
     	position: absolute;
@@ -60,24 +61,26 @@ page-products {
 	    top: 0;
 	    bottom: 0;
 	    text-align: center;
-	    display: grid;
-	    align-items: center;
+	    margin: 10px;
 	    font-weight: bold;
 	    font-size: 20px;
     }
     .section-active {
-        background: #0b417a;
+        background: #0b417a !important;
         color: #fff;
+        text-transform: capitalize;
     }
- 
     .child {
-        background: #e8e7e6;
+        background: #e8e7e6 !important;
         color: #000;
-        margin-bottom: 4px;
+        margin-bottom: 0px;
+        text-transform: capitalize;
     }
     .child-item {
-        background: #f3f2f1;
+        background: #ffff !important;
         padding: 10px;
+        border: 1px solid #e8e7e6 !important;
+        border-top: none !important;
     }
     .label {
         margin: 0px;
@@ -86,6 +89,61 @@ page-products {
         margin-bottom: 4px;
     }
     .list-header-md, .list-header-ios{
-    	margin-bottom: 4px;
+    	margin-bottom: 2px;
+    	background-color: transparent;
+    	border-top: none !important;
     }
+    .item-md p {
+	    margin: 0 25px 0 5px;
+	    overflow: visible;
+	    font-size: 1.3rem;
+	    line-height: normal;
+	    text-overflow: inherit;
+	    color: #666;
+	}
+	.item-ios p {
+	    margin: 0 25px 0 5px;
+	    overflow: visible;
+	    font-size: 1.2rem;
+	    line-height: normal;
+	    text-overflow: inherit;
+	    color: #666;
+	}
+	.item-md [item-end], .item-ios [item-end]{
+		margin: 9px 0px;
+	}
+	.item-md.item-block .item-inner, .item-ios.item-block .item-inner{
+		padding-right: 0px;
+	}
+	.item-ios h2, .item-md h2 {
+	    font-size: 1.5rem;
+	    font-weight: normal;
+	    text-transform: capitalize;
+	}
+	.item-md .item-button{
+		border-radius: 4px;
+	}
+	.content-address{
+		padding: 5px 12px;
+	    font-size: 12px;
+	    background-color: #fafafa;
+	    border: 1px solid #e8e7e6;
+	    text-transform: lowercase;
+	    color: #757575;
+	}
+	.icon-address{
+		margin-right: 3px !important;
+		font-size: 12px;
+	}
+	.icon-child{
+		font-size: 2.2rem;
+		min-height: 2.2rem;
+	}
+	.img-sub{
+		height: 48px;
+	    width: 55px;
+	    float: right;
+	    object-fit: cover;
+	    opacity: 0.7;
+	}
 }

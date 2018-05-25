@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><img src="assets/imgs/motorbike.png" class="icon-menu"><span class="title-menu"> PEDIDOS</span></ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="gotoCart()">
+        <ion-badge item-end *ngIf="itemsInCart > 0">{{itemsInCart}}</ion-badge>
+        <ion-icon ios="md-cart" md="md-cart" class="icon-cart"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card class="card-content">
+  	<ion-grid>
+  	  <ion-row>
+  	    <ion-col col-12>
+  	    	<div class="orderStatus">
+  			  <ul class="row">
+  			    <li class="col done img1" [ngClass]="{'status': items.estado == 1, 'imgS1': items.estado == 1}">Orden Realizada</li>
+  			    <li class="col img2" [ngClass]="{'status': items.estado == 2, 'imgS2': items.estado == 2, 'done': items.estado == 2 || items.estado == 3}">Pedido en Camino</li>
+  			    <li class="col img3" [ngClass]="{'status': items.estado == 3, 'imgS3': items.estado == 3, 'done': items.estado == 3}">Pedido Finalizado</li>
+  			  </ul>
+  			</div>
+  	    </ion-col>
+  	  </ion-row>
+	  </ion-grid>
+    <ion-grid class="header-table">
+      <ion-row class="row-header">
+        <ion-col col-4>
+          Producto
+        </ion-col>
+        <ion-col col-5>
+          Establecimiento
+        </ion-col>
+        <ion-col col-3>
+          Precio
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid>
+      <ion-row *ngFor="let item of items.productos" class="row-details">
+        <ion-col col-4 class="content-center">
+          <p>{{item.pivot.cantidad}} {{item.nombre}}</p>
+          <p class="text-description" text-wrap>{{item.descripcion}}</p>
+        </ion-col>
+        <ion-col col-5 class="content-center" text-wrap>
+          <p>{{item.establecimiento.nombre}}</p>
+          <p class="text-description">{{item.establecimiento.direccion}}</p>
+        </ion-col>
+        <ion-col col-3 class="content-center text-l" text-wrap>
+          $ {{item.precio}}
+        </ion-col>
+      </ion-row>
+      <ion-row class="row-details1">
+        <ion-col col-1>          
+        </ion-col>
+        <ion-col col-6 class="content-right bold">
+          Subtotal
+        </ion-col>
+        <ion-col col-5 class="content-right bold text-l">
+          $ {{items.subtotal}} MXN
+        </ion-col>
+      </ion-row>
+      <ion-row class="row-details1">
+        <ion-col col-1>          
+        </ion-col>
+        <ion-col col-6 class="content-right bold">
+          Costo Envío
+        </ion-col>
+        <ion-col col-5 class="content-right bold text-l">
+          $ {{items.costo_envio}} MXN
+        </ion-col>
+      </ion-row>
+      <ion-row class="row-details1">
+        <ion-col col-1>          
+        </ion-col>
+        <ion-col col-6 class="content-right bold">
+          Total
+        </ion-col>
+        <ion-col col-5 class="content-right bold text-l">
+          $ {{items.costo}} MXN
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div *ngIf="items.repartidor_id != null">
+      <ion-item class="content-repartidor">
+        <ion-avatar item-start>
+          <img src="{{repartidor.usuario.imagen}}">
+        </ion-avatar>
+        <h2 class="color-white"><img src="assets/imgs/motorbike.png" class="img-repartidor"> {{ items.repartidor_nom }}</h2>
+        <p class="color-white"><ion-icon name="call" class="icon-call"></ion-icon> {{ repartidor.usuario.telefono }}</p> 
+      </ion-item>
+    </div>
+  </ion-card>
+</ion-content>

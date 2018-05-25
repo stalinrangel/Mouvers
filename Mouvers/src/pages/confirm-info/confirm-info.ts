@@ -3,6 +3,7 @@ import { NavController, NavParams, LoadingController, Loading, AlertController, 
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+import { RuteBaseProvider } from '../../providers/rute-base/rute-base';
 import { TabsPage } from '../tabs/tabs';
 
 @Component({
@@ -27,13 +28,9 @@ export class ConfirmInfoPage {
 		'estado': ''
 	};
 
-	constructor(public navCtrl: NavController, private auth: AuthServiceProvider, public navParams: NavParams, private http: HttpClient, private loadingCtrl: LoadingController, private builder: FormBuilder, public alertCtrl: AlertController, private toastCtrl: ToastController) {
+	constructor(public navCtrl: NavController, private auth: AuthServiceProvider, public navParams: NavParams, private http: HttpClient, private loadingCtrl: LoadingController, private builder: FormBuilder, public alertCtrl: AlertController, private toastCtrl: ToastController, private rutebaseApi: RuteBaseProvider) {
 		this.user = navParams.get('user');
 		this.initForm();
-	}
-
-	ionViewDidLoad() {
-	console.log('ionViewDidLoad ConfirmInfoPage');
 	}
 
 	initForm() {
@@ -49,7 +46,8 @@ export class ConfirmInfoPage {
       id_facebook: [this.user.id_facebook],
       id_twitter: [this.user.id_twitter],
       id_instagram: [this.user.id_instagram],
-      check: [false]
+      check: [false],
+      token_notificacion: [this.user.token_notificacion]
     });
     this.registerUserForm.valueChanges.subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
@@ -57,7 +55,8 @@ export class ConfirmInfoPage {
    }
 
   page(){
-    this.http.get('http://rattios.com/api/token4/Laravel/public/api/entidades/municipios')
+    this.showLoadingc();
+    this.http.get(this.rutebaseApi.getRutaApi() + 'entidades/municipios')
     .toPromise()
     .then(
       data => {
@@ -65,9 +64,11 @@ export class ConfirmInfoPage {
         this.estados = this.datos.entidades;
         this.registerUserForm.patchValue({estado: this.estados[0].nom_ent}); 
         this.setEstado(this.estados[0].nom_ent);
+        this.loading.dismiss();
       },
       msg => {
-        console.log(msg);
+        this.presentToast('No se pudo cargar los estados y ciudades, intenta de nuevo');
+        this.loading.dismiss();
     });
   }
 
@@ -90,7 +91,7 @@ export class ConfirmInfoPage {
     if (this.registerUserForm.valid) {
       if (this.registerUserForm.value.check) {
         this.showLoading();
-        this.auth.register(this.registerUserForm.value).subscribe(
+        this.auth.registerSocial(this.registerUserForm.value).subscribe(
           success => {
             if (success) {
               this.loading.dismiss();
@@ -146,7 +147,16 @@ export class ConfirmInfoPage {
   showLoading() {
     this.loading = this.loadingCtrl.create({
       content: 'Registrando usuario...',
+      spinner: 'ios',
       dismissOnPageChange: true
+    });
+    this.loading.present();
+  }
+
+  showLoadingc() {
+    this.loading = this.loadingCtrl.create({
+      content: 'Cargando...',
+      spinner: 'ios'
     });
     this.loading.present();
   }
@@ -173,7 +183,7 @@ export class ConfirmInfoPage {
     let toast = this.toastCtrl.create({
       message: text,
       duration: 3000,
-      position: 'bottom'
+      position: 'top'
     });
 
     toast.onDidDismiss(() => {

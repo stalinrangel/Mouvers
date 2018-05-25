@@ -3,6 +3,8 @@ import { NavController, NavParams, AlertController, LoadingController, Loading, 
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+import { RuteBaseProvider } from '../../providers/rute-base/rute-base';
+import { StorageProvider } from '../../providers/storage/storage';
 
 @Component({
   selector: 'page-register',
@@ -29,13 +31,9 @@ export class RegisterPage {
     'rpassword': ''
   };
 
-	constructor(public navCtrl: NavController, public http: HttpClient, private auth: AuthServiceProvider, public navParams: NavParams, private alertCtrl: AlertController, private loadingCtrl: LoadingController, private builder: FormBuilder, private toastCtrl: ToastController) {
+	constructor(public navCtrl: NavController, public http: HttpClient, private auth: AuthServiceProvider, public navParams: NavParams, private alertCtrl: AlertController, private loadingCtrl: LoadingController, private builder: FormBuilder, private toastCtrl: ToastController, public rutebaseApi: RuteBaseProvider, public storage: StorageProvider) {
 	  this.initForm();
   }
-
-	ionViewDidLoad() {
-	console.log('ionViewDidLoad RegisterPage');
-	}
 
   initForm() {
     this.registerUserForm = this.builder.group({
@@ -46,9 +44,11 @@ export class RegisterPage {
       tipo_registro: [1],
       ciudad: ['', [Validators.required]],
       estado: ['', [Validators.required]],
+      imagen: ['http://mouvers.mx/terminos/imgs/user-white.png'],
       password: ['', [Validators.required]],
       rpassword: ['', [Validators.required]],
-      check: [false]
+      check: [false],
+      token_notificacion: ['']
     });
     this.registerUserForm.valueChanges.subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
@@ -56,7 +56,8 @@ export class RegisterPage {
   }
 
   page(){
-    this.http.get('http://rattios.com/api/token4/Laravel/public/api/entidades/municipios')
+    this.showLoadingc();
+    this.http.get(this.rutebaseApi.getRutaApi() + 'entidades/municipios')
     .toPromise()
     .then(
       data => {
@@ -64,19 +65,13 @@ export class RegisterPage {
         this.estados = this.datos.entidades;
         this.registerUserForm.patchValue({estado: this.estados[0].nom_ent}); 
         this.setEstado(this.estados[0].nom_ent);
+        this.loading.dismiss();
       },
       msg => {
-        console.log(msg);
+        this.presentToast('No se pudo cargar los estados y ciudades, intenta de nuevo');
+        this.loading.dismiss();
     });
   }
-
-	togglePasswordMode1() {   
-	   this.password_type1 = this.password_type1 === 'text' ? 'password' : 'text';
-	}
-
-	togglePasswordMode2() {   
-	   this.password_type2 = this.password_type2 === 'text' ? 'password' : 'text';
-	}
 
   setEstado(estado){
     for (var i = 0; i < this.estados.length; ++i) {
@@ -91,12 +86,21 @@ export class RegisterPage {
       this.city = 'Ciudad';
     }
   }
+	
+  togglePasswordMode1() {   
+	   this.password_type1 = this.password_type1 === 'text' ? 'password' : 'text';
+	}
+
+	togglePasswordMode2() {   
+	   this.password_type2 = this.password_type2 === 'text' ? 'password' : 'text';
+	}
 
   register(){
     this.registerUserForm.value.email = this.registerUserForm.value.email.toLowerCase();
+    this.registerUserForm.patchValue({token_notificacion: this.storage.get('token_notificacion')});
     if (this.registerUserForm.valid) {
       if (this.registerUserForm.value.password !== this.registerUserForm.value.rpassword) {
-        this.showPopup("¡Lo sentimos!", "Contraseñas no coinciden");
+        this.presentToast("¡Lo sentimos!, Contraseñas no coinciden");
       } else {
         if (this.registerUserForm.value.check) {
           this.showLoading();
@@ -105,9 +109,9 @@ export class RegisterPage {
               if (success) {
                 this.loading.dismiss();
                 this.createSuccess = true;
-                this.showPopup("Completado", "Usuario registrado con éxito.");
+                this.showPopup("Completado", 'Revisa la bandeja de entrada de tu correo electrónico para validar tu cuenta y así poder disfrutar nuestros servicios.');
               } else {
-                this.showPopup("Error", "Ha ocurrido un error al crear la cuenta.");
+                this.presentToast("Ha ocurrido un error al crear la cuenta.");
               }
             },
             error => {
@@ -117,7 +121,7 @@ export class RegisterPage {
           );
         } else {
           this.createSuccess = false;
-          this.showPopup("¡Lo sentimos!", "Debes aceptar las condiciones de uso");
+          this.presentToast("¡Lo sentimos!, Debes aceptar las condiciones de uso");
         }
       }
     } else {
@@ -157,7 +161,16 @@ export class RegisterPage {
   showLoading() {
     this.loading = this.loadingCtrl.create({
       content: 'Registrando Usuario...',
+      spinner: 'ios',
       dismissOnPageChange: true
+    });
+    this.loading.present();
+  }
+
+  showLoadingc() {
+    this.loading = this.loadingCtrl.create({
+      content: 'Cargando...',
+      spinner: 'ios'
     });
     this.loading.present();
   }
@@ -184,7 +197,7 @@ export class RegisterPage {
     let toast = this.toastCtrl.create({
       message: text,
       duration: 3000,
-      position: 'bottom'
+      position: 'top'
     });
 
     toast.onDidDismiss(() => {

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><ion-icon ios="md-map" md="md-map" class="icon-menu"></ion-icon><span class="title-menu"> CONFIRMAR UBICACIÓN</span></ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card class="card-content">
+    <ion-grid class="header-table">
+	  <ion-row class="row-header">
+	    <ion-col col-12>
+	      Seleccione su ubicación
+	    </ion-col>
+	  </ion-row>
+	</ion-grid>
+	<div *ngIf="refresh" class="center" (click)="getCurrentPosition()"><ion-icon ios="ios-refresh" md="ios-refresh" class="icon-refresh"></ion-icon></div>
+	<div #map id="map"></div>
+	<div [hidden]="inside">
+		<div class="content-button" *ngIf="!refresh" (click)="gotoPayment()">
+			<div class="img-button back-blue">
+				<img src="assets/imgs/flag.png">
+			</div>
+			<div class="div-button back-blue">
+				Finalizar Compra
+			</div>
+		</div>
+	</div>
+  </ion-card>
+</ion-content>

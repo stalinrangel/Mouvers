@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><ion-icon ios="md-cash" md="md-cash" class="icon-menu"></ion-icon><span class="title-menu"> PAGAR SERVICIO</span></ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+	<div class="content-header">
+		<div class="card-expl">
+            <div class="credit center"><img src="assets/imgs/cards1.png" alt=""></div><hr>
+            <div class="debit center"><img src="assets/imgs/cards2.png" alt=""></div>
+        </div>
+	</div>
+	<div class="content-form">
+		<form [formGroup]="paymentForm" id="paymentform" novalidate>
+		    <div class="pymnt-itm card active">
+		        <div class="pymnt-cntnt">         
+		            <ion-list>
+					  <ion-item>
+					    <ion-label stacked>Nombre del titular</ion-label>
+					    <ion-input type="text" placeholder="Como aparece en la tarjeta" formControlName="holder_name" [ngClass]="{'danger': formErrors.holder_name}"></ion-input>
+					  </ion-item>
+					  <ion-item>
+					    <ion-label stacked>Número de tarjeta</ion-label>
+					    <ion-input type="text" formControlName="card_number" [ngClass]="{'danger': formErrors.card_number}"></ion-input>
+					  </ion-item>
+					  <ion-row>
+				        <ion-col col-6 no-padding class="p-right">
+				          <ion-item>
+				            <ion-label stacked>Fecha de expiración</ion-label>
+					    	<ion-input type="text" placeholder="Mes (2 dígitos)" formControlName="expiration_month" [ngClass]="{'danger': formErrors.expiration_month}"></ion-input>
+				          </ion-item>
+				        </ion-col>
+				        <ion-col col-6 no-padding class="p-left">
+				          <ion-item class="padding-left-2px">
+				            <ion-label stacked class="f_exp"></ion-label>
+				            <ion-input type="text" placeholder="Año (2 dígitos)" formControlName="expiration_year" [ngClass]="{'danger': formErrors.expiration_year}"></ion-input>
+				          </ion-item>
+				        </ion-col>
+				      </ion-row>
+				      <ion-row>
+				        <ion-col col-6 no-padding class="p-right">
+				          <ion-item>
+						    <ion-label stacked>Código de seguridad</ion-label>
+						    <ion-input type="text" placeholder="3 dígitos" formControlName="cvv2" [ngClass]="{'danger': formErrors.cvv2}"></ion-input>
+						  </ion-item>
+				        </ion-col>
+				        <ion-col col-6 no-padding class="p-left">
+				          <img src="assets/imgs/cvv.png" class="img-cvv" alt="cvv">
+				        </ion-col>
+				      </ion-row>
+					  <div class="m-top">
+					  	  <ion-grid>
+						    <ion-row>
+						      <ion-col col-6 class="line-right">
+						        <div class="openpay"><div class="logo">Transacciones realizadas vía: <img src="assets/imgs/openpay.png" alt="openpay"></div>
+					  			</div>
+						      </ion-col>
+						      <ion-col col-6>
+						        <div class="shield"><img src="assets/imgs/security.png" alt="security"> Tus pagos se realizan de forma segura con encriptación de 256 bits</div>
+						      </ion-col>
+						    </ion-row>
+						  </ion-grid>
+					  </div>
+					  <br>
+					  <div class="content-button" (click)="pagar(paymentForm)">
+						<div class="img-button back-blue">
+							<img src="assets/imgs/checked.png">
+						</div>
+						<div class="div-button back-blue">
+							Confirmar pago
+						</div>
+					  </div>
+					</ion-list>   
+		    	</div>
+		    </div>
+		</form>
+	</div>
+</ion-content>

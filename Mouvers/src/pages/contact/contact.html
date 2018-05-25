@@ -1,23 +1,36 @@
-
 <ion-content>
   <div class="header-profile">
-    <img src="assets/imgs/usuario.png" alt="usuario" class="img-profile">
+    <ion-icon ios="md-create" md="md-create" class="icon-edit" (click)="editProfile()"></ion-icon>
+    <img src="{{usuario.imagen}}" alt="usuario" class="img-profile">
     <p class="name-profile">{{usuario.nombre}}</p>
   </div>
   <ion-grid class="content-count">
-  <ion-row>
-    <ion-col col-6>
-      <p class="number-count">12</p>
-      <p class="title-count">Pedidos</p>
-    </ion-col>
-    <ion-col col-6 class="line-left">
-      <p class="number-count">18</p>
-      <p class="title-count">Enviados</p>
-    </ion-col>
-  </ion-row>
-</ion-grid>
-  <ion-card>
-    <h1 class="title-text">En construcción...</h1>
-    <button ion-button class="button-salir" (click)="salir()">Cerrar sesión</button>
-  </ion-card>
+    <ion-row>
+      <ion-col col-6>
+        <p class="number-count">12</p>
+        <p class="title-count">Pedidos</p>
+      </ion-col>
+      <ion-col col-6 class="line-left">
+        <p class="number-count">18</p>
+        <p class="title-count">Enviados</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <div class="content-card">
+    <ion-card>
+      <div class="header-card"></div>
+      <div class="img-button back-blue">
+        <img src="assets/imgs/users.png">
+      </div>
+      <h1 class="title-card">Comunidad</h1>
+    </ion-card>
+    <ion-card (click)="support()">
+      <div class="header-card"></div>
+      <div class="img-button back-blue">
+        <img src="assets/imgs/headset.png">
+      </div>
+      <h1 class="title-card">Soporte</h1>
+    </ion-card>
+  </div>
+  <p class="logout-title" (click)="presentConfirm()">Cerrar sesión</p>
 </ion-content>

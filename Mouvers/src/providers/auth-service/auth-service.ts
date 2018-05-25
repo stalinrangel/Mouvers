@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {StorageProvider} from '../storage/storage';
+import { RuteBaseProvider } from '../../providers/rute-base/rute-base';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -10,14 +11,14 @@ export class AuthServiceProvider {
 
   usuario: any;
 
-  constructor(public http: HttpClient, public storage: StorageProvider) {}
+  constructor(public http: HttpClient, public storage: StorageProvider, public rutebaseAPI: RuteBaseProvider) {}
  
   public login(credentials) {
     if (credentials.email === null || credentials.password === null) {
       return Observable.throw("Please insert credentials");
     } else {
       return Observable.create(observer => {
-        this.http.post('http://mouvers.mx/mouversAPI/public/login/app', credentials)
+        this.http.post(this.rutebaseAPI.getRutaApi()+'login/app', credentials)
         .toPromise()
         .then(
           data => {
@@ -40,7 +41,7 @@ export class AuthServiceProvider {
       return Observable.throw("Please insert credentials");
     } else {
       return Observable.create(observer => {
-        this.http.post('http://mouvers.mx/mouversAPI/public/login/app', credentials)
+        this.http.post(this.rutebaseAPI.getRutaApi()+'login/app', credentials)
         .toPromise()
         .then(
           data => {
@@ -59,24 +60,24 @@ export class AuthServiceProvider {
   }
 
   public registerSocial(credentials) {
-    if (credentials.nombre === null || credentials.telefono === null || credentials.email === null || credentials.password === null || credentials.ciudad === null || credentials.estado === null || credentials.rpassword === null) {
+    if (credentials.nombre === null || credentials.telefono === null || credentials.email === null || credentials.ciudad === null || credentials.estado === null) {
       return Observable.throw("Please insert credentials");
     } else {
       return Observable.create(observer => {
-      	this.http.post('http://mouvers.mx/mouversAPI/public/usuarios', credentials)
-		.toPromise()
-		.then(
-		data => {
-      this.usuario = data;
-      this.storage.set('tokenMouver',this.usuario.token);
-      this.storage.setObject('userMouver', this.usuario.user);
-			observer.next(data);
-			observer.complete();
-		},
-		msg => {
-			observer.error(msg.error);
-			observer.complete();
-		});
+      	this.http.post(this.rutebaseAPI.getRutaApi()+'usuarios', credentials)
+    		.toPromise()
+    		.then(
+    		data => {
+          this.usuario = data;
+          this.storage.set('tokenMouver',this.usuario.token);
+          this.storage.setObject('userMouver', this.usuario.usuario);
+    			observer.next(true);
+    			observer.complete();
+    		},
+    		msg => {
+    			observer.error(msg.error);
+    			observer.complete();
+    		});
       });
     }
   }
@@ -86,17 +87,17 @@ export class AuthServiceProvider {
       return Observable.throw("Please insert credentials");
     } else {
       return Observable.create(observer => {
-      	this.http.post('http://mouvers.mx/mouversAPI/public/usuarios', credentials)
-		.toPromise()
-		.then(
-		data => {
-			observer.next(data);
-			observer.complete();
-		},
-		msg => {
-			observer.error(msg.error);
-			observer.complete();
-		});
+      	this.http.post(this.rutebaseAPI.getRutaApi()+'usuarios', credentials)
+    		.toPromise()
+    		.then(
+    		data => {
+    			observer.next(true);
+    			observer.complete();
+    		},
+    		msg => {
+    			observer.error(msg.error);
+    			observer.complete();
+    		});
       });
     }
   }

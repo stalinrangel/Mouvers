@@ -2,8 +2,8 @@
   <ion-navbar>
     <ion-title> <img src="assets/imgs/home.png" alt="menu" class="icon-menu"> MENU</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only>
-        <ion-badge item-end>1</ion-badge>
+      <button ion-button icon-only (click)="gotoCart()">
+        <ion-badge item-end *ngIf="itemsInCart > 0">{{itemsInCart}}</ion-badge>
         <ion-icon ios="md-cart" md="md-cart" class="icon-cart"></ion-icon>
       </button>
     </ion-buttons>
@@ -11,7 +11,7 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-card class="card-content">
+  <ion-card class="card-content">  
     <ion-card class="content-category" *ngFor="let item of categories" (click)="products(item)">
       <img src="{{item.imagen}}" alt="Categoria" class="img-category"/>
       <div class="title-category">{{item.nombre}}</div>

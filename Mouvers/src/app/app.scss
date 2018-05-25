@@ -43,13 +43,14 @@
 	padding-left: 5px;
 }
 ion-header ion-icon.back-button-icon.icon, .tabs-md .tab-button-icon, .tabs-ios .tab-button-icon, .toolbar-title-md, .toolbar-title-ios {
-    color: #ffffff;
+  color: #ffffff;
 }
 .toolbar-title-md, .toolbar-title-ios {
 	font-size: 18px;
 }
-.loading-md .spinner-crescent circle {
-    stroke: #00203e;
+ion-spinner *, .loading-ios .spinner-ios line, .loading-md .spinner-ios line {
+  stroke: #00203e;
+  fill: #00203e;
 }
 .tabs-md .tabbar, .tabs-ios .tabbar{
 	background-color: #00203e;
@@ -57,6 +58,9 @@ ion-header ion-icon.back-button-icon.icon, .tabs-md .tab-button-icon, .tabs-ios 
 .tabs-md .tab-button[aria-selected=true], .tabs-md .tab-button[aria-selected=true] .tab-button-icon, .tabs-ios .tab-button[aria-selected=true], .tabs-ios .tab-button[aria-selected=true] .tab-button-icon{
 	color: #ffffff;
 	background-color: #0b417a;
+}
+.toast-button {
+  color: #04213e;
 }
 .tabbar, .tabs-ios, .tabs-md , .tabs-wp{ 
 	.tab-button-icon {
@@ -178,11 +182,27 @@ ion-header ion-icon.back-button-icon.icon, .tabs-md .tab-button-icon, .tabs-ios 
   width: 40px;
 }
 .bar-buttons-md[end], .bar-buttons-ios[end]{
-  margin-top: 5px;
+  margin-top: 3px;
 }
 .toast-ios .toast-message, .toast-md .toast-message{
   text-align: center;
+  color: #000;
 }
 .toast-md .toast-wrapper, .toast-ios .toast-wrapper{
-  background: rgba(200, 53, 43, 0.77);
+  background: rgba(118, 248, 246, 0.97);
+}
+.toast-ios .toast-wrapper.toast-top{
+  transform: translateY(44px) !important;
+}
+.toast-md .toast-wrapper.toast-top{
+  transform: translateY(55px) !important;
+}
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3){
+  .toast-ios .toast-wrapper.toast-top{
+    transform: translateY(45px) !important;
+  }
+  .align-right{
+    text-align:center;
+    margin: 30% 0px;
+  }
 }
