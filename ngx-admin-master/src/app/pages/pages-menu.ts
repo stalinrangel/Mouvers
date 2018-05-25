@@ -113,9 +113,15 @@ export const MENU_ITEMS: NbMenuItem[] = [
       },
     ],
   },
+  {
+    title: 'Sistema',
+    icon: 'ion-wrench',
+    link: '/pages/sistema',
+    home: true,
+  },
 
  
-  {
+  /*{
     title: 'FEATURES',
     group: true,
   },
@@ -263,5 +269,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/auth/reset-password',
       },
     ],
-  },
+  },*/
 ];

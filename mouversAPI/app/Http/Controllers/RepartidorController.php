@@ -359,65 +359,6 @@ class RepartidorController extends Controller
         }
     }
 
-    /*Un repartidor id acepta un pedido*/
-    public function aceptarPedido(Request $request, $id)
-    {
-        // Comprobamos si el repartidor que nos están pasando existe o no.
-        $repartidor = \App\Repartidor::with('usuario')->find($id);
-
-        if (count($repartidor)==0)
-        {
-            // Devolvemos error codigo http 404
-            return response()->json(['error'=>'No existe el repartidor con id '.$id], 404);
-        }      
-
-        // Listado de campos recibidos teóricamente.
-        $pedido_id=$request->input('pedido_id');
-
-        // Creamos una bandera para controlar si se ha modificado algún dato.
-        $bandera = false;
-
-        // Actualización parcial de campos.
-        if ($pedido_id != null && $pedido_id!='')
-        {
-            // Comprobamos si el pedido que nos están pasando existe o no.
-            $pedido = \App\Pedido::find($pedido_id);
-
-            if (count($pedido)==0)
-            {
-                // Devolvemos error codigo http 404
-                return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
-            }
-
-            if ($pedido->estado == 2 || $pedido->repartidor_id != null) {
-                return response()->json(['error'=>'El pedido ya tiene un repartidor asignado.'],409);
-            }
-
-            $pedido->repartidor_id = $repartidor->id;
-            $pedido->repartidor_nom = $repartidor->usuario->nombre;
-            $pedido->estado = 2;
-            $bandera=true;
-        }
-
-        $repartidor->ocupado = 1;
-
-        if ($bandera)
-        {
-            // Almacenamos en la base de datos el registro.
-            if ($pedido->save() && $repartidor->save()) {
-                return response()->json(['message'=>'Pedido aceptado.'], 200);
-            }else{
-                return response()->json(['error'=>'Error al aceptar el pedido.'], 500);
-            }
-        }
-        else
-        {
-            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
-            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
-            return response()->json(['error'=>'No se ha modificado ningún dato.'],409);
-        }
-    }
-
     public function repDisponibles()
     {
         //cargar todos los repartidores en ON, Trabajando y Disponibles

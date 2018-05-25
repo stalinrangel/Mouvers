@@ -33,9 +33,17 @@ Route::group(  ['middleware' =>'cors'], function(){
     //----Pruebas CoordenadasController
     Route::get('/coordenadas','CoordenadasController@index');
 
+    Route::post('/usuarios','UsuarioController@store');
+
+    //----Pruebas EntidadMunicipioController
+    Route::get('/entidades/municipios','EntidadMunicipioController@index');
+
+    Route::group(['middleware' => 'jwt-auth'], function(){
+
+
         //----Pruebas UsuarioController
         Route::get('/usuarios','UsuarioController@index');
-        Route::post('/usuarios','UsuarioController@store');
+        //Route::post('/usuarios','UsuarioController@store');
         Route::put('/usuarios/{id}','UsuarioController@update');
         Route::delete('/usuarios/{id}','UsuarioController@destroy');
         Route::get('/usuarios/{id}','UsuarioController@show');
@@ -85,7 +93,6 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/subcategorias/{id}','SubCategoriaController@show');
         Route::get('/subcategorias/{id}/productos','SubCategoriaController@subcategoriaProductos');
 
-
         //----Pruebas PedidoController
         Route::get('/pedidos','PedidoController@index');
         Route::post('/pedidos','PedidoController@store');
@@ -114,12 +121,8 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/repartidores/{id}','RepartidorController@destroy');
         Route::get('/repartidores/{id}','RepartidorController@show');
         Route::post('/repartidores/{id}/set/posicion','RepartidorController@setPosicion');
-        Route::put('/repartidores/{id}/aceptar/pedido','RepartidorController@aceptarPedido');
         Route::get('/repartidores/{id}/pedido/encurso','RepartidorController@miPedidoEnCurso');
         Route::get('/repartidores/{id}/historial/pedidos','RepartidorController@historialPedidos');
-
-        //----Pruebas EntidadMunicipioController
-        Route::get('/entidades/municipios','EntidadMunicipioController@index');
 
         //----Pruebas BlogController
         Route::get('/blogs','BlogController@index');
@@ -157,17 +160,35 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/notificaciones/localizar/repartidores/pedido_id/{id}','NotificacionController@localizarRepartidores');
         Route::put('/notificaciones/{repartidor_id}/asignar/pedido','NotificacionController@asignarPedido');
         Route::post('/notificaciones/establecimiento/visitado','NotificacionController@notificarVisita');
+        Route::put('/notificaciones/{repartidor_id}/aceptar/pedido','NotificacionController@aceptarPedido');
+        Route::put('/notificaciones/{repartidor_id}/finalizar/pedido','NotificacionController@finalizarPedido');
+
+        //----Pruebas VarSistemaController
+        Route::get('/sistema','VarSistemaController@index');
+        Route::post('/sistema','VarSistemaController@store');
+        Route::put('/sistema/{id}','VarSistemaController@update');
 
 
-
-
-    Route::group(['middleware' => 'jwt-auth'], function(){
-
-
-
-        
-
- 
 
     });
+
+        //----Pruebas ChatClienteController
+        //Route::get('/chats/clientes','ChatClienteController@index');
+        Route::post('/chats/clientes','ChatClienteController@store');
+        Route::post('/chats/clientes/mensaje','ChatClienteController@storeMsg');
+        //Route::put('/chats/clientes/{id}','ChatClienteController@update');
+        Route::delete('/chats/clientes/{id}','ChatClienteController@destroy');
+        Route::get('/chats/clientes/{id}','ChatClienteController@show');
+        Route::get('/chats/clientes/michat/{usuario_id}','ChatClienteController@miChat');
+        Route::put('/chats/clientes/leer','ChatClienteController@leerMensajes');
+
+        //----Pruebas ChatRepartidorController
+        //Route::get('/chats/repartidores','ChatRepartidorController@index');
+        Route::post('/chats/repartidores','ChatRepartidorController@store');
+        Route::post('/chats/repartidores/mensaje','ChatRepartidorController@storeMsg');
+        //Route::put('/chats/repartidores/{id}','ChatRepartidorController@update');
+        Route::delete('/chats/repartidores/{id}','ChatRepartidorController@destroy');
+        Route::get('/chats/repartidores/{id}','ChatRepartidorController@show');
+        Route::get('/chats/repartidores/michat/{usuario_id}','ChatRepartidorController@miChat');
+        Route::put('/chats/repartidores/leer','ChatRepartidorController@leerMensajes');
 });

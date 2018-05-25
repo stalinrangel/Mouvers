@@ -40,7 +40,6 @@ export class SubcategoriasAgregarComponent implements OnInit{
   public categorias:any;
 
 	public loading = false;
-	public mostrar = true;
 
 	//Formularios
 	myFormAgregar: FormGroup;
@@ -161,7 +160,6 @@ export class SubcategoriasAgregarComponent implements OnInit{
                   //ir a login
 
                   this.showToast('warning', 'Warning!', msg.error.error);
-                  //this.mostrar = false;
               }
               else { 
                   //alert(msg.error.error);

@@ -122,8 +122,9 @@ export class CategoriasVerComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                   
             }
-            //sin usuarios
+            //sin categorias
             else if(msg.status == 404){ 
                 //alert(msg.error.error);
                 this.showToast('info', 'Info!', msg.error.error);
@@ -241,7 +242,7 @@ export class CategoriasVerComponent implements OnInit{
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
                   //ir a login
-                  this.editando = false;
+                  this.editando = true;
                   this.showToast('warning', 'Warning!', msg.error.error);
               }
               else { 

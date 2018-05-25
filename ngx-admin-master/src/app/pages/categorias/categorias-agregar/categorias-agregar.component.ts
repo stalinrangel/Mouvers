@@ -42,7 +42,6 @@ export class CategoriasAgregarComponent implements OnInit{
 	private data:any;
 
 	public loading = false;
-	public mostrar = true;
 
 	//Formularios
 	myFormAgregar: FormGroup;
@@ -131,7 +130,6 @@ export class CategoriasAgregarComponent implements OnInit{
                   //ir a login
 
                   this.showToast('warning', 'Warning!', msg.error.error);
-                  //this.mostrar = false;
               }
               else { 
                   //alert(msg.error.error);

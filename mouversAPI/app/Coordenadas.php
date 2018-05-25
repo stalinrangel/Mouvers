@@ -31,6 +31,6 @@ class Coordenadas extends Model
      *
      * @var array
      */
-    //protected $hidden = [];
+    protected $hidden = ['id'];
 
 }

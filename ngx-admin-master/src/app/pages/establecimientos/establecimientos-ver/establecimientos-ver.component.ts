@@ -381,7 +381,7 @@ export class EstablecimientosVerComponent implements OnInit{
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
                   //ir a login
-                  this.editando = false;
+                  this.editando = true;
                   this.showToast('warning', 'Warning!', msg.error.error);
               }
               else { 

@@ -24,7 +24,7 @@ class Ruta extends Model
      *
      * @var array
      */
-    protected $fillable = ['pedido_id', 'posicion', 'estado',
+    protected $fillable = ['pedido_id', 'posicion', 'estado', 'establecimiento_id',
 			'lat', 'lng'];
 
     /**

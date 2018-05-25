@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subcategoria extends Model
 {
-/**
+    /**
      * The database table used by the model.
      *
      * @var string

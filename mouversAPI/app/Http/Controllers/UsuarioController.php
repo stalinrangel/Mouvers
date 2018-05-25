@@ -464,6 +464,7 @@ class UsuarioController extends Controller
         //cargar todos los pedidos en curso (Estado 1, 2, 3)
         $pedidos = \App\Pedido::with('productos.establecimiento')
             ->with('repartidor.usuario')
+            ->with('calificacion')
             ->where('usuario_id', $id)
             ->where('estado',4)
             ->orderBy('id', 'desc')

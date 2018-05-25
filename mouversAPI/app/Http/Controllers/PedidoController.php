@@ -380,6 +380,7 @@ class PedidoController extends Controller
         $pedidos = \App\Pedido::with('usuario')
             ->with('repartidor')
             ->with('productos.establecimiento')
+            ->with('calificacion')
             ->where('estado',4)
             ->orderBy('id', 'desc')
             ->get();

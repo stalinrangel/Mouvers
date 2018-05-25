@@ -12,7 +12,7 @@ use Exception;
 class NotificacionController extends Controller
 {
 
-    //Enviar notificacion a un dispositivo mediante su token_notificacion
+    //Enviar notificacion a un dispositivo repartidor/panel mediante su token_notificacion
     public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0)
     {
         $ch = curl_init();
@@ -30,10 +30,10 @@ class NotificacionController extends Controller
     }
 
     //Enviar notificacion a un dispositivo cliente mediante su token_notificacion
-    public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null')
+    public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null', $accion = 0)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id);
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -77,12 +77,22 @@ class NotificacionController extends Controller
                     ->get();
 
             if(count($repartidores) == 0){
-                //Enviar notificacion al cliente (pedido no asignado)
-                if ($usuario->token_notificacion) {
-                    $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
+
+                //Repetir todo el proceso
+                $intento = $intento + 1;
+                if ($intento <= 2) {
+                    $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                return response()->json(['error'=>'No hay repartidores disponibles.'], 404);          
+                if ($intento == 2) {
+                    //Enviar notificacion al cliente (pedido no asignado)
+                    if ($usuario->token_notificacion) {
+                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
+                    }
+
+                    return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                }
+                          
             }
 
             //Calcular distancia(km) aproximada de los repartidores al establecimiento
@@ -159,9 +169,9 @@ class NotificacionController extends Controller
                     $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                     if ($pedidoAux->repartidor_id) {
                         //Enviar notificacion al cliente (pedido asignado)
-                        if ($usuario->token_notificacion) {
+                        /*if ($usuario->token_notificacion) {
                             $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
-                        }
+                        }*/
 
                         $bandera = true;
 
@@ -172,13 +182,27 @@ class NotificacionController extends Controller
                     }
                 }
 
-                if (!$bandera) {
-                    //Enviar notificacion al cliente (pedido no asignado)
-                    if ($usuario->token_notificacion) {
-                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
-                    }
+                //Repetir todo el proceso
+                $intento = $intento + 1;
+                if ($intento <= 2) {
+                    $this->localizarRepartidores($request, $id, $intento);
+                }
 
-                    return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                if (!$bandera && $intento == 2) {
+                    //verificar
+                    $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
+                    if (!$pedidoAux->repartidor_id) {
+
+                        //Enviar notificacion al cliente (pedido no asignado)
+                        if ($usuario->token_notificacion) {
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                        }
+
+                        return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+
+                    }else{
+                        return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+                    }
                 }
 
             }else{
@@ -196,27 +220,38 @@ class NotificacionController extends Controller
                 $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                 if ($pedidoAux->repartidor_id) {
                     //Enviar notificacion al cliente (pedido asignado)
-                    if ($usuario->token_notificacion) {
+                    /*if ($usuario->token_notificacion) {
                         $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
-                    }
+                    }*/
 
                     $bandera = true;
 
                     return response()->json(['message'=>'Tu pedido va en camino.'], 200);
                 }
 
-                /*$intento = $intento + 1;
+                //Repetir todo el proceso
+                $intento = $intento + 1;
                 if ($intento <= 2) {
                     $this->localizarRepartidores($request, $id, $intento);
-                }*/
+                }
 
-                if (!$bandera) {
-                    //Enviar notificacion al cliente (pedido no asignado)
-                    if ($usuario->token_notificacion) {
-                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                if (!$bandera && $intento == 2) {
+
+                    //verificar
+                    $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
+                    if (!$pedidoAux->repartidor_id) {
+
+                        //Enviar notificacion al cliente (pedido no asignado)
+                        if ($usuario->token_notificacion) {
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                        }
+
+                        return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+
+                    }else{
+                        return response()->json(['message'=>'Tu pedido va en camino.'], 200);
                     }
-
-                    return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                    
                 }
             }
             
@@ -433,6 +468,94 @@ class NotificacionController extends Controller
 
         return response()->json(['message'=>'Cliente notificado.'], 200);
     }
+
+    /*Un repartidor_id acepta un pedido y se notifica al cliente*/
+    public function aceptarPedido(Request $request, $repartidor_id)
+    {
+        // Comprobamos si el repartidor que nos están pasando existe o no.
+        $repartidor = \App\Repartidor::with('usuario')->find($repartidor_id);
+
+        if (count($repartidor)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el repartidor con id '.$repartidor_id], 404);
+        }      
+
+        // Listado de campos recibidos teóricamente.
+        $pedido_id=$request->input('pedido_id');
+
+        // Creamos una bandera para controlar si se ha modificado algún dato.
+        $bandera = false;
+
+        // Actualización parcial de campos.
+        if ($pedido_id != null && $pedido_id!='')
+        {
+            // Comprobamos si el pedido que nos están pasando existe o no.
+            $pedido = \App\Pedido::with('usuario')->find($pedido_id);
+
+            if (count($pedido)==0)
+            {
+                // Devolvemos error codigo http 404
+                return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
+            }
+
+            if ($pedido->estado == 2 || $pedido->repartidor_id != null) {
+                return response()->json(['error'=>'El pedido ya tiene un repartidor asignado.'],409);
+            }
+
+            $pedido->repartidor_id = $repartidor->id;
+            $pedido->repartidor_nom = $repartidor->usuario->nombre;
+            $pedido->estado = 2;
+            $bandera=true;
+        }
+
+        $repartidor->ocupado = 1;
+
+        if ($bandera)
+        {
+            // Almacenamos en la base de datos el registro.
+            if ($pedido->save() && $repartidor->save()) {
+
+                if ($pedido->usuario->token_notificacion) {
+                    $this->enviarNotificacionCliente($pedido->usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                }
+
+                return response()->json(['message'=>'Pedido aceptado.'], 200);
+            }else{
+                return response()->json(['error'=>'Error al aceptar el pedido.'], 500);
+            }
+        }
+        else
+        {
+            // Se devuelve un array error con los error encontrados y cabecera HTTP 304 Not Modified – [No Modificada] Usado cuando el cacheo de encabezados HTTP está activo
+            // Este código 304 no devuelve ningún body, así que si quisiéramos que se mostrara el mensaje usaríamos un código 200 en su lugar.
+            return response()->json(['error'=>'No se ha modificado ningún dato.'],409);
+        }
+    }
+
+    /*Un repartidor_id finaliza un pedido y se notifica al cliente*/
+    public function finalizarPedido(Request $request, $repartidor_id)
+    {
+
+        //Finalizar pedido
+        DB::table('pedidos')
+                    ->where('id', $request->input('pedido_id'))
+                    ->update(['estado' => 4]);
+
+        //Liberar repartidor
+        DB::table('repartidores')
+                    ->where('id', $repartidor_id)
+                    ->update(['ocupado' => 2]);
+
+        //Notificar al cliente
+        if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+            $this->enviarNotificacionCliente($request->input('token_notificacion'), 'El%20repartidor%20ha%20llegado%20a%20tu%20ubicación.', $request->input('pedido_id'), 1);
+        }
+
+        return response()->json(['message'=>'Pedido finalizado.'], 200);
+ 
+    }
+
 
 
 }

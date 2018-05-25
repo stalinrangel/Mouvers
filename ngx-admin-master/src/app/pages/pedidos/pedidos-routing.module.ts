@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PedidosComponent } from './pedidos.component';
-import { PedidosHistorialComponent } from './pedidos-historial/pedidos-historial.component';
-import { PedidosHoyComponent } from './pedidos-hoy/pedidos-hoy.component';
+import { PedidosCursoComponent } from './pedidos-curso/pedidos-curso.component';
+import { PedidosFinalizadosComponent } from './pedidos-finalizados/pedidos-finalizados.component';
 
 const routes: Routes = [{
   path: '',
   component: PedidosComponent,
   children: [{
     path: 'encurso',
-    component: PedidosHistorialComponent,
+    component: PedidosCursoComponent,
   },{
     path: 'finalizados',
-    component: PedidosHoyComponent,
+    component: PedidosFinalizadosComponent,
   }],
 }];
 
@@ -30,6 +30,6 @@ export class PedidosRoutingModule {
 
 export const routedComponents = [
   PedidosComponent,
-  PedidosHistorialComponent,
-  PedidosHoyComponent,
+  PedidosCursoComponent,
+  PedidosFinalizadosComponent,
 ];

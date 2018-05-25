@@ -22,7 +22,7 @@ class PasswordController extends Controller
     public function generarCodigo($correo)
     {
         //verificar si existe el cliente que nos estan pasando
-        $obj = \App\User::where('correo', $correo)->get();
+        $obj = \App\User::where('email', $correo)->get();
 
         if(count($obj)==0){
             return response()->json(['error'=>'No existe el cliente con el correo '.$correo], 404);          

@@ -196,7 +196,7 @@ export class ProductosVerComponent implements OnInit{
                   //ir a login
                   this.showToast('warning', 'Warning!', msg.error.error);
               }
-              //sin categorias o todas deshabilitadas OFF
+              //sin subcategorias o todas deshabilitadas OFF
               else if(msg.status == 404){ 
                   //alert(msg.error.error);
                   this.showToast('info', 'Info!', msg.error.error);
@@ -304,7 +304,7 @@ export class ProductosVerComponent implements OnInit{
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
                   //ir a login
-                  this.editando = false;
+                  this.editando = true;
                   this.showToast('warning', 'Warning!', msg.error.error);
               }
               else { 
