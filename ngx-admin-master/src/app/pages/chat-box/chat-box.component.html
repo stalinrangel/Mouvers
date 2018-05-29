@@ -3,27 +3,29 @@
     <nb-card>
       <nb-card-header>
       	<div class="header">
-          {{chat_nombre}}
+          {{usuario_nombre}}
+          <button (click)="printConversas()">print</button>
+          <button (click)="addConversa()">add</button>
         </div>
     </nb-card-header>
       <nb-card-body>
 		<div class="chatbox">
 			<div class="chatlogs">
-				<div *ngFor="let item of chat">
-					<div *ngIf="item.emisor_id == admin_id" class="chat friend">
-						<div class="user-photo"><img src="{{item.emisor.imagen}}"></div>
-						<p class="chat-message">{{item.msg}}</p>
+				<div *ngFor="let msg of msgList">
+					<div *ngIf="msg.emisor_id == toUser.id" class="chat friend">
+						<div class="user-photo"><img src="{{msg.userAvatar}}"></div>
+						<p class="chat-message">{{msg.msg}}</p>
 					</div>
-					<div *ngIf="item.emisor_id != admin_id" class="chat self">
-						<div class="user-photo"><img src="{{item.emisor.imagen}}"></div>
-						<p class="chat-message">{{item.msg}}</p>
+					<div *ngIf="msg.emisor_id == user.id" class="chat self">
+						<div class="user-photo"><img src="{{msg.userAvatar}}"></div>
+						<p class="chat-message">{{msg.msg}}</p>
 					</div>
 				</div>
 			</div>
 
 			<div class="chat-form">
-				<textarea name="msg" [(ngModel)]="msg" id="msg"></textarea>
-				<button [disabled]="!msg || msg == ''" (click)="enviarMensaje()">Enviar</button>
+				<textarea name="msg" [(ngModel)]="editorMsg" id="msg"></textarea>
+				<button [disabled]="!editorMsg || editorMsg == ''" (click)="sendMsg()">Enviar</button>
 			</div>
 
 		</div>        

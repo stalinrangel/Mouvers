@@ -130,9 +130,16 @@ export class ClientesVerComponent implements OnInit{
   //Redirigir al chat
   chat(cliente) {
     console.log(cliente);
-    localStorage.setItem('mouvers_chat_id', cliente.id);
-    localStorage.setItem('mouvers_chat_nombre', cliente.nombre);
-    localStorage.setItem('mouvers_chat_tipo_usuario', cliente.tipo_usuario);
+    if (cliente.chat_cliente) {
+      localStorage.setItem('mouvers_chat_id', cliente.chat_cliente.id);
+    }else{
+      localStorage.setItem('mouvers_chat_id', '');
+    }
+    localStorage.setItem('mouvers_usuario_id', cliente.id);
+    localStorage.setItem('mouvers_usuario_tipo', cliente.tipo_usuario);
+    localStorage.setItem('mouvers_usuario_nombre', cliente.nombre);
+    localStorage.setItem('mouvers_usuario_imagen', cliente.imagen);
+    localStorage.setItem('mouvers_usuario_token_notifi', cliente.token_notificacion);
 
     this.router.navigateByUrl('/pages/chat-box');
   }

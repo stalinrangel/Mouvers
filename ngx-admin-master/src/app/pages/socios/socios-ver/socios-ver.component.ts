@@ -139,9 +139,17 @@ export class SociosVerComponent implements OnInit{
   //Redirigir al chat
   chat(repartidor) {
     console.log(repartidor);
-    localStorage.setItem('mouvers_chat_id', repartidor.usuario.id);
-    localStorage.setItem('mouvers_chat_nombre', repartidor.usuario.nombre);
-    localStorage.setItem('mouvers_chat_tipo_usuario', repartidor.usuario.tipo_usuario);
+
+    if (repartidor.usuario.chat_repartidor) {
+      localStorage.setItem('mouvers_chat_id', repartidor.usuario.chat_repartidor.id);
+    }else{
+      localStorage.setItem('mouvers_chat_id', '');
+    }
+    localStorage.setItem('mouvers_usuario_id', repartidor.usuario.id);
+    localStorage.setItem('mouvers_usuario_tipo', repartidor.usuario.tipo_usuario);
+    localStorage.setItem('mouvers_usuario_nombre', repartidor.usuario.nombre);
+    localStorage.setItem('mouvers_usuario_imagen', repartidor.usuario.imagen);
+    localStorage.setItem('mouvers_usuario_token_notifi', repartidor.usuario.token_notificacion);
 
     this.router.navigateByUrl('/pages/chat-box');
   }

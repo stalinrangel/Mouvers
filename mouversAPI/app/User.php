@@ -60,4 +60,18 @@ class User extends Model implements AuthenticatableContract,
         return $this->hasOne('App\Repartidor', 'usuario_id');
     }
 
+    // Relación de usuario(Cliente) con chats_clientes:
+    public function chat_cliente()
+    {
+        // 1 usuario cliente puede tener un chat
+        return $this->hasOne('App\ChatCliente', 'usuario_id');
+    }
+
+    // Relación de usuario(Repartidor) con chats_repartidores:
+    public function chat_repartidor()
+    {
+        // 1 usuario repartidor puede tener un chat
+        return $this->hasOne('App\ChatRepartidor', 'usuario_id');
+    }
+
 }

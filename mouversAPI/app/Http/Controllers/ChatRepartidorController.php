@@ -34,7 +34,25 @@ class ChatRepartidorController extends Controller
      */
     public function index()
     {
-        //
+        //cargar todos los chats
+        $chats = \App\ChatRepartidor::
+            with(['usuario' => function ($query) {
+                $query->select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion');
+            }])
+            ->get();
+
+        if(count($chats)!=0){
+            //Cargar el ultimo mensaje
+            for ($i=0; $i < count($chats) ; $i++) { 
+                $chats[$i]->ultimo_msg = $chats[$i]
+                    ->mensajes()
+                    ->select('id', 'msg', 'created_at')
+                    ->orderBy('id', 'desc')
+                    ->take(1)->first(); 
+            }          
+        }
+
+        return response()->json(['chats'=>$chats], 200);
     }
 
     /**
@@ -106,7 +124,7 @@ class ChatRepartidorController extends Controller
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                     }
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                 }
 
@@ -126,7 +144,7 @@ class ChatRepartidorController extends Controller
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                     }
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                 }
            }
@@ -155,7 +173,7 @@ class ChatRepartidorController extends Controller
                             $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                         }
 
-                        $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                        $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                     }
 
@@ -175,7 +193,7 @@ class ChatRepartidorController extends Controller
                             $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                         }
 
-                        $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                        $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                     }
                 }
@@ -274,7 +292,7 @@ class ChatRepartidorController extends Controller
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                     }
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                 }
 
@@ -294,7 +312,7 @@ class ChatRepartidorController extends Controller
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                     }
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                 }
             }
@@ -326,7 +344,7 @@ class ChatRepartidorController extends Controller
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                     }
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                 }
 
@@ -346,7 +364,7 @@ class ChatRepartidorController extends Controller
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
                     }
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null');
+                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
 
                 }
             }

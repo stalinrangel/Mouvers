@@ -22,6 +22,9 @@ import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
 
 import { AgmCoreModule } from '@agm/core';
 
+import { ChatService } from './services/chat-service/chat.service';
+import { ConversationsService } from './services/conversations-service/conversations.service';
+
 
 @NgModule({
   declarations: [AppComponent,  ],
@@ -52,6 +55,8 @@ import { AgmCoreModule } from '@agm/core';
   ],
   bootstrap: [AppComponent],
   providers: [
+    ConversationsService,
+    ChatService,
     RutaBaseService,
     { provide: APP_BASE_HREF, useValue: '/' },
   ],

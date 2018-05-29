@@ -19,9 +19,15 @@ class RepartidorController extends Controller
     public function index()
     {
         //cargar todos los repartidores
-        $repartidores = \App\Repartidor::with(['usuario' => function ($query){
-                    $query->where('tipo_usuario', 3);
-                }])->get();
+        $repartidores = \App\Repartidor::
+            with(['usuario' => function ($query){
+                    $query->select('id', 'email', 'nombre', 'ciudad', 'estado', 'telefono', 'imagen', 'tipo_usuario', 'token_notificacion')
+                    ->where('tipo_usuario', 3)
+                    ->with(['chat_repartidor' => function ($query) {
+                        $query->select('id', 'admin_id', 'usuario_id');
+                    }]);
+                }])
+            ->get();
 
         if(count($repartidores) == 0){
             return response()->json(['error'=>'No existen repartidores.'], 404);          

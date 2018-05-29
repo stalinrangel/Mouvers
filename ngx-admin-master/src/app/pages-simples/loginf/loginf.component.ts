@@ -135,6 +135,7 @@ export class LoginfComponent implements OnInit {
 		    localStorage.setItem('mouvers_token', this.data.token);
 		    localStorage.setItem('mouvers_user_id', this.data.user.id);
 		    localStorage.setItem('mouvers_user_nombre', this.data.user.nombre);
+		    localStorage.setItem('mouvers_user_imagen', this.data.user.imagen);
 		    localStorage.setItem('mouvers_user_tipo', this.data.user.tipo_usuario);
 		    localStorage.setItem('mouvers_token_notificacion', this.data.user.token_notificacion);
 		    

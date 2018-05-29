@@ -102,6 +102,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::get('/pedidos/fecha/hoy','PedidoController@pedidosHoy');
         Route::get('/pedidos/estado/curso','PedidoController@pedidosEncurso');
         Route::get('/pedidos/estado/finalizados','PedidoController@pedidosFinalizados');
+        Route::get('/pedidos/estadisticas/{cliente_id}','PedidoController@conteoPedidos');
 
         //----Pruebas CalificacionController
         Route::get('/calificaciones','CalificacionController@index');
@@ -173,7 +174,7 @@ Route::group(  ['middleware' =>'cors'], function(){
     });
 
         //----Pruebas ChatClienteController
-        //Route::get('/chats/clientes','ChatClienteController@index');
+        Route::get('/chats/clientes','ChatClienteController@index');
         Route::post('/chats/clientes','ChatClienteController@store');
         Route::post('/chats/clientes/mensaje','ChatClienteController@storeMsg');
         //Route::put('/chats/clientes/{id}','ChatClienteController@update');
@@ -183,7 +184,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/chats/clientes/leer','ChatClienteController@leerMensajes');
 
         //----Pruebas ChatRepartidorController
-        //Route::get('/chats/repartidores','ChatRepartidorController@index');
+        Route::get('/chats/repartidores','ChatRepartidorController@index');
         Route::post('/chats/repartidores','ChatRepartidorController@store');
         Route::post('/chats/repartidores/mensaje','ChatRepartidorController@storeMsg');
         //Route::put('/chats/repartidores/{id}','ChatRepartidorController@update');

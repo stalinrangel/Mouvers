@@ -22,8 +22,12 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        //cargar todos los usuarios
-        $usuarios = \App\User::where('tipo_usuario', 2)->get();
+        //cargar todos los usuarios clientes
+        $usuarios = \App\User::select('id', 'email', 'nombre', 'ciudad', 'estado', 'telefono', 'imagen', 'tipo_usuario', 'token_notificacion')
+            ->with(['chat_cliente' => function ($query) {
+                $query->select('id', 'admin_id', 'usuario_id');
+            }])
+            ->where('tipo_usuario', 2)->get();
 
         if(count($usuarios) == 0){
             return response()->json(['message'=>'No existen usuarios.'], 404);          
