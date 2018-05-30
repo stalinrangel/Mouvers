@@ -11,10 +11,10 @@ use DB;
 class ChatClienteController extends Controller
 {
     //Enviar notificacion a un dispositivo repartidor/panel mediante su token_notificacion
-    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0)
+    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0, $obj = 'null')
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion);
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -28,20 +28,24 @@ class ChatClienteController extends Controller
     }
 
     //Enviar notificacion a un dispositivo cliente mediante su token_notificacion
-    public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null', $accion = 0)
+    public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null', $accion = 0, $obj = 'null')
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion);
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);
         curl_setopt($ch, CURLOPT_POST, TRUE);
-        ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        //$fields = array('contenido'=>$msg);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, "accion=t");
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
         $response = curl_exec($ch);
         curl_close($ch);
+
+        return $response;
     }
 
     /**
@@ -88,141 +92,6 @@ class ChatClienteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('admin_id') )
-        {
-            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro admin_id.'],422);
-        }
-        if ( !$request->input('usuario_id') )
-        {
-            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro usuario_id.'],422);
-        }
-        // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('msg') )
-        {
-            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro msg.'],422);
-        }
-        if ( !$request->input('emisor') )
-        {
-            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro emisor.'],422);
-        }
-        if ( !$request->input('token_notificacion') )
-        {
-            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro token_notificacion.'],422);
-        }
-
-        //Verificar si existe un chat entre el admin y el cliente
-        $auxChat = \App\ChatCliente::where('admin_id', $request->input('admin_id'))
-            ->where('usuario_id', $request->input('usuario_id'))->get();
-
-        //Actualizar el chat con el mensaje
-        if(count($auxChat)!=0){
-
-           if ($request->input('emisor') == 'admin') {
-
-               $msg = $auxChat[0]->mensajes()->create([
-                    'msg' => $request->input('msg'),
-                    'emisor_id' => $auxChat[0]->admin_id,
-                    'receptor_id' => $auxChat[0]->usuario_id,
-                ]);
-
-               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
-            
-                    $explode1 = explode(" ",$request->input('msg'));
-                    $auxMsg = null;
-                    for ($i=0; $i < count($explode1); $i++) { 
-                        $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                    }
-
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
-
-                }
-
-           }else if ($request->input('emisor') == 'cliente') {
-
-               $msg = $auxChat[0]->mensajes()->create([
-                    'msg' => $request->input('msg'),
-                    'emisor_id' => $auxChat[0]->usuario_id,
-                    'receptor_id' => $auxChat[0]->admin_id,
-                ]);
-
-               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
-            
-                    $explode1 = explode(" ",$request->input('msg'));
-                    $auxMsg = null;
-                    for ($i=0; $i < count($explode1); $i++) { 
-                        $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                    }
-
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
-
-                }
-           }
-
-           return response()->json(['message'=>'Mensaje enviado con éxito.',
-             'chat'=>$auxChat[0], 'msg'=>$msg], 200);
-        }
-        //Crear un nuevo chat
-        else{
-
-            if($chat=\App\ChatCliente::create($request->all())){
-
-                if ($request->input('emisor') == 'admin') {
-
-                   $msg = $chat->mensajes()->create([
-                        'msg' => $request->input('msg'),
-                        'emisor_id' => $chat->admin_id,
-                        'receptor_id' => $chat->usuario_id,
-                    ]);
-
-                   if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
-
-                        $explode1 = explode(" ",$request->input('msg'));
-                        $auxMsg = null;
-                        for ($i=0; $i < count($explode1); $i++) { 
-                            $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                        }
-
-                        $this->enviarNotificacionCliente($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
-
-                    }
-
-                }else if ($request->input('emisor') == 'cliente') {
-
-                   $msg = $chat->mensajes()->create([
-                        'msg' => $request->input('msg'),
-                        'emisor_id' => $chat->usuario_id,
-                        'receptor_id' => $chat->admin_id,
-                    ]);
-
-                   if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
-
-                        $explode1 = explode(" ",$request->input('msg'));
-                        $auxMsg = null;
-                        for ($i=0; $i < count($explode1); $i++) { 
-                            $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                        }
-
-                        $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
-
-                    }
-                }
-
-               return response()->json(['message'=>'Mensaje enviado con éxito.',
-                 'chat'=>$chat, 'msg'=>$msg], 200);
-            }else{
-                return response()->json(['error'=>'Error al crear el chat.'], 500);
-            }
-        }
-    }
-
     /*crear un mesage asociado a un chat*/
     public function storeMsg(Request $request)
     {
@@ -298,13 +167,30 @@ class ChatClienteController extends Controller
 
                if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
 
-                    $explode1 = explode(" ",$request->input('msg'));
+                    /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
                     for ($i=0; $i < count($explode1); $i++) { 
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                    }
+                    }*/
 
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
+                    // Orden del reemplazo
+                    //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                    $order   = array("\r\n", "\n", "\r", " ");
+                    $replace = '%20';
+
+                    // Procesa primero \r\n así no es convertido dos veces.
+                    $newstr = str_replace($order, $replace, $request->input('msg'));
+
+                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+
+                    //Tratar los espacios del nombre
+                    $nombre = str_replace($order, $replace, $emisor->nombre);
+                    $emisor->nombre = $nombre;
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    $obj = json_encode($obj);
+
+                    $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
 
@@ -318,13 +204,30 @@ class ChatClienteController extends Controller
 
                if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
 
-                    $explode1 = explode(" ",$request->input('msg'));
+                    /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
                     for ($i=0; $i < count($explode1); $i++) { 
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                    }
+                    }*/
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
+                    // Orden del reemplazo
+                    //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                    $order   = array("\r\n", "\n", "\r", " ");
+                    $replace = '%20';
+
+                    // Procesa primero \r\n así no es convertido dos veces.
+                    $newstr = str_replace($order, $replace, $request->input('msg'));
+
+                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+
+                    //Tratar los espacios del nombre
+                    $nombre = str_replace($order, $replace, $emisor->nombre);
+                    $emisor->nombre = $nombre;
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    $obj = json_encode($obj);
+
+                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
             }
@@ -353,13 +256,30 @@ class ChatClienteController extends Controller
 
                if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
 
-                    $explode1 = explode(" ",$request->input('msg'));
+                    /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
                     for ($i=0; $i < count($explode1); $i++) { 
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                    }
+                    }*/
 
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
+                    // Orden del reemplazo
+                    //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                    $order   = array("\r\n", "\n", "\r", " ");
+                    $replace = '%20';
+
+                    // Procesa primero \r\n así no es convertido dos veces.
+                    $newstr = str_replace($order, $replace, $request->input('msg'));
+
+                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+
+                    //Tratar los espacios del nombre
+                    $nombre = str_replace($order, $replace, $emisor->nombre);
+                    $emisor->nombre = $nombre;
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    $obj = json_encode($obj);
+
+                    $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
 
@@ -373,13 +293,30 @@ class ChatClienteController extends Controller
 
                if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
 
-                    $explode1 = explode(" ",$request->input('msg'));
+                    /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
                     for ($i=0; $i < count($explode1); $i++) { 
                         $auxMsg = $auxMsg.$explode1[$i].'%20'; 
-                    }
+                    }*/
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), 'Nuevo%20mensaje:%20'.$auxMsg, 'null', 3);
+                    // Orden del reemplazo
+                    //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                    $order   = array("\r\n", "\n", "\r", " ");
+                    $replace = '%20';
+
+                    // Procesa primero \r\n así no es convertido dos veces.
+                    $newstr = str_replace($order, $replace, $request->input('msg'));
+
+                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+
+                    //Tratar los espacios del nombre
+                    $nombre = str_replace($order, $replace, $emisor->nombre);
+                    $emisor->nombre = $nombre;
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    $obj = json_encode($obj);
+
+                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
             }
