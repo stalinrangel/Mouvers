@@ -11,9 +11,12 @@ $nb-themes: nb-register-theme((
   sidebar-header-gap: 2rem,
   sidebar-header-height: initial,
   layout-content-width: 1400px,
-
   font-main: Roboto,
   font-secondary: Exo,
+  color-fg-highlight: #76f8f6,
+  link-color: #00203e,
+  link-color-hover: #00203e,
+  color-success: #0b417a
 ), default, default);
 
 $nb-themes: nb-register-theme((

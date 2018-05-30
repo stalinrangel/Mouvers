@@ -40,9 +40,9 @@
 </div-->
 
 <div class="wrapper">
-    <div class="container">
+    <div class="containerChat">
         <div class="left">
-            <nb-tabset fullWidth>
+            <nb-tabset fullWidth style="height: 100% !important;">
 		        <nb-tab tabTitle="Clientes">
 		        	<div class="content-initChat">
 		        		<i class="fa fa-edit search"></i> Iniciar Conversación con Cliente
@@ -52,6 +52,7 @@
 		            </div-->
 		            <ul class="people">
 		                <li class="person">
+		                	<i class="ion-close-round icon-delete" (click)="deletChat()"></i>
 		                    <img src="https://www.futuretechpodcast.com/wp-content/uploads/2018/05/podcast-small-ShareRoot-.jpg" alt="" />
 		                    <span class="name">Thomas Bangalter</span>
 		                    <span class="time">2:09 PM</span>
@@ -148,9 +149,12 @@
 		    </nb-tabset>
         </div>
         <div class="right">
-            <div class="top"><span class="name">Dog Woofson</span></div>
-			<div class="chatbox ">
-				<div class="chatlogs message-wrap">
+            <div class="top">
+            	<span class="name">Dog Woofson</span>
+            	<i class="fa fa-refresh icon-refresh"></i>
+            </div>
+			<div class="chatbox">
+				<div #scrollChat class="chatlogs message-wrap">
 			    <div *ngFor="let msg of msgList"
 			         class="message"
 			         [class.leftmsg]=" msg.emisor_id == toUser.id "
@@ -169,7 +173,7 @@
 			    </div>
 				</div>
 			    <div class="chat-form">
-					<textarea name="msg" [(ngModel)]="editorMsg" id="msg" placeholder="Escribe un mensaje"></textarea>
+					<textarea name="msg" [(ngModel)]="editorMsg" id="msg" placeholder="Escribe un mensaje..." (keydown)="enterMsg($event)"></textarea>
 					<button type="button" class="btn btn-primary btn-icon btn-send" [disabled]="!editorMsg || editorMsg == ''" (click)="sendMsg()">
 						<i class="ion-android-send icon-send"></i>
 					</button>

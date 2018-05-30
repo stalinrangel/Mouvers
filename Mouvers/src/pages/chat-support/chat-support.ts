@@ -1,9 +1,11 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams, Events, Content } from 'ionic-angular';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { NavController, NavParams, Events, Content, Loading, LoadingController } from 'ionic-angular';
 import { ChatServiceProvider, ChatMessage, UserInfo } from "../../providers/chat-service/chat-service";
 import { RuteBaseProvider } from '../../providers/rute-base/rute-base';
 import { StorageProvider } from '../../providers/storage/storage'; 
 import { HttpClient } from '@angular/common/http';
+import { OneSignal } from '@ionic-native/onesignal';
+
 
 @Component({
   selector: 'page-chat-support',
@@ -17,6 +19,7 @@ export class ChatSupportPage {
 	user: UserInfo;
 	toUser: UserInfo;
 	editorMsg = '';
+	loading: Loading;
 	showEmojiPicker = false;
 
 	public usuario: any;
@@ -34,12 +37,11 @@ export class ChatSupportPage {
 	  	chat_id: ''
 	}
 
-  constructor(navParams: NavParams, private chatService: ChatServiceProvider, private events: Events, public storage: StorageProvider, private rutebaseApi: RuteBaseProvider, public http: HttpClient) {
+  constructor(navParams: NavParams, private chatService: ChatServiceProvider, private events: Events, public storage: StorageProvider, private rutebaseApi: RuteBaseProvider, public http: HttpClient, public loadingCtrl: LoadingController, private oneSignal: OneSignal, public cdr: ChangeDetectorRef) {
 
   	this.admin_id = navParams.get('admin_id');
   	this.chat_id = navParams.get('chat_id');
-  	this.token_notificacion = navParams.get('token_notificacion');
-   
+  	this.token_notificacion = navParams.get('token_notificacion');  
     this.usuario = this.storage.getObject('userMouver');
     this.toUser = {
       id: this.admin_id
@@ -52,21 +54,28 @@ export class ChatSupportPage {
   }
 
 	ionViewWillLeave() {
-		// unsubscribe
 		this.events.unsubscribe('chat:received');
 	}
 
 	ionViewDidEnter() {
-		//get message list
 		if (this.chat_id != '') {
+			this.msgList = [];
+			this.showLoading('Cargando conversación');
 			this.getMsg();
 		}		
 
-		// Subscribe to received  new message events
 		this.events.subscribe('chat:received', msg => {
-
-		  this.pushNewMsg(msg);
-		  console.log(msg)
+			let newMsg: ChatMessage = {
+			  id: Date.now().toString(),
+			  emisor_id: parseInt(this.toUser.id),
+			  userAvatar: this.user.avatar,
+			  receptor_id: parseInt(this.user.id),
+			  created_at: Date.now(),
+			  msg: msg.msg,
+			  status: 2
+			};
+			this.pushNewMsg(newMsg);
+			this.cdr.detectChanges();
 		})
 	}
 
@@ -75,6 +84,7 @@ export class ChatSupportPage {
 	    	).subscribe(res => {
 	        this.msgList = res;
 	        this.scrollToBottom();
+	        this.loading.dismiss();
 	    });
 	}
 
@@ -86,7 +96,6 @@ export class ChatSupportPage {
 	sendMsg() {
 		if (!this.editorMsg.trim()) return;
 
-		// Mock message
 		const id = Date.now().toString();
 		
 		let newMsg: ChatMessage = {
@@ -112,7 +121,6 @@ export class ChatSupportPage {
 		this.send_msg.msg = msg;
 		this.send_msg.token_notificacion = this.token_notificacion;
 		this.send_msg.chat_id = this.chat_id;
-		console.log(this.send_msg);
 		this.http.post(this.rutebaseApi.getRutaApi()+'chats/clientes/mensaje', this.send_msg)
 	    .toPromise()
 	    .then(
@@ -162,6 +170,14 @@ export class ChatSupportPage {
 	private setTextareaScroll() {
 		const textarea = this.messageInput.nativeElement;
 		textarea.scrollTop = textarea.scrollHeight;
+	}
+
+	showLoading(text) {
+	    this.loading = this.loadingCtrl.create({
+	      content: text,
+	      spinner: 'ios'
+	    });
+	    this.loading.present();
 	}
 
 }

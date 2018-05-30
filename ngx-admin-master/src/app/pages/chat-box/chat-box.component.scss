@@ -26,20 +26,18 @@
   .chatbox {
   	width: 100%;
     min-width: 390px;
-    height: 590px;
+    height: calc(100% - 24px);
     background: #fff;
     padding: 25px;
     margin: 0px auto;
-
   }
 
   .chatlogs {
   	padding: 10px;
   	width: 100%;
-  	height: 450px;
+  	height: calc(100% - 90px);
   	overflow-x: hidden;
   	overflow-y: scroll;
-
   }
 
   .chatlogs::-webkit-scrollbar {
@@ -59,16 +57,11 @@
   	border-radius: 3px;
   	resize: none;
   	padding: 10px;
-  	font-size: 18px;
   	color: #333;
-    margin-top: 25px;
+    margin-top: 15px;
     float: left;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px; 
-  }
-
-  .chat-form textarea:focus {
-  	background: #fff;
   }
 
   .chat-form textarea::-webkit-scrollbar {
@@ -79,12 +72,17 @@
   	border-radius: 5px;
   	background: rgba(0,0,0,.1);
   }
+
+  nb-tab {
+    height: calc(100% - 62px);
+    overflow: hidden;
+  }
  
   .btn-send{
     float: left;
-    margin-top: 25px;
+    margin-top: 15px;
     width: 10%;
-    height: 68px;
+    height: 64px;
     font-size: 35px;
     background-color: #eeeeee;
     color: #011c3d;
@@ -96,6 +94,34 @@
     font-family: Ionicons;
   }
 
+  .icon-delete{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    bottom: 0;
+    margin: auto;
+    display: table;
+    font-size: 16px;
+    color: #fff;
+    font-family: Ionicons;
+    z-index: 9999;
+    opacity: 0;
+  }
+
+  li:hover .icon-delete{
+    opacity: 1;
+  }
+
+  .icon-delete:hover{
+    transform: scale(1.3);
+  }
+
+  .icon-refresh{
+    font-family: FontAwesome;
+    float: right;
+    cursor: pointer;
+  }
+
   $white: #fff;
   $black: #000;
   $bg: #f8f8f8;
@@ -103,15 +129,16 @@
   $dark: #1a1a1a;
   $light: #e6e6e6;
   $wrapper: 1000px;
-  $blue: #00b0ff;
+  $blue: #0b417a;
 
   .wrapper {
-    height: 800px;
+    height: calc(100vh - 12.75rem) !important;
+    overflow: hidden;
+    position: relative;
   }
-  .container {
-    top: 50%;
-    left: 50%;
-    height: 75%;
+  .containerChat {
+    width: 100%;
+    height: 100%;
     background-color: $white;
     .left {
       float: left;
@@ -154,7 +181,7 @@
         position: relative;
         top: 3px;
         text-align: right;
-        color: #2196F3;
+        color: #0b417a;
         font-family: FontAwesome;
         cursor: pointer;
         margin-right: 5px;
@@ -164,7 +191,7 @@
         border-right: 1px solid $light;
         border-left: 1px solid $light;
         width: calc(100% + 2px);
-        height: 500px;
+        height: 100%;
         overflow-y: scroll;
         overflow-x: hidden; 
           .person {
@@ -209,7 +236,7 @@
             }
             .preview {
                 font-size: 14px;
-                display: inline-block;
+                display: block;
                 overflow: hidden !important;
                 width: 70%;
                 white-space: nowrap;
@@ -263,7 +290,7 @@
     text-align: center;
     margin-bottom: 12px;
     font-size: 14px;
-    color: #2196F3;
+    color: #0b417a;
     cursor: pointer;
   } 
 

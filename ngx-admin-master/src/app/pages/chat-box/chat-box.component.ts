@@ -59,8 +59,8 @@ export class ChatBoxComponent implements OnInit{
 	public msg:any;
 
 	//Manejo del chat
-	//@ViewChild(Content) content: Content;
-	//@ViewChild('chat_input') messageInput: ElementRef;
+	//@ViewChild(Content) contentM: Content;
+	@ViewChild('scrollChat') chatContent: ElementRef;
 	msgList: ChatMessage[] = [];
 	user: UserInfo;
 	toUser: UserInfo;
@@ -149,14 +149,16 @@ export class ChatBoxComponent implements OnInit{
 	    return this.chatService.getMsgList(this.chat_id, this.usuario_tipo
 	    	).subscribe(res => {
 	        this.msgList = res;
-	        //this.scrollToBottom();
+	        this.scrollToBottom();
 	    });
 	}
 
-	/*onFocus() {
-		this.content.resize();
-		this.scrollToBottom();
-	}*/
+	enterMsg(event:any){
+	   if(event.keyCode == 13){
+	      this.sendMsg();
+	      event.preventDefault();
+	   }
+	}
 
 	sendMsg() {
 		if (!this.editorMsg.trim()) return;
@@ -231,25 +233,22 @@ export class ChatBoxComponent implements OnInit{
 		} else if (msg.receptor_id === userId && msg.emisor_id === toUserId) {
 		  this.msgList.push(msg);
 		}
-		//this.scrollToBottom();
+		this.scrollToBottom();
 	}
 
 	getMsgIndexById(id: string) {
 		return this.msgList.findIndex(e => e.id === id)
 	}
 
-	/*scrollToBottom() {
+	scrollToBottom() {
 		setTimeout(() => {
-		  if (this.content.scrollToBottom) {
-		    this.content.scrollToBottom();
-		  }
+		  this.chatContent.nativeElement.scrollTop = this.chatContent.nativeElement.scrollHeight;
 		}, 400)
-	}*/
+	}
 
-	/*private setTextareaScroll() {
-		const textarea = this.messageInput.nativeElement;
-		textarea.scrollTop = textarea.scrollHeight;
-	}*/
+	deletChat(){
+		console.log('entro');
+	}
 
 	private showToast(type: string, title: string, body: string) {
 	  this.config = new ToasterConfig({
