@@ -11,11 +11,13 @@
 
   nb-tab {
     padding: nb-theme(padding);
+    width: 50%;
   }
 
   /deep/ ngx-tab1, /deep/ ngx-tab2 {
     display: block;
     padding: nb-theme(padding);
+    width: 50%;
   }
 
   @include media-breakpoint-down(xs) {
