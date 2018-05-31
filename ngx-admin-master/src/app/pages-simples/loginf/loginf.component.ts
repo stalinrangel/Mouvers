@@ -91,6 +91,8 @@ export class LoginfComponent implements OnInit {
 	        localStorage.setItem('mouvers_token_notificacion', userId);
 	      });
 	    });
+
+	    
 	}
 
 	private showToast(type: string, title: string, body: string) {

@@ -19,6 +19,8 @@ import { ConversationsService, Conversation } from "../../services/conversations
 
 import { Observable } from 'rxjs/Observable';
 
+import { NbSidebarService } from '@nebular/theme';
+
 @Component({
   selector: 'ngx-chat-box',
   styleUrls: ['./chat-box.component.scss'],
@@ -90,7 +92,8 @@ export class ChatBoxComponent implements OnInit{
 	conversations: Conversation[] = [];
   	conversations$: Observable<Conversation[]>;
 
-	constructor( private modalService: NgbModal,
+	constructor( private sidebarService: NbSidebarService,
+		   private modalService: NgbModal,
 	       private toasterService: ToasterService,
 	       private http: HttpClient,
 	       private router: Router,
@@ -124,8 +127,11 @@ export class ChatBoxComponent implements OnInit{
 
 
 	ngOnInit() {
+
+		this.toggleSidebar();
+		
 		//get message list
-		if (this.chat_id != '') {
+		if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
 			this.getMsg();
 		}
 
@@ -144,6 +150,12 @@ export class ChatBoxComponent implements OnInit{
     	this.conversations = this.conversationsService.getConversas();
 
 	}
+
+	/*Ocultar sidebar*/
+	toggleSidebar(): boolean {
+	    this.sidebarService.toggle(true, 'menu-sidebar');
+	    return false;
+	  }
 
 	getMsg() {
 	    return this.chatService.getMsgList(this.chat_id, this.usuario_tipo
@@ -180,6 +192,7 @@ export class ChatBoxComponent implements OnInit{
 		this.chatService.sendMsg(newMsg).then(() => {})
 		this.sendMsgServer(this.editorMsg,id);
 		this.editorMsg = '';
+		this.setUltimoMsg(newMsg);
 		 
 	}
 
@@ -214,6 +227,13 @@ export class ChatBoxComponent implements OnInit{
 			if (index !== -1) {
 			  this.msgList[index].status = 2;
 			}
+
+			/*Actualizar el chat_id en los servicios de las conversas*/
+			if (this.usuario_tipo == '2') {
+				this.conversationsService.updateConversa(this.datos.chat.id, this.datos.chat.usuario_id, this.datos.msg.token_notificacion);
+			}
+
+			/*Falta para los repartidores*/
 		},
 		msg => {
 			console.log(msg);
@@ -271,128 +291,100 @@ export class ChatBoxComponent implements OnInit{
 	  this.toasterService.popAsync(toast);
 	}
 
-	enviarMensaje() {
-
-		//Peticion a la tabla de mensajes de los clientes
-		if (this.chat_tipo_usuario == '2') {
-			var url_final = 'cliente';
-		}
-		//Peticion a la tabla de mensajes de los repartidores
-		else{
-			var url_final = 'repartidor';
-		}
-
-		//this.loading = true;
-
-		var datos= {
-	        token: localStorage.getItem('mouvers_token'),
-	        msg: this.msg,
-	        estado: 1,
-	        emisor_id: this.admin_id,
-	        receptor_id: this.chat_id,
-	      }
-	    console.log(datos);
-
-		setTimeout(()=>{
-			this.msg = null;
-		},6);
-
-		this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/mensajes/'+url_final, datos)
-		   .toPromise()
-		   .then(
-		     data => { // Success
-		       console.log(data);
-
-		       //this.loading = false;
-
-		     },
-		     msg => { // Error
-		       console.log(msg);
-		       console.log(msg.error.error);
-
-		       //this.loading = false;
-
-		       //token invalido/ausente o token expiro
-		       if(msg.status == 400 || msg.status == 401){ 
-		            //alert(msg.error.error);
-		            this.showToast('warning', 'Warning!', msg.error.error);
-		        }
-		        //sin usuarios
-		        else { 
-		            //alert(msg.error.error);
-		            this.showToast('info', 'Info!', msg.error.error);
-		        }
-		        
-
-		     }
-		   );
-	}
-
-	/*Actualiza los mensajes de un receptor_id a leidos (estado=2)*/
-	leerMensajes(receptor_id, emisor_id) {
-
-		//Peticion a la tabla de mensajes de los clientes
-		if (this.chat_tipo_usuario == '2') {
-			var url_final = 'cliente/leer';
-		}
-		//Peticion a la tabla de mensajes de los repartidores
-		else{
-			var url_final = 'repartidor/leer';
-		}
-
-		var datos= {
-	        token: localStorage.getItem('mouvers_token'),
-	        emisor_id: emisor_id, // cliente/repartidor
-	        receptor_id: receptor_id, // admin
-	      }
-
-		this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/mensajes/'+url_final, datos)
-		   .toPromise()
-		   .then(
-		     data => { // Success
-		       console.log(data);
-
-		     },
-		     msg => { // Error
-		       console.log(msg);
-
-		       //token invalido/ausente o token expiro
-		       if(msg.status == 400 || msg.status == 401){ 
-		            //alert(msg.error.error);
-		            this.showToast('warning', 'Warning!', msg.error.error);
-		        }
-		        
-		     }
-		   );
-	}
-
 	printConversas() {	
 		//console.log(this.conversationsService.getConversas());
 		console.log(this.conversations);
 	}
 
-	addConversa() {	
+	addConversa(msg) {	
 		const aux: Conversation = {
-				id: 6,
-				admin_id: 6,
-				usuario_id: 6,
-				created_at: 'prueba',
-				updated_at: 'prueba',
+				id: 0,
+				admin_id: parseInt(this.admin_id),
+				usuario_id: parseInt(this.usuario_id),
+				created_at: msg.created_at,
+				updated_at: msg.created_at,
 				ultimo_msg: {
-				    id: 6,
-				    msg: 'prueba',
-				    created_at: 'prueba',
+				    id: msg.id,
+				    msg: msg.msg,
+				    created_at: msg.created_at,
 				},
 				usuario: {
-				    id: 6,
-				    nombre: 'prueba',
-				    imagen: 'prueba',
-				    tipo_usuario: 6,
-				    token_notificacion: 'prueba',
+				    id: parseInt(this.usuario_id),
+				    nombre: this.usuario_nombre,
+				    imagen: this.usuario_imagen,
+				    tipo_usuario: parseInt(this.usuario_tipo),
+				    token_notificacion: this.token_notificacion,
 				},
 		};
 
+		/*Falta validar el tipo*/
 		this.conversationsService.agregarConversation(aux);
+	}
+
+	/*Cargar el chat de una conversa de la lista*/
+	getChatOfConversa(conversa) {
+
+		if (conversa.usuario.id != this.usuario_id) {
+			//console.log(conversa);
+		    this.setUsuario(conversa.id,conversa.usuario.id,conversa.usuario.tipo_usuario,conversa.usuario.nombre,conversa.usuario.imagen,conversa.usuario.token_notificacion);
+
+		    //get message list
+			if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
+				this.getMsg();
+			}
+		}
+	    
+	}
+
+	/*Setear el usuario seleccionado de la lista de conversas
+	o de la lista de usarios(clientes/repartidores)*/
+	setUsuario(chat_id, usuario_id, usuario_tipo, usuario_nombre, usuario_imagen, token_notificacion){
+		
+		//Datos del ususario (cliente/repartidor)
+		localStorage.setItem('mouvers_chat_id', chat_id);
+		localStorage.setItem('mouvers_usuario_id', usuario_id);
+		localStorage.setItem('mouvers_usuario_tipo', usuario_tipo);
+		localStorage.setItem('mouvers_usuario_nombre', usuario_nombre);
+		localStorage.setItem('mouvers_usuario_imagen', usuario_imagen);
+		localStorage.setItem('mouvers_usuario_token_notifi', token_notificacion);
+
+	  	/*this.chat_id = chat_id;
+	  	this.usuario_id = usuario_id;
+	  	this.usuario_tipo = usuario_tipo;
+	  	this.usuario_nombre = usuario_nombre;
+	  	this.usuario_imagen = usuario_imagen;
+	    this.token_notificacion = token_notificacion;*/
+
+	    //Datos del ususario (cliente/repartidor)
+	  	this.chat_id = localStorage.getItem('mouvers_chat_id');
+	  	this.usuario_id = localStorage.getItem('mouvers_usuario_id');
+	  	this.usuario_tipo = localStorage.getItem('mouvers_usuario_tipo');
+	  	this.usuario_nombre = localStorage.getItem('mouvers_usuario_nombre');
+	  	this.usuario_imagen = localStorage.getItem('mouvers_usuario_imagen');
+	    this.token_notificacion = localStorage.getItem('mouvers_usuario_token_notifi');
+	   
+	    this.toUser = {
+	      id: this.usuario_id
+	    };
+	}
+
+	setUltimoMsg(msg){
+		if (this.usuario_tipo == '2' ) {
+			if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
+				for (var i = 0; i < this.conversations.length; ++i) {
+					if (this.conversations[i].id == parseInt(this.chat_id)) {
+						this.conversations[i].ultimo_msg.msg = msg.msg;
+						this.conversations[i].ultimo_msg.created_at = msg.created_at;
+					}
+				}
+			}
+			else{
+				this.addConversa(msg);
+			}
+			
+		}
+
+		/*Falta para los repartidores*/
 	}
 
 }

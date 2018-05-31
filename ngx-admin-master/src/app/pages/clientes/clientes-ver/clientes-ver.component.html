@@ -40,6 +40,9 @@
             <td style="text-align: center;">{{item.ciudad}}</td>
             <td style="text-align: center;">{{item.estado}}</td>
             <td style="text-align: center;">
+              <button type="button" class="btn btn-danger btn-icon" title="Eliminar" (click)="open(modal1); aEliminar(item)">
+                <i class="nb-trash"></i>
+              </button>
               <button type="button" class="btn btn-primary btn-icon" title="Chat" (click)="chat(item)">
                 <i class="nb-email"></i>
               </button>
@@ -66,6 +69,22 @@
     </div>  
   </nb-card-footer>
 </nb-card>
+
+<ng-template #modal1 let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Eliminar Cliente: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>¿Realmente desea eliminar el cliente {{eliminar_nombre}}?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); eliminar()">Eliminar</button>
+  </div>
+</ng-template>
 
 <toaster-container [toasterconfig]="config"></toaster-container>
 

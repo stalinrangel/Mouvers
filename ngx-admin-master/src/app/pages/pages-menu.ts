@@ -114,13 +114,19 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
+    title: 'Chat',
+    icon: 'nb-email',
+    link: '/pages/chat-box',
+    home: true,
+  },
+  {
     title: 'Sistema',
     icon: 'ion-wrench',
     link: '/pages/sistema',
     home: true,
   },
 
- 
+ /*
   {
     title: 'FEATURES',
     group: true,
@@ -269,5 +275,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/auth/reset-password',
       },
     ],
-  },
+  },*/
 ];

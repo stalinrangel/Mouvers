@@ -25,9 +25,10 @@ import { AgmCoreModule } from '@agm/core';
 import { ChatService } from './services/chat-service/chat.service';
 import { ConversationsService } from './services/conversations-service/conversations.service';
 
+//import { RelativeTimePipe } from './pipes/relative-time/relative-time';
 
 @NgModule({
-  declarations: [AppComponent,  ],
+  declarations: [AppComponent, ],
   imports: [
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCr8zuLtOO7IoK_rC948rLcqyqsIaZOouY',

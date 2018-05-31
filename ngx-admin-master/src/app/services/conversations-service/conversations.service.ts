@@ -55,4 +55,13 @@ export class ConversationsService {
 		return this.conversations;
 	}
 
+	updateConversa(chat_id, usuario_id, token_notificacion) {
+		for (var i = 0; i < this.conversations.length; ++i) {
+			if (this.conversations[i].id == 0 || this.conversations[i].usuario.id == usuario_id) {
+				this.conversations[i].id = chat_id;
+				this.conversations[i].usuario.token_notificacion = token_notificacion;
+			}
+		}
+	}
+
 }

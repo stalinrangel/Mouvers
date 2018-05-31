@@ -549,7 +549,7 @@ class NotificacionController extends Controller
 
         //Notificar al cliente
         if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
-            $this->enviarNotificacionCliente($request->input('token_notificacion'), 'El%20repartidor%20ha%20llegado%20a%20tu%20ubicación.', $request->input('pedido_id'), 1);
+            $this->enviarNotificacionCliente($request->input('token_notificacion'), 'El%20repartidor%20ha%20llegado%20a%20tu%20ubicación.', $request->input('pedido_id'), 3);
         }
 
         return response()->json(['message'=>'Pedido finalizado.'], 200);

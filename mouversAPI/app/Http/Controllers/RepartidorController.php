@@ -308,6 +308,23 @@ class RepartidorController extends Controller
 
         $usuario=\App\User::find($repartidor->usuario_id);
 
+        //Eliminamos el chat si lo tiene
+        $chat = $usuario->chat_repartidor;
+        if (sizeof($chat) > 0) {
+
+            $mensajes = $chat->mensajes;
+
+            if (sizeof($mensajes) > 0)
+            {
+                for ($i=0; $i < count($mensajes) ; $i++) { 
+                    $mensajes[$i]->delete();
+                }
+            }
+
+            // Eliminamos el chat.
+            $chat->delete();
+        }
+
         // Eliminamos el repartidor.
         $repartidor->delete();
 

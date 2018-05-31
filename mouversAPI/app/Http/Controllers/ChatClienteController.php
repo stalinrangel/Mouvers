@@ -165,7 +165,7 @@ class ChatClienteController extends Controller
                     'receptor_id' => $chat->usuario_id,
                 ]);
 
-               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != 'null') {
 
                     /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
@@ -202,7 +202,7 @@ class ChatClienteController extends Controller
                     'receptor_id' => $chat->admin_id,
                 ]);
 
-               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != 'null') {
 
                     /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
@@ -254,7 +254,7 @@ class ChatClienteController extends Controller
                     'receptor_id' => $chat->usuario_id,
                 ]);
 
-               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != 'null') {
 
                     /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;
@@ -291,7 +291,7 @@ class ChatClienteController extends Controller
                     'receptor_id' => $chat->admin_id,
                 ]);
 
-               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+               if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != 'null') {
 
                     /*$explode1 = explode(" ",$request->input('msg'));
                     $auxMsg = null;

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
-
-import { SmartTableService } from '../../../@core/data/smart-table.service';
+//import { LocalDataSource } from 'ng2-smart-table';
+//import { SmartTableService } from '../../../@core/data/smart-table.service';
 
 //Mis imports
 import { RouterModule, Routes, Router, ActivatedRoute } from '@angular/router';
@@ -12,6 +11,8 @@ import { RutaBaseService } from '../../../services/ruta-base/ruta-base.service';
 
 import { ToasterService, ToasterConfig, Toast, BodyOutputType } from 'angular2-toaster';
 import 'style-loader!angular2-toaster/toaster.css';
+
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'ngx-ver-cli',
@@ -44,16 +45,16 @@ export class ClientesVerComponent implements OnInit{
   public data:any;
   private productList:any;
 
-  selectedCliente: any;
-  clienteAEliminar: any;
-  eliminar_id: any;
-  eliminar_user: any;
-
   public loading = false;
-  public editando = false;
   public mostrar = true;
 
-  constructor(private toasterService: ToasterService,
+  objAEditar: any;
+  objAEliminar: any;
+  eliminar_id: any;
+  eliminar_nombre: any;
+
+  constructor(private modalService: NgbModal,
+              private toasterService: ToasterService,
               private http: HttpClient,
               private router: Router,
               private route: ActivatedRoute,
@@ -143,6 +144,79 @@ export class ClientesVerComponent implements OnInit{
 
     this.router.navigateByUrl('/pages/chat-box');
   }
+
+  //Abrir modal por defecto
+  open(modal) {
+    this.modalService.open(modal);
+  }
+
+  //Abrir modal larga
+  open2(modal) {
+    this.modalService.open(modal , { size: 'lg', backdrop: 'static', container: 'nb-layout', keyboard: false});
+  }
+
+    aEliminar(obj): void {
+      this.objAEliminar = obj;
+      //console.log(this.objAEliminar);
+      this.eliminar_id = this.objAEliminar.id;
+      this.eliminar_nombre = this.objAEliminar.nombre;
+    }
+
+    eliminar(): void {
+      console.log(this.objAEliminar);
+      
+      this.loading = true;
+
+      var datos= {
+        token: localStorage.getItem('mouvers_token')
+      }
+
+      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/usuarios/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+         .toPromise()
+         .then(
+           data => { // Success
+              console.log(data);
+              this.data = data;
+
+              var aux = this.productList;
+              this.productList = [];
+
+              for (var i = 0; i < aux.length; ++i) {
+                if (aux[i].id != this.eliminar_id) {
+                   this.productList.push(aux[i]);
+                }
+              }
+
+              this.filteredItems = this.productList;
+              this.init();
+              
+              //console.log(this.productList);
+              //alert(this.data.message);
+              this.loading = false;
+              this.showToast('success', 'Success!', this.data.message);    
+           },
+           msg => { // Error
+             console.log(msg);
+             console.log(msg.error.error);
+
+             this.loading = false;
+
+             //token invalido/ausente o token expiro
+             if(msg.status == 400 || msg.status == 401){ 
+                  //alert(msg.error.error);
+                  //ir a login
+
+                  this.showToast('warning', 'Warning!', msg.error.error);
+              }
+              //no encontrada o confilto
+              else if(msg.status == 404 || msg.status == 409){ 
+                  //alert(msg.error.error);
+                  this.showToast('error', 'Erro!', msg.error.error);
+              }
+
+           }
+         );
+    }
 
   //----Tabla<
    filteredItems : any;
