@@ -30,7 +30,7 @@ export class Conversation {
 }
 
 @Injectable()
-export class ConversationsService {
+export class ConversationsCliService {
 
 	private conversations: Conversation[];
 
@@ -38,11 +38,11 @@ export class ConversationsService {
 
   constructor(private http: HttpClient,
               private rutaService: RutaBaseService) { 
-  	console.log('Hello ConversationsService');
+  	console.log('Hello ConversationsCliService');
   	this.conversations = [];
   }
 
-	getConversationsClientes$(): Observable<Conversation[]> {
+	getConversations$(): Observable<Conversation[]> {
 		return this.conversations$.asObservable();
 	}
 
@@ -62,6 +62,23 @@ export class ConversationsService {
 				this.conversations[i].usuario.token_notificacion = token_notificacion;
 			}
 		}
+	}
+
+	resetConversas() {
+		this.conversations = [];
+	}
+
+	deleteConversation(chat_id){
+		var aux = this.conversations;
+
+		this.conversations = [];
+
+		for (var i = 0; i < aux.length; ++i) {
+			if (chat_id != aux[i].id) {
+				this.conversations.push(aux[i]);
+			}
+		}
+
 	}
 
 }

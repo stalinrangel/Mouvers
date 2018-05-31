@@ -179,7 +179,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
 
@@ -216,7 +216,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
             }
@@ -267,7 +267,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
 
@@ -304,7 +304,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
             }
@@ -422,13 +422,13 @@ class ChatRepartidorController extends Controller
         //Cargar el chat.
         $chat=\App\ChatRepartidor::where('usuario_id', $usuario_id)->get();
 
-        if (count($chat)==0)
-        {
-
-            //Cargar los datos del admin
+        //Cargar los datos del admin
             $admin=\App\User::where('tipo_usuario', 1)
                 ->select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')
                 ->get();
+
+        if (count($chat)==0)
+        {
 
             if (count($admin)==0) {
                 // Devolvemos un código 409 Conflict.
@@ -441,6 +441,6 @@ class ChatRepartidorController extends Controller
             
         }
 
-        return response()->json(['chat'=>$chat[0]], 200);
+        return response()->json(['chat'=>$chat[0], 'admin'=>$admin], 200);
     }
 }

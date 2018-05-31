@@ -23,12 +23,13 @@ import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
 import { AgmCoreModule } from '@agm/core';
 
 import { ChatService } from './services/chat-service/chat.service';
-import { ConversationsService } from './services/conversations-service/conversations.service';
+import { ConversationsCliService } from './services/conversationsCli-service/conversations-cli.service';
+import { ConversationsRepService } from './services/conversationsRep-service/conversations-rep.service';
 
-//import { RelativeTimePipe } from './pipes/relative-time/relative-time';
+import { RelativeTimePipe } from './pipes/relative-time/relative-time';
 
 @NgModule({
-  declarations: [AppComponent, ],
+  declarations: [AppComponent, RelativeTimePipe],
   imports: [
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCr8zuLtOO7IoK_rC948rLcqyqsIaZOouY',
@@ -56,7 +57,8 @@ import { ConversationsService } from './services/conversations-service/conversat
   ],
   bootstrap: [AppComponent],
   providers: [
-    ConversationsService,
+    ConversationsRepService,
+    ConversationsCliService,
     ChatService,
     RutaBaseService,
     { provide: APP_BASE_HREF, useValue: '/' },
