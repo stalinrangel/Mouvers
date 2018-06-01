@@ -49,6 +49,15 @@ class MsgBlogController extends Controller
             return response()->json(['error'=>'Falta el parametro usuario_id.'],422);
         }
 
+        // Comprobamos si el blog existe o no.
+        $blog=\App\Blog::find($request->input('blog_id'));
+
+        if (count($blog)==0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'No existe el blog con id '.$id], 404);
+        }
+
         if($msg=\App\MsgBlog::create($request->all())){
            return response()->json(['message'=>'Mensaje creado con éxito.',
              'mensaje'=>$msg], 200);

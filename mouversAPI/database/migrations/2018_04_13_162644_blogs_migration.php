@@ -14,10 +14,8 @@ class BlogsMigration extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre_tema');
-
-            $table->integer('usuario_id')->unsigned(); //creador del blog
-            $table->foreign('usuario_id')->references('id')->on('usuarios');
+            $table->string('tema');
+            $table->string('creador'); //creador del blog
 
             $table->timestamps();
         });

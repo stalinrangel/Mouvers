@@ -320,6 +320,9 @@ class UsuarioController extends Controller
             return response()->json(['error'=>'Este usuario no puede ser eliminado porque posee pedidos asociados.'], 409);
         }
 
+        //Eliminamos los comentarios en los blogs
+        DB::table('msgs_blogs')->where('usuario_id', $id)->delete();
+
         //Eliminamos el chat si lo tiene
         $chat = $usuario->chat_cliente;
         if (sizeof($chat) > 0) {

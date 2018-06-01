@@ -24,7 +24,7 @@ class Blog extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre_tema', 'usuario_id'];
+    protected $fillable = ['tema', 'creador'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -40,10 +40,4 @@ class Blog extends Model
         return $this->hasMany('App\MsgBlog', 'blog_id');
     }
 
-    // Relación de blog con usuarios (creador):
-	public function creador()
-	{
-		// 1 blog pertenece a un usuario
-		return $this->belongsTo('App\User', 'usuario_id');
-	}
 }

@@ -9,6 +9,25 @@ use App\Http\Controllers\Controller;
 
 class BlogController extends Controller
 {
+
+    //Enviar notificacion a un dispositivo repartidor/panel mediante su token_notificacion
+    public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0, $obj = 'null')
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -17,11 +36,17 @@ class BlogController extends Controller
     public function index()
     {
         //cargar todos los blogs
-        $blogs = \App\Blog::with('creador')->get();
+        $blogs = \App\Blog::orderBy('id', 'desc')->get();
 
         if(count($blogs) == 0){
             return response()->json(['error'=>'No existen blogs.'], 404);          
         }else{
+
+            /*Cargar el contador de mensajes*/
+            for ($i=0; $i < count($blogs) ; $i++) { 
+                $blogs[$i]->count_msgs = $blogs[$i]->msgs()->count();
+            }
+
             return response()->json(['blogs'=>$blogs], 200);
         }
     }
@@ -45,18 +70,47 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         // Primero comprobaremos si estamos recibiendo todos los campos.
-        if ( !$request->input('nombre_tema') )
+        if ( !$request->input('tema') )
         {
             // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro nombre_tema (Nombre del blog).'],422);
+            return response()->json(['error'=>'Falta el parametro tema (Nombre del blog).'],422);
         }
-        if ( !$request->input('usuario_id') )
+        if ( !$request->input('creador') )
         {
             // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
-            return response()->json(['error'=>'Falta el parametro usuario_id (Creador del blog).'],422);
+            return response()->json(['error'=>'Falta el parametro creador (Creador del blog).'],422);
+        }
+
+        // Comprobamos si el blog que nos están pasando existe o no.
+        $blogAux=\App\Blog::where('tema',$request->input('tema'))->get();
+
+        if (count($blogAux)!=0)
+        {
+            // Devolvemos error codigo http 404
+            return response()->json(['error'=>'Ya existe un blog con el nombre '.$request->input('tema')], 409);
         }
 
         if($blog=\App\Blog::create($request->all())){
+
+            //Cargar los datos del admin
+            $admin=\App\User::where('tipo_usuario', 1)
+                ->select('id', 'token_notificacion')
+                ->get();
+
+            if (count($admin)!=0) {
+                if ($admin[0]->token_notificacion && $admin[0]->token_notificacion != '' && $admin[0]->token_notificacion != 'null') {
+
+                    $order   = array("\r\n", "\n", "\r", " ");
+                    $replace = '%20';
+                    $creador = str_replace($order, $replace, $request->input('creador'));
+                    $tema = str_replace($order, $replace, $request->input('tema'));
+
+                    $contenido = $creador.'%20creó%20el%20blog:%20'.$tema;
+
+                    $this->enviarNotificacion($admin[0]->token_notificacion, $contenido, 'null', 4);
+                }
+            }
+
            return response()->json(['message'=>'Blog creado con éxito.',
              'blog'=>$blog], 200);
         }else{
@@ -73,7 +127,11 @@ class BlogController extends Controller
     public function show($id)
     {
         //cargar un blog
-        $blog = \App\Blog::with('creador')->with('msgs.usuario')->find($id);
+        $blog = \App\Blog::/*with('msgs.usuario')*/
+            with(['msgs.usuario' => function ($query) {
+                $query->select('usuarios.id', 'usuarios.nombre', 'usuarios.imagen', 'usuarios.tipo_usuario', 'usuarios.token_notificacion');
+            }])
+            ->find($id);
 
         if(count($blog)==0){
             return response()->json(['error'=>'No existe el blog con id '.$id], 404);          
@@ -113,22 +171,22 @@ class BlogController extends Controller
         }      
 
         // Listado de campos recibidos teóricamente.
-        $nombre_tema=$request->input('nombre_tema');
-        $usuario_id=$request->input('usuario_id');
+        $tema=$request->input('tema');
+        $creador=$request->input('creador');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
 
         // Actualización parcial de campos.
-        if ($nombre_tema != null && $nombre_tema!='')
+        if ($tema != null && $tema!='')
         {
-            $blog->nombre_tema = $nombre_tema;
+            $blog->tema = $tema;
             $bandera=true;
         }
 
-        if ($usuario_id != null && $usuario_id!='')
+        if ($creador != null && $creador!='')
         {
-            $blog->usuario_id = $usuario_id;
+            $blog->creador = $creador;
             $bandera=true;
         }
 
