@@ -47,6 +47,7 @@ Route::group(  ['middleware' =>'cors'], function(){
 
         //----Pruebas UsuarioController
         Route::get('/usuarios','UsuarioController@index');
+        Route::get('/usuarios/repartidores/aux','UsuarioController@indexRepartidores');
         //Route::post('/usuarios','UsuarioController@store');
         Route::put('/usuarios/{id}','UsuarioController@update');
         Route::delete('/usuarios/{id}','UsuarioController@destroy');

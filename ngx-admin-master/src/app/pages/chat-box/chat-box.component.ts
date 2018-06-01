@@ -48,6 +48,7 @@ export class ChatBoxComponent implements OnInit{
 	//----Alertas--->
 
 	private data:any;
+    private productList:any;
 	private dataCli:any;
 	private dataRep:any;
 	public loading = false;
@@ -79,7 +80,7 @@ export class ChatBoxComponent implements OnInit{
 	  	token_notificacion: '',
 	  	token: '',
 	  	chat_id: ''
-	}
+	};
 
 	conversationsCli: Conversation[] = [];
   	conversationsCli$: Observable<Conversation[]>;
@@ -291,7 +292,7 @@ export class ChatBoxComponent implements OnInit{
 
 	//Abrir modal larga
 	open2(modal) {
-		this.modalService.open(modal , { size: 'lg', backdrop: 'static', container: 'nb-layout', keyboard: false});
+		this.modalService.open(modal , { size: 'lg', backdrop: true, container: 'nb-layout', keyboard: true});
 	}
 
 	getMsg() {
@@ -650,7 +651,150 @@ export class ChatBoxComponent implements OnInit{
 			
 		}
 
-		/*Falta para los repartidores*/
 	}
+
+  /*Cargar la lista de clientes o de repartidores*/
+  getUsuariosCliRep(modal2, tipo) {
+
+	if (tipo == 2) {
+		var url_final = 'usuarios';
+		this.titulo_tabla = 'Clientes';
+	}
+	else if (tipo == 3){
+		var url_final = 'usuarios/repartidores/aux';
+		this.titulo_tabla = 'Repartidores';
+	}
+    
+    this.loading = true;
+    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/'+url_final+'?token='+localStorage.getItem('mouvers_token'))
+       .toPromise()
+       .then(
+         data => { // Success
+           console.log(data);
+           this.data=data;
+
+           this.productList = this.data.usuarios;
+           this.filteredItems = this.productList;
+           //console.log(this.productList);
+
+           this.init();
+
+           this.loading = false;
+
+           this.open2(modal2);
+           
+         },
+         msg => { // Error
+           console.log(msg);
+           console.log(msg.error.error);
+
+           this.loading = false;
+
+           //token invalido/ausente o token expiro
+           if(msg.status == 400 || msg.status == 401){ 
+                //alert(msg.error.error);
+
+                this.showToast('warning', 'Warning!', msg.error.error);
+                //this.mostrar = false;
+            }
+            //sin usuarios
+            else if(msg.status == 404){ 
+                //alert(msg.error.error);
+                this.showToast('info', 'Info!', msg.error.error);
+            }
+            
+
+         }
+       );
+  }
+
+  //----Tabla<
+   titulo_tabla = '';
+   filteredItems : any;
+   pages : number = 4;
+   pageSize : number = 5;
+   pageNumber : number = 0;
+   currentIndex : number = 1;
+   items: any;
+   pagesIndex : Array<number>;
+   pageStart : number = 1;
+   inputName : string = '';
+
+   init(){
+         this.currentIndex = 1;
+         this.pageStart = 1;
+         this.pages = 4;
+
+         this.pageNumber = parseInt(""+ (this.filteredItems.length / this.pageSize));
+         if(this.filteredItems.length % this.pageSize != 0){
+            this.pageNumber ++;
+         }
+    
+         if(this.pageNumber  < this.pages){
+               this.pages =  this.pageNumber;
+         }
+       
+         this.refreshItems();
+         console.log("this.pageNumber :  "+this.pageNumber);
+   }
+
+   FilterByName(){
+      this.filteredItems = [];
+      if(this.inputName != ""){
+            for (var i = 0; i < this.productList.length; ++i) {
+              if (this.productList[i].nombre.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
+                 this.filteredItems.push(this.productList[i]);
+              }else if (this.productList[i].email.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
+                 this.filteredItems.push(this.productList[i]);
+              }/*else if (this.productList[i].ciudad.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
+                 this.filteredItems.push(this.productList[i]);
+              }else if (this.productList[i].estado.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
+                 this.filteredItems.push(this.productList[i]);
+              }*/else if (this.productList[i].telefono.indexOf(this.inputName)>=0) {
+                 this.filteredItems.push(this.productList[i]);
+              }
+            }
+      }else{
+         this.filteredItems = this.productList;
+      }
+      console.log(this.filteredItems);
+      this.init();
+   }
+   fillArray(): any{
+      var obj = new Array();
+      for(var index = this.pageStart; index< this.pageStart + this.pages; index ++) {
+                  obj.push(index);
+      }
+      return obj;
+   }
+   refreshItems(){
+       this.items = this.filteredItems.slice((this.currentIndex - 1)*this.pageSize, (this.currentIndex) * this.pageSize);
+       this.pagesIndex =  this.fillArray();
+   }
+   prevPage(){
+      if(this.currentIndex>1){
+         this.currentIndex --;
+      } 
+      if(this.currentIndex < this.pageStart){
+         this.pageStart = this.currentIndex;
+      }
+      this.refreshItems();
+   }
+   nextPage(){
+      if(this.currentIndex < this.pageNumber){
+            this.currentIndex ++;
+      }
+      if(this.currentIndex >= (this.pageStart + this.pages)){
+         this.pageStart = this.currentIndex - this.pages + 1;
+      }
+ 
+      this.refreshItems();
+   }
+    setPage(index : number){
+         this.currentIndex = index;
+         this.refreshItems();
+    }
+  //----Tabla>
+
 
 }

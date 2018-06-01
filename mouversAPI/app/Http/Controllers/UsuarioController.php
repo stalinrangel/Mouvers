@@ -30,7 +30,23 @@ class UsuarioController extends Controller
             ->where('tipo_usuario', 2)->get();
 
         if(count($usuarios) == 0){
-            return response()->json(['message'=>'No existen usuarios.'], 404);          
+            return response()->json(['message'=>'No existen clientes.'], 404);          
+        }else{
+            return response()->json(['usuarios'=>$usuarios], 200);
+        } 
+    }
+
+    public function indexRepartidores()
+    {
+        //cargar todos los usuarios repartidores
+        $usuarios = \App\User::select('id', 'email', 'nombre', 'ciudad', 'estado', 'telefono', 'imagen', 'tipo_usuario', 'token_notificacion')
+            ->with(['chat_repartidor' => function ($query) {
+                $query->select('id', 'admin_id', 'usuario_id');
+            }])
+            ->where('tipo_usuario', 3)->get();
+
+        if(count($usuarios) == 0){
+            return response()->json(['message'=>'No existen repartidores.'], 404);          
         }else{
             return response()->json(['usuarios'=>$usuarios], 200);
         } 
