@@ -19,8 +19,12 @@ import { ConversationsCliService, Conversation } from "../../services/conversati
 import { ConversationsRepService } from "../../services/conversationsRep-service/conversations-rep.service";
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { NbSidebarService } from '@nebular/theme';
+
+import { ViewChatEventService } from '../../services/eventos-services/view-chat-event-service/view-chat-event.service';
+import { HeaderToChatEventService } from '../../services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
 
 @Component({
   selector: 'ngx-chat-box',
@@ -52,6 +56,8 @@ export class ChatBoxComponent implements OnInit{
 	private dataCli:any;
 	private dataRep:any;
 	public loading = false;
+	public loading2 = false;
+	public loading3 = false;
 
 	//Manejo del chat
 	//@ViewChild(Content) contentM: Content;
@@ -84,9 +90,11 @@ export class ChatBoxComponent implements OnInit{
 
 	conversationsCli: Conversation[] = [];
   	conversationsCli$: Observable<Conversation[]>;
+  	conversationsCliSubscription: Subscription;
 
   	conversationsRep: Conversation[] = [];
   	conversationsRep$: Observable<Conversation[]>;
+  	conversationsRepSubscription: Subscription;
 
   	objAEliminar: any;
 	eliminar_id: any;
@@ -101,8 +109,23 @@ export class ChatBoxComponent implements OnInit{
 	       public fb: FormBuilder,
 	       private chatService: ChatService,
 	       private conversationsCliService: ConversationsCliService,
-	       private conversationsRepService: ConversationsRepService)
+	       private conversationsRepService: ConversationsRepService,
+	       private viewChatEventService: ViewChatEventService,
+	       private headerToChatEventService: HeaderToChatEventService)
 	{
+		//Detectar evento add msg al chat
+		this.viewChatEventService.viewChatData.subscribe(
+	      (data: any) => {
+	        //console.log(data); 
+	        this.addMsgEvent(data);
+	    });
+
+	    //Detectar evento cargar chat de notificacion entrante
+		this.headerToChatEventService.headerToChatData.subscribe(
+	      (data: any) => {
+	        //console.log(data); 
+	        this.headerEvent(data);
+	    });
 
 		//Datos del admin
 		this.admin_id = localStorage.getItem('mouvers_user_id');
@@ -130,6 +153,8 @@ export class ChatBoxComponent implements OnInit{
 	ngOnInit() {
 
 		this.toggleSidebar();
+
+		//alert(this.chat_id);
 		
 		//get message list
 		if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
@@ -144,22 +169,36 @@ export class ChatBoxComponent implements OnInit{
 		})*/
 
 		this.conversationsCli$ = this.conversationsCliService.getConversations$();
-    	this.conversationsCli$.subscribe(conversationsCli => this.conversationsCli = conversationsCli);
+    	this.conversationsCliSubscription = this.conversationsCli$.subscribe(conversationsCli => this.conversationsCli = conversationsCli);
     	this.initConversationsCli();
     	//this.conversationsCli = this.conversationsCliService.getConversas();
 
     	this.conversationsRep$ = this.conversationsRepService.getConversations$();
-    	this.conversationsRep$.subscribe(conversationsRep => this.conversationsRep = conversationsRep);
+    	this.conversationsRepSubscription = this.conversationsRep$.subscribe(conversationsRep => this.conversationsRep = conversationsRep);
     	this.initConversationsRep();
     	//this.conversationsRep = this.conversationsRepService.getConversas();
 
 	}
 
+	ngOnDestroy() {
+	   // acciones de destrucción
+		localStorage.setItem('mouvers_chat_id', '');
+		localStorage.setItem('mouvers_usuario_id', '');
+		localStorage.setItem('mouvers_usuario_tipo', '');
+		localStorage.setItem('mouvers_usuario_nombre', '');
+		localStorage.setItem('mouvers_usuario_imagen', '');
+		localStorage.setItem('mouvers_usuario_token_notifi', '');
+
+		this.conversationsCliSubscription.unsubscribe();
+		this.conversationsRepSubscription.unsubscribe();
+
+	 }
+
 	initConversationsCli() {
 
       this.conversationsCliService.resetConversas();
 
-      this.loading = true;
+      this.loading2 = true;
 
       this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/chats/clientes?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
@@ -194,7 +233,7 @@ export class ChatBoxComponent implements OnInit{
                 this.conversationsCliService.agregarConversation(aux);
             }
 
-             this.loading = false;
+             this.loading2 = false;
 
              console.log('Chats Clientes:');
              console.log(this.conversationsCliService.getConversas());
@@ -204,7 +243,7 @@ export class ChatBoxComponent implements OnInit{
              console.log(msg);
              console.log(msg.error.error);
 
-             this.loading = false;
+             this.loading2 = false;
 
              //token invalido/ausente o token expiro
              if(msg.status == 400 || msg.status == 401){ 
@@ -221,7 +260,7 @@ export class ChatBoxComponent implements OnInit{
 
       this.conversationsRepService.resetConversas();
 
-      this.loading = true;
+      this.loading3 = true;
 
       this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/chats/repartidores?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
@@ -256,7 +295,7 @@ export class ChatBoxComponent implements OnInit{
                 this.conversationsRepService.agregarConversation(aux);
             }
 
-             this.loading = false;
+             this.loading3 = false;
 
              console.log('Chats Repartidores:');
              console.log(this.conversationsRepService.getConversas());
@@ -266,7 +305,7 @@ export class ChatBoxComponent implements OnInit{
              console.log(msg);
              console.log(msg.error.error);
 
-             this.loading = false;
+             this.loading3 = false;
 
              //token invalido/ausente o token expiro
              if(msg.status == 400 || msg.status == 401){ 
@@ -297,6 +336,7 @@ export class ChatBoxComponent implements OnInit{
 
 	getMsg() {
 		this.loading = true;
+		this.msgList = [];
 	    return this.chatService.getMsgList(this.chat_id, this.usuario_tipo
 	    	).subscribe(res => {
 	        this.msgList = res;
@@ -314,6 +354,11 @@ export class ChatBoxComponent implements OnInit{
 
 	sendMsg() {
 		if (!this.editorMsg.trim()) return;
+
+		if (this.usuario_id == '' || this.usuario_id == 'null' || !this.usuario_id){
+			this.showToast('info', 'Info!', 'Debe seleccionar un cliente o un repartidor.');
+			return;
+		}
 
 		// Mock message
 		const id = Date.now().toString();
@@ -359,10 +404,20 @@ export class ChatBoxComponent implements OnInit{
 	    .toPromise()
 	    .then(
 		data => {
+			console.log(data);
 			this.datos = data;
 			this.chat_id = this.datos.chat.id;
 			this.admin_id = this.datos.chat.admin_id;
 			this.token_notificacion = this.datos.msg.token_notificacion;	
+
+			//Datos del ususario (cliente/repartidor)
+			localStorage.setItem('mouvers_chat_id', this.datos.chat.id);
+			localStorage.setItem('mouvers_usuario_id', this.datos.chat.usuario_id);
+			localStorage.setItem('mouvers_usuario_tipo', this.usuario_tipo);
+			//localStorage.setItem('mouvers_usuario_nombre', usuario_nombre);
+			//localStorage.setItem('mouvers_usuario_imagen', usuario_imagen);
+			localStorage.setItem('mouvers_usuario_token_notifi', this.datos.msg.token_notificacion);
+
 			let index = this.getMsgIndexById(id);
 			if (index !== -1) {
 			  this.msgList[index].status = 2;
@@ -432,6 +487,9 @@ export class ChatBoxComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
+      localStorage.setItem('mouvers_chat_id', '');
+	  localStorage.setItem('mouvers_usuario_nombre', '');
+
       this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/chats/'+url_final+'/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
@@ -439,8 +497,6 @@ export class ChatBoxComponent implements OnInit{
               console.log(data);
               this.data = data;
 
-              /*Falta verificar si tengo abierto el chat 
-              que estoy borrando para eliminar los mensajes*/
 	            if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
 	              if (parseInt(this.chat_id) == this.eliminar_id && parseInt(this.usuario_id) == this.objAEliminar.usuario.id) {
 	              	this.msgList = [];
@@ -450,9 +506,9 @@ export class ChatBoxComponent implements OnInit{
 	          	}
 
 				if (this.objAEliminar.usuario.tipo_usuario == '2') {
-					//this.conversationsCliService.deleteConversation(this.eliminar_id);
+					this.conversationsCliService.deleteConversation(this.eliminar_id);
 
-					var aux = this.conversationsCli;
+					/*var aux = this.conversationsCli;
 
 					this.conversationsCli = [];
 
@@ -460,12 +516,12 @@ export class ChatBoxComponent implements OnInit{
 						if (this.eliminar_id != aux[i].id) {
 							this.conversationsCli.push(aux[i]);
 						}
-					}
+					}*/
 				}
 				else if (this.objAEliminar.usuario.tipo_usuario == '3'){
-					//this.conversationsRepService.deleteConversation(this.eliminar_id);
+					this.conversationsRepService.deleteConversation(this.eliminar_id);
 
-					var aux = this.conversationsRep;
+					/*var aux = this.conversationsRep;
 
 					this.conversationsRep = [];
 
@@ -473,7 +529,7 @@ export class ChatBoxComponent implements OnInit{
 						if (this.eliminar_id != aux[i].id) {
 							this.conversationsRep.push(aux[i]);
 						}
-					}
+					}*/
 				}
 
               this.loading = false;
@@ -621,6 +677,7 @@ export class ChatBoxComponent implements OnInit{
 	    };
 	}
 
+	/*Setear el ultimo mensaje en la lista de conversaciones*/
 	setUltimoMsg(msg){
 		if (this.usuario_tipo == '2' ) {
 			if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
@@ -706,6 +763,163 @@ export class ChatBoxComponent implements OnInit{
 
          }
        );
+  }
+
+  /*Tratamineto para el usuario(Cliente/Repartidor)
+  seleccionado de la lista(tabla)*/
+  selectUsuarioList (userSelecto){
+  	console.log(userSelecto);
+
+  	var chat_id : any;
+
+  	if (userSelecto.tipo_usuario == 2) {
+  		if (userSelecto.chat_cliente) {
+  			chat_id =  userSelecto.chat_cliente.id;
+  		}else{
+  			chat_id = '';
+  		}
+  	}else if (userSelecto.tipo_usuario == 3) {
+  		if (userSelecto.chat_repartidor) {
+  			chat_id = userSelecto.chat_repartidor.id;
+  		}else{
+  			chat_id = '';
+  		}
+  	}
+
+  	this.setUsuario(chat_id, userSelecto.id,
+  		userSelecto.tipo_usuario, userSelecto.nombre,
+  		userSelecto.imagen, userSelecto.token_notificacion);
+
+  	//this.refreshChat();
+
+  	//get message list
+	if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
+
+		this.getMsg();
+
+	}else{
+
+		this.msgList = [];
+	}
+  	
+  }
+
+  addMsgEvent(data){
+
+  	var obj = JSON.parse(data.obj);
+
+  	let newMsg: ChatMessage = {
+		  id: Date.now().toString(),
+		  emisor_id: parseInt(obj.emisor.id),
+		  userAvatar: obj.emisor.imagen,
+		  receptor_id: parseInt(this.user.id),
+		  created_at: Date.now(),
+		  msg: data.contenido,
+		  status: 1
+		};
+
+		/*Si tengo cargado el chat
+		de la notificacion entrante 
+		actualizo la caja de chat*/
+		if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
+			if (obj.chat_id == parseInt(this.chat_id) &&
+			  	obj.emisor.tipo_usuario == parseInt(this.usuario_tipo)) {
+				this.msgList.push(newMsg);
+				this.scrollToBottom();
+			}
+		}	
+
+		/*Actulizar la lista de conversaciones*/
+		if (obj.emisor.tipo_usuario == 2 ) {
+			var actualizado = false;
+			for (var i = 0; i < this.conversationsCli.length; ++i) {
+				if (this.conversationsCli[i].id == obj.chat_id) {
+					this.conversationsCli[i].ultimo_msg.msg = newMsg.msg;
+					this.conversationsCli[i].ultimo_msg.created_at = newMsg.created_at;
+					actualizado = true;
+				}
+			}
+
+			if (!actualizado) {
+				const aux: Conversation = {
+					id: obj.chat_id,
+					admin_id: parseInt(this.admin_id),
+					usuario_id: obj.emisor.id,
+					created_at: newMsg.created_at,
+					updated_at: newMsg.created_at,
+					ultimo_msg: {
+					    id: Date.now(),
+					    msg: newMsg.msg,
+					    created_at: newMsg.created_at,
+					},
+					usuario: {
+					    id: obj.emisor.id,
+					    nombre: obj.emisor.nombre,
+					    imagen: obj.emisor.imagen,
+					    tipo_usuario: obj.emisor.tipo_usuario,
+					    token_notificacion: obj.emisor.token_notificacion,
+					},
+				};
+
+
+				this.conversationsCliService.agregarConversation(aux);
+
+			}
+			
+			
+		}
+		else if (obj.emisor.tipo_usuario == 3 ) {
+			var actualizado = false;
+			for (var i = 0; i < this.conversationsRep.length; ++i) {
+				if (this.conversationsRep[i].id == obj.chat_id) {
+					this.conversationsRep[i].ultimo_msg.msg = newMsg.msg;
+					this.conversationsRep[i].ultimo_msg.created_at = newMsg.created_at;
+					actualizado = true;
+				}
+			}
+
+			if (!actualizado) {
+				const aux: Conversation = {
+					id: obj.chat_id,
+					admin_id: parseInt(this.admin_id),
+					usuario_id: obj.emisor.id,
+					created_at: newMsg.created_at,
+					updated_at: newMsg.created_at,
+					ultimo_msg: {
+					    id: Date.now(),
+					    msg: newMsg.msg,
+					    created_at: newMsg.created_at,
+					},
+					usuario: {
+					    id: obj.emisor.id,
+					    nombre: obj.emisor.nombre,
+					    imagen: obj.emisor.imagen,
+					    tipo_usuario: obj.emisor.tipo_usuario,
+					    token_notificacion: obj.emisor.token_notificacion,
+					},
+				};
+
+
+				this.conversationsRepService.agregarConversation(aux);
+
+			}
+			
+		}	
+  }
+
+  headerEvent(obj){
+  	var obj = JSON.parse(obj);
+
+  	this.setUsuario(obj.chat_id, obj.emisor.id,
+  		obj.emisor.tipo_usuario, obj.emisor.nombre,
+  		obj.emisor.imagen, obj.emisor.token_notificacion);
+
+  	//get message list
+	if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
+
+		this.getMsg();
+
+	}
   }
 
   //----Tabla<

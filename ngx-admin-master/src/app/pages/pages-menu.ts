@@ -120,13 +120,19 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true,
   },
   {
+    title: 'Blogs',
+    icon: 'fa fa-book',
+    link: '/pages/blogs',
+    home: true,
+  },
+  {
     title: 'Sistema',
     icon: 'ion-wrench',
     link: '/pages/sistema',
     home: true,
   },
 
- /*
+
   {
     title: 'FEATURES',
     group: true,
@@ -275,5 +281,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/auth/reset-password',
       },
     ],
-  },*/
+  },
 ];

@@ -107,7 +107,12 @@ class BlogController extends Controller
 
                     $contenido = $creador.'%20creó%20el%20blog:%20'.$tema;
 
-                    $this->enviarNotificacion($admin[0]->token_notificacion, $contenido, 'null', 4);
+                    $fecha = str_replace($order, $replace, $blog->created_at);
+
+                    $obj = array('blog_id'=>$blog->id, 'creador'=>$creador, 'tema'=>$tema, 'created_at'=>$fecha);
+                    $obj = json_encode($obj);
+
+                    $this->enviarNotificacion($admin[0]->token_notificacion, $contenido, 'null', 4, $obj);
                 }
             }
 

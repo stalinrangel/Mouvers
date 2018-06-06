@@ -58,6 +58,9 @@ const routes: Routes = [{
     path: 'chat-box',
     loadChildren: './chat-box/chat-box.module#ChatBoxModule',
   },{
+    path: 'blogs',
+    loadChildren: './blogs/blogs.module#BlogsModule',
+  },{
     path: 'sistema',
     loadChildren: './sistema/sistema.module#SistemaModule',
   },{

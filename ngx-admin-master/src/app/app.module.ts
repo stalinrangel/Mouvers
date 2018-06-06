@@ -26,6 +26,15 @@ import { ChatService } from './services/chat-service/chat.service';
 import { ConversationsCliService } from './services/conversationsCli-service/conversations-cli.service';
 import { ConversationsRepService } from './services/conversationsRep-service/conversations-rep.service';
 
+import { ComentariosService } from './services/blog-services/comentarios-service/comentarios.service';
+import { ListaService } from './services/blog-services/lista-service/lista.service';
+
+import { ViewChatEventService } from './services/eventos-services/view-chat-event-service/view-chat-event.service';
+import { ViewBlogEventService } from './services/eventos-services/view-blog-event-service/view-blog-event.service';
+import { ViewHeaderEventService } from './services/eventos-services/view-header-event-service/view-header-event.service';
+import { HeaderToChatEventService } from './services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
+import { HeaderToBlogEventService } from './services/eventos-services/header-to-blog-event-service/header-to-blog-event.service';
+
 import { RelativeTimePipe } from './pipes/relative-time/relative-time';
 
 @NgModule({
@@ -57,6 +66,13 @@ import { RelativeTimePipe } from './pipes/relative-time/relative-time';
   ],
   bootstrap: [AppComponent],
   providers: [
+    HeaderToBlogEventService,
+    HeaderToChatEventService,
+    ViewHeaderEventService,
+    ViewBlogEventService,
+    ViewChatEventService,
+    ListaService,
+    ComentariosService,
     ConversationsRepService,
     ConversationsCliService,
     ChatService,

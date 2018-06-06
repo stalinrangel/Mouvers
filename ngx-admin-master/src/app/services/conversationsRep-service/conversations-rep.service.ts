@@ -62,6 +62,8 @@ export class ConversationsRepService {
 				this.conversations[i].usuario.token_notificacion = token_notificacion;
 			}
 		}
+
+		this.conversations$.next(this.conversations);
 	}
 
 	resetConversas() {
@@ -78,6 +80,8 @@ export class ConversationsRepService {
 				this.conversations.push(aux[i]);
 			}
 		}
+
+		this.conversations$.next(this.conversations);
 
 	}
 

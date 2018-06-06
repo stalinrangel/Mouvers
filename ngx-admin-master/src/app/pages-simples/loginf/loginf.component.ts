@@ -61,37 +61,20 @@ export class LoginfComponent implements OnInit {
 		this.themeService.changeTheme('cosmic');
 		//this.themeService.changeTheme('default');
 
+		//console.log(this.router.url);
+
 		let OneSignal = window['OneSignal'] || [];
-    	
-    	//Subscripcion a las notificaciones
-	    OneSignal.push(["init", {
-	      appId: "a75f81f0-b531-45c1-b7bf-fc41a11191b9",
-	      autoRegister: true, // Set to true to automatically prompt visitors
-	      subdomainName: 'https://mouvers.OS.TC',
 
-	      httpPermissionRequest: {
-	        enable: true,
-	        modalTitle: 'Mouvers',
-	        modalMessage: 'Gracias por suscribirse a las notificaciones!',
-	        modalButtonText:'OK'
-
-	      },
-	      welcomeNotification:{
-	        "title": "Mouvers",
-	        "message": "Gracias por suscribirse a las notificaciones!"
-	      },
-	      notifyButton: {
-	          enable: false 
-	      }
-	    }]);
-
-	    OneSignal.push(function() {
+		OneSignal.push(function() {
 	      /* These examples are all valid */
 	      OneSignal.getUserId(function(userId) {
 	        localStorage.setItem('mouvers_token_notificacion', userId);
+	        if (!userId) {
+	        	console.log('Register For Push');
+	        	OneSignal.push(["registerForPushNotifications"]);
+	        }
 	      });
 	    });
-
 	    
 	}
 

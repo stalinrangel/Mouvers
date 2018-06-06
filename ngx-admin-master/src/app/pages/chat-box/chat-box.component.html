@@ -174,7 +174,7 @@
 	            <!-- <td style="text-align: center;">{{item.ciudad}}</td>
 	            <td style="text-align: center;">{{item.estado}}</td> -->
 	            <td style="text-align: center;">
-	              <button type="button" class="btn btn-primary btn-icon" title="Chat" (click)="chat(item)">
+	              <button type="button" class="btn btn-primary btn-icon" title="Chat" (click)="c('Close click'); selectUsuarioList(item)">
 	                <i class="nb-email"></i>
 	              </button>
 	            </td>
@@ -211,7 +211,7 @@
 <toaster-container [toasterconfig]="config"></toaster-container>
 
 <div class="my-container">
-    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+    <ngx-loading [show]="loading || loading2 || loading3" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
 </div>
 
 

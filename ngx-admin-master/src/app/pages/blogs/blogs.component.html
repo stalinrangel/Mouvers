@@ -1,0 +1,99 @@
+<div class="wrapper">
+    <div class="containerChat">
+        <div class="left">
+            <nb-tabset fullWidth style="height: 100% !important;">
+		        <nb-tab tabTitle="Blogs">
+		        	<div class="content-initChat" (click)="open2(modal2)">
+		        		<i class="fa fa-edit search"></i> Crear Nuevo Blog
+		        	</div>
+		        	<!--div class="top">
+		                <input type="text" placeholder="buscar usuario" />
+		            </div-->
+		            <ul class="people" >
+		                <li class="person" *ngFor="let item of blogs" (click)="getChatOfConversa(item)">
+		                	<i class="ion-close-round icon-delete" (click)="open(modal1); aEliminar(item)"></i>
+		                    <!-- <img src="{{item.usuario.imagen}}" alt="" /> -->
+		                    <span class="name">{{item.tema}}</span>
+		                    <span class="time">{{item.count_msgs}}</span>
+		                    <span class="preview">{{item.creador}}</span>
+		                </li>  
+		            </ul>
+		        </nb-tab>
+		        
+		    </nb-tabset>
+        </div>
+        <div class="right">
+            <div class="top">
+            	<span class="name">{{tema}}</span>
+            	<i class="fa fa-refresh icon-refresh" (click)="refreshChat()"></i>
+            </div>
+			<div class="chatbox">
+				<div #scrollChat class="chatlogs message-wrap">
+			    <div *ngFor="let msg of msgList"
+			         class="message"
+			         [class.leftmsg]=" true ">
+			      <img class="user-img" [src]="msg.userAvatar" alt="" >
+			      <!--ion-spinner name="dots" *ngIf="msg.status === 1"></ion-spinner-->
+			      <div class="msg-detail">
+			        <div class="msg-info">
+			          <!--p>{{msg.created_at | relativeTime}}</p-->
+			        </div>
+			        <div class="msg-content">
+			          <span class="triangle"></span>
+			          <p class="line-breaker ">{{msg.msg}}</p>
+			        </div>
+			      </div>
+			    </div>
+				</div>
+			    <div class="chat-form">
+					<textarea name="msg" [(ngModel)]="editorMsg" id="msg" placeholder="Escribe un mensaje..." (keydown)="enterMsg($event)"></textarea>
+					<button type="button" class="btn btn-primary btn-icon btn-send" [disabled]="!editorMsg || editorMsg == ''" (click)="sendMsg()">
+						<i class="ion-android-send icon-send"></i>
+					</button>
+				</div>
+			</div>        
+        </div>
+    </div>
+</div>
+
+<ng-template #modal1 let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Eliminar Chat: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>¿Realmente desea eliminar el chat con {{eliminar_nombre}}?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); deletChat()">Eliminar</button>
+  </div>
+</ng-template>
+
+<ng-template #modal2 let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Nuevo Blog: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click'); resetNewBlog()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Tema" [(ngModel)]="newBlog" id="input-newBlog">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click'); resetNewBlog()" >Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); addBlog()" [disabled]="newBlog == '' || newBlog == undefined ">Aceptar</button>
+  </div>
+</ng-template>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading || loading2" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>
+
+

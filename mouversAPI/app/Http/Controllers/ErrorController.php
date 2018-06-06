@@ -16,7 +16,7 @@ class ErrorController extends Controller
      */
     public function index()
     {
-        $errores = \App\Error::all();
+        $errores = \App\Error::orderBy('id', 'desc')->get();
 
         for ($i=0; $i < count($errores); $i++) { 
             $errores[$i]->data = json_decode($errores[$i]->data); 

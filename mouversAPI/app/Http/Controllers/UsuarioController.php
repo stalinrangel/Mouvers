@@ -219,6 +219,7 @@ class UsuarioController extends Controller
         $tipo_registro=$request->input('tipo_registro');
         //$codigo_verificacion=$request->input('codigo_verificacion');
         $validado=$request->input('validado');
+        $token_notificacion=$request->input('token_notificacion');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -289,6 +290,12 @@ class UsuarioController extends Controller
         if ($validado != null && $validado!='')
         {
             $usuario->validado = $validado;
+            $bandera=true;
+        }
+
+        if ($token_notificacion != null && $token_notificacion!='')
+        {
+            $usuario->token_notificacion = $token_notificacion;
             $bandera=true;
         }
 
