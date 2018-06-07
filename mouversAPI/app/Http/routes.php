@@ -18,6 +18,10 @@ Route::get('/', function () {
 
 Route::group(  ['middleware' =>'cors'], function(){
 
+    //----Pruebas DashboardController
+    Route::get('/dashboard/diagram1','DashboardController@filterDiagram1');
+    Route::get('/dashboard/diagram2','DashboardController@filterDiagram2');
+
     //----Pruebas ErrorController
     Route::get('/error','ErrorController@index');
     Route::post('/error','ErrorController@store');

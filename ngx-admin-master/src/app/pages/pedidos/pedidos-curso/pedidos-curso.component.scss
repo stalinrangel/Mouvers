@@ -1,9 +1,22 @@
-@import '../../../@theme/styles/themes';
+  @import '../../../@theme/styles/themes';
 @import '~@nebular/theme/styles/global/bootstrap/hero-buttons';
 @import '~bootstrap/scss/mixins/breakpoints';
 @import '~@nebular/theme/styles/global/bootstrap/breakpoints';
 
 @include nb-install-component() {
+
+  .btn-table{
+    display: inline-block;
+  }
+
+  .page-link{
+ 
+  }
+
+  .img-table{
+    border-radius: 4px;
+    object-fit: cover;
+  }
 
   .viendo{
 

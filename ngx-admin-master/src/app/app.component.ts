@@ -36,6 +36,19 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.analytics.trackPageViews();
 
+    	//Set memoria para los chats
+    	localStorage.setItem('mouvers_chat_id', '');
+		localStorage.setItem('mouvers_usuario_id', '');
+		localStorage.setItem('mouvers_usuario_tipo', '');
+		localStorage.setItem('mouvers_usuario_nombre', '');
+		localStorage.setItem('mouvers_usuario_imagen', '');
+		localStorage.setItem('mouvers_usuario_token_notifi', '');
+
+		//Set memoria para los blogs
+		localStorage.setItem('mouvers_blog_id', '');
+		localStorage.setItem('mouvers_tema', '');
+		localStorage.setItem('mouvers_creador', '');
+
 		let OneSignal = window['OneSignal'] || [];
 		var that = this;
     	

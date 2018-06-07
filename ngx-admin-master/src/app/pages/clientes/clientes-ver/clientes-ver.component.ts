@@ -17,11 +17,12 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'ngx-ver-cli',
   templateUrl: './clientes-ver.component.html',
-  styles: [`
+  /*styles: [`
     nb-card {
       transform: translate3d(0, 0, 0);
     }
-  `],
+  `],*/
+  styleUrls: ['./clientes-ver.component.scss'],
 })
 export class ClientesVerComponent implements OnInit{
 

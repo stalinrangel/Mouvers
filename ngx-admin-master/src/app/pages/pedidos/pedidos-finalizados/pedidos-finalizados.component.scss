@@ -5,6 +5,19 @@
 
 @include nb-install-component() {
 
+  .btn-table{
+    display: inline-block;
+  }
+
+  .page-link{
+ 
+  }
+
+  .img-table{
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
   .viendo{
 
       .star {

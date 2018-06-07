@@ -16,7 +16,7 @@ class EstablecimientoController extends Controller
      */
     public function index()
     {
-        //cargar todas los establecimientos
+        //cargar todos los establecimientos
         $establecimientos = \App\Establecimiento::all();
 
         if(count($establecimientos) == 0){

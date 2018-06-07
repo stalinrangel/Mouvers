@@ -132,7 +132,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true,
   },
 
-
+/*
   {
     title: 'FEATURES',
     group: true,
@@ -281,5 +281,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/auth/reset-password',
       },
     ],
-  },
+  },*/
 ];

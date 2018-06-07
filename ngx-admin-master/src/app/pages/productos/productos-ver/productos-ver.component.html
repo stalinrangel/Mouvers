@@ -17,7 +17,7 @@
 
   <nb-card-body>
 
-    <table class="table table-striped">
+    <table class="table">
       <thead>
          <!-- <th style="text-align: center;">ID</th> -->
          <!-- <th style="text-align: center;">Imagen</th> -->
@@ -46,10 +46,10 @@
               </div>
             </td> 
             <td style="text-align: center; vertical-align:middle;">
-              <button type="button" class="btn btn-primary btn-icon" title="Editar" (click)="aEditar(item)">
+              <button type="button" class="btn btn-primary btn-icon btn-sm btn-table" title="Editar" (click)="aEditar(item)">
                 <i class="nb-edit"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-icon" title="Eliminar" (click)="open(modal1); aEliminar(item)">
+              <button type="button" class="btn btn-danger btn-icon btn-sm btn-table" title="Eliminar" (click)="open(modal1); aEliminar(item)">
                 <i class="nb-trash"></i>
               </button>
             </td>

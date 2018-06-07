@@ -374,6 +374,23 @@ class PedidoController extends Controller
         } 
     }
 
+    public function pedidosFinalizados()
+    {
+        //cargar todos los pedidos en finalizados (Estado 4)
+        $pedidos = \App\Pedido::with('usuario')
+            ->with('repartidor')
+            ->with('productos.establecimiento')
+            ->where('estado',4)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if(count($pedidos) == 0){
+            return response()->json(['error'=>'No existen pedidos finalizados.'], 404);          
+        }else{
+            return response()->json(['pedidos'=>$pedidos], 200);
+        } 
+    }
+
     /*Retorna el conteo de pedidos en curso 
     y finalizados de un cliente_id*/
     public function conteoPedidos($cliente_id)
