@@ -16,7 +16,13 @@ $nb-themes: nb-register-theme((
   color-fg-highlight: #76f8f6,
   link-color: #00203e,
   link-color-hover: #00203e,
-  color-success: #0b417a
+  color-success: #0b417a,
+  sidebar-fg2: #fff,
+  color-primary: #0b417a,
+  btn-padding-y-sm: 0.35rem,
+  btn-padding-x-sm: 0.9rem,
+  btn-font-size-sm: 1.5rem,
+  color-danger: #00BCD4
 ), default, default);
 
 $nb-themes: nb-register-theme((
