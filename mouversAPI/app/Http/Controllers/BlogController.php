@@ -100,8 +100,8 @@ class BlogController extends Controller
             if (count($admin)!=0) {
                 if ($admin[0]->token_notificacion && $admin[0]->token_notificacion != '' && $admin[0]->token_notificacion != 'null') {
 
-                    $order   = array("\r\n", "\n", "\r", " ");
-                    $replace = '%20';
+                    $order   = array("\r\n", "\n", "\r", " ", "&");
+                    $replace = array('%20', '%20', '%20', '%20', '%26');
                     $creador = str_replace($order, $replace, $request->input('creador'));
                     $tema = str_replace($order, $replace, $request->input('tema'));
 

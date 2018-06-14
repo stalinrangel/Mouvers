@@ -19,9 +19,15 @@ Route::get('/', function () {
 Route::group(  ['middleware' =>'cors'], function(){
 
     //----Pruebas DashboardController
-    Route::get('/dashboard/diagram1','DashboardController@filterDiagram1');
-    Route::get('/dashboard/diagram2','DashboardController@filterDiagram2');
-
+    Route::get('/dashboard/contadores','DashboardController@contadores');
+    Route::get('/dashboard/diagram1','DashboardController@filterCategorias');
+    Route::get('/dashboard/diagram2','DashboardController@filterSubcateogrias');
+    Route::get('/dashboard/diagram3','DashboardController@filterEstablecimientos');
+    Route::get('/dashboard/diagram4','DashboardController@filterHora');
+    Route::get('/dashboard/diagram5','DashboardController@filterHoraComida');
+    Route::get('/dashboard/tabla1','DashboardController@filterRepartidores');
+    Route::get('/dashboard/tabla2','DashboardController@filterCalificaciones');
+    
     //----Pruebas ErrorController
     Route::get('/error','ErrorController@index');
     Route::post('/error','ErrorController@store');
@@ -133,6 +139,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::post('/repartidores/{id}/set/posicion','RepartidorController@setPosicion');
         Route::get('/repartidores/{id}/pedido/encurso','RepartidorController@miPedidoEnCurso');
         Route::get('/repartidores/{id}/historial/pedidos','RepartidorController@historialPedidos');
+        Route::get('/repartidores/estadisticas/{repartidor_id}','RepartidorController@conteoPedidos');
 
         //----Pruebas BlogController
         Route::get('/blogs','BlogController@index');

@@ -12,6 +12,8 @@ use DB;
 use Mail;
 use Session;
 use Redirect;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsuarioController extends Controller
 {
@@ -30,7 +32,7 @@ class UsuarioController extends Controller
             ->where('tipo_usuario', 2)->get();
 
         if(count($usuarios) == 0){
-            return response()->json(['message'=>'No existen clientes.'], 404);          
+            return response()->json(['error'=>'No existen clientes.'], 404);          
         }else{
             return response()->json(['usuarios'=>$usuarios], 200);
         } 
@@ -46,7 +48,7 @@ class UsuarioController extends Controller
             ->where('tipo_usuario', 3)->get();
 
         if(count($usuarios) == 0){
-            return response()->json(['message'=>'No existen repartidores.'], 404);          
+            return response()->json(['error'=>'No existen repartidores.'], 404);          
         }else{
             return response()->json(['usuarios'=>$usuarios], 200);
         } 
@@ -106,10 +108,24 @@ class UsuarioController extends Controller
                 }else if ($request->input('tipo_registro') == 4) {
                     $auxUser->id_instagram = $request->input('id_instagram');
                 }
+
+                if ($request->has('token_notificacion')) {
+                    if ($request->input('token_notificacion') != 'null' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != '') {
+
+                        $auxUser->token_notificacion = $request->input('token_notificacion');
+                    }
+                }
                 
                 // Almacenamos en la base de datos el registro.
                 if ($auxUser->save()) {
-                    return response()->json(['message'=>'Usuario actualizado con éxito.', 'usuario'=>$auxUser], 200);
+
+                    if (!$token = JWTAuth::fromUser($auxUser)) {
+                        return response()->json(['error' => 'could_not_create_token'], 401);
+                    }
+
+                    $auxUser = JWTAuth::toUser($token);
+                    
+                    return response()->json(['message'=>'Usuario actualizado con éxito.', 'usuario'=>$auxUser, 'token' => $token], 200);
                 }else{
                     return response()->json(['error'=>'Error al actualizar el usuario.'], 500);
                 }
@@ -146,6 +162,13 @@ class UsuarioController extends Controller
         $usuario->id_instagram = $request->input('id_instagram');
         $usuario->validado = $validado;
 
+        if ($request->has('token_notificacion')) {
+            if ($request->input('token_notificacion') != 'null' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != '') {
+
+                $usuario->token_notificacion = $request->input('token_notificacion');
+            }
+        }
+
         if($usuario->save()){
 
             //Si es un registro con normal con email y password enviar correo de verificacion
@@ -153,7 +176,13 @@ class UsuarioController extends Controller
                 $this->emailDeValidacion($usuario->email);
             }
 
-           return response()->json(['message'=>'Usuario creado con éxito.', 'usuario'=>$usuario], 200);
+            if (!$token = JWTAuth::fromUser($usuario)) {
+                    return response()->json(['error' => 'could_not_create_token'], 401);
+                }
+
+                $usuario = JWTAuth::toUser($token);
+
+           return response()->json(['message'=>'Usuario creado con éxito.', 'usuario'=>$usuario, 'token' => $token], 200);
         }else{
             return response()->json(['error'=>'Error al crear el usuario.'], 500);
         }
@@ -481,8 +510,10 @@ class UsuarioController extends Controller
         $pedidos = \App\Pedido::with('productos.establecimiento')
             ->with('repartidor.usuario')
             ->where('usuario_id', $id)
+            ->where('estado_pago','aprobado')
             ->where(function ($query) {
-                $query->where('estado',1)
+                $query
+                    ->where('estado',1)
                     ->orWhere('estado',2)
                     ->orWhere('estado',3);
             })

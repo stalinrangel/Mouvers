@@ -406,8 +406,8 @@ export class ChatBoxComponent implements OnInit{
 		data => {
 			console.log(data);
 			this.datos = data;
-			this.chat_id = this.datos.chat.id;
-			this.admin_id = this.datos.chat.admin_id;
+			this.chat_id = (this.datos.chat.id).toString();
+			this.admin_id = (this.datos.chat.admin_id).toString();
 			this.token_notificacion = this.datos.msg.token_notificacion;	
 
 			//Datos del ususario (cliente/repartidor)
@@ -426,9 +426,23 @@ export class ChatBoxComponent implements OnInit{
 			/*Actualizar el chat_id en los servicios de las conversas*/
 			if (this.usuario_tipo == '2') {
 				this.conversationsCliService.updateConversa(this.datos.chat.id, this.datos.chat.usuario_id, this.datos.msg.token_notificacion);
+
+				/*for (var i = 0; i < this.conversationsCli.length; ++i) {
+					if (this.conversationsCli[i].id == 0 || this.conversationsCli[i].usuario.id == this.datos.chat.usuario_id) {
+						this.conversationsCli[i].id = this.datos.chat.id;
+						this.conversationsCli[i].usuario.token_notificacion = this.datos.msg.token_notificacion;
+					}
+				}*/
 			}
 			else if (this.usuario_tipo == '3') {
 				this.conversationsRepService.updateConversa(this.datos.chat.id, this.datos.chat.usuario_id, this.datos.msg.token_notificacion);
+
+				/*for (var i = 0; i < this.conversationsRep.length; ++i) {
+					if (this.conversationsRep[i].id == 0 || this.conversationsRep[i].usuario.id == this.datos.chat.usuario_id) {
+						this.conversationsRep[i].id = this.datos.chat.id;
+						this.conversationsRep[i].usuario.token_notificacion = this.datos.msg.token_notificacion;
+					}
+				}*/
 			}
 		},
 		msg => {

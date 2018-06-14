@@ -377,7 +377,7 @@ class NotificacionController extends Controller
                 return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
             }
 
-            if ($pedido->estado_pago == null || $pedido->estado_pago == 'declinado') {
+            if ($pedido->estado_pago == null || $pedido->estado_pago == 'declinado' || $pedido->estado_pago == 'pendiente') {
                 return response()->json(['error'=>'Para poder asignar un repartidor el pedido debe tener un pago registrado.'],409);
             }
 

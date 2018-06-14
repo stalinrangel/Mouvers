@@ -108,7 +108,7 @@ class PedidoController extends Controller
             'costo'=>$request->input('costo'),
             'usuario_id'=>$request->input('usuario_id'),
             /*'establecimiento_id'=>$request->input('establecimiento_id')*/
-            'estado_pago'=>'Pendiente'
+            'estado_pago'=>'pendiente'
             ])){
 
             //Crear las relaciones en la tabla pivote
@@ -361,9 +361,13 @@ class PedidoController extends Controller
         $pedidos = \App\Pedido::with('usuario')
             ->with('repartidor')
             ->with('productos.establecimiento')
-            ->where('estado',1)
-            ->orWhere('estado',2)
-            ->orWhere('estado',3)
+            ->where('estado_pago','aprobado')
+            ->where(function ($query) {
+                $query
+                    ->where('estado',1)
+                    ->orWhere('estado',2)
+                    ->orWhere('estado',3);
+            })
             ->orderBy('id', 'desc')
             ->get();
 
@@ -380,6 +384,7 @@ class PedidoController extends Controller
         $pedidos = \App\Pedido::with('usuario')
             ->with('repartidor')
             ->with('productos.establecimiento')
+            ->with('calificacion')
             ->where('estado',4)
             ->orderBy('id', 'desc')
             ->get();
@@ -398,9 +403,13 @@ class PedidoController extends Controller
         //contar todos los pedidos en curso (Estado 1 2 3)
         $enCurso = \App\Pedido::
             where('usuario_id',$cliente_id)
-            ->where('estado',1)
-            ->orWhere('estado',2)
-            ->orWhere('estado',3)
+            ->where('estado_pago','aprobado')
+            ->where(function ($query) {
+                $query
+                    ->where('estado',1)
+                    ->orWhere('estado',2)
+                    ->orWhere('estado',3);
+            })
             ->count();
 
         //contar todos los pedidos en finalizados (Estado 4)

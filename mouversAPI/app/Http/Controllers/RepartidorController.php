@@ -76,7 +76,7 @@ class RepartidorController extends Controller
         $usuario->ciudad = $request->input('ciudad');
         $usuario->estado = $request->input('estado');
         $usuario->telefono = $request->input('telefono');
-        //$usuario->imagen = $request->input('imagen');
+        $usuario->imagen = 'http://mouvers.mx/terminos/imgs/user-white.png';
         $usuario->tipo_usuario = 3;
         $usuario->tipo_registro = 1;
         //$usuario->id_facebook = $request->input('id_facebook');
@@ -438,6 +438,31 @@ class RepartidorController extends Controller
         }else{
             return response()->json(['pedidos'=>$pedidos], 200);
         } 
+    }
+
+    /*Retorna el conteo de pedidos en curso 
+    y finalizados de un repartidor_id*/
+    public function conteoPedidos($repartidor_id)
+    {
+        //contar todos los pedidos en curso (Estado 1 2 3)
+        $enCurso = \App\Pedido::
+            where('repartidor_id',$repartidor_id)
+            ->where(function ($query) {
+                $query
+                    ->where('estado',1)
+                    ->orWhere('estado',2)
+                    ->orWhere('estado',3);
+            })
+            ->count();
+
+        //contar todos los pedidos en finalizados (Estado 4)
+        $enFinalizados = \App\Pedido::
+            where('repartidor_id',$repartidor_id)
+            ->where('estado',4)
+            ->count();
+
+        return response()->json(['enCurso'=>$enCurso, 'enFinalizados'=>$enFinalizados], 200);
+         
     }
 
 }

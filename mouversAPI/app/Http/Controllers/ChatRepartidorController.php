@@ -164,17 +164,21 @@ class ChatRepartidorController extends Controller
 
                     // Orden del reemplazo
                     //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
-                    $order   = array("\r\n", "\n", "\r", " ");
-                    $replace = '%20';
+                    $order   = array("\r\n", "\n", "\r", " ", "&");
+                    $replace = array('%20', '%20', '%20', '%20', '%26');;
 
                     // Procesa primero \r\n así no es convertido dos veces.
                     $newstr = str_replace($order, $replace, $request->input('msg'));
 
-                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+                    $emisor = \App\User::select('id', 'nombre', 'tipo_usuario', 'token_notificacion', 'imagen')->find($msg->emisor_id);
 
                     //Tratar los espacios del nombre
                     $nombre = str_replace($order, $replace, $emisor->nombre);
                     $emisor->nombre = $nombre;
+
+                    //Tratar los & de la imagen
+                    $imagen = str_replace('&', '%26', $emisor->imagen);
+                    $emisor->imagen = $imagen;
 
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
@@ -201,17 +205,21 @@ class ChatRepartidorController extends Controller
 
                     // Orden del reemplazo
                     //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
-                    $order   = array("\r\n", "\n", "\r", " ");
-                    $replace = '%20';
+                    $order   = array("\r\n", "\n", "\r", " ", "&");
+                    $replace = array('%20', '%20', '%20', '%20', '%26');
 
                     // Procesa primero \r\n así no es convertido dos veces.
                     $newstr = str_replace($order, $replace, $request->input('msg'));
 
-                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+                    $emisor = \App\User::select('id', 'nombre', 'tipo_usuario', 'token_notificacion', 'imagen')->find($msg->emisor_id);
 
                     //Tratar los espacios del nombre
                     $nombre = str_replace($order, $replace, $emisor->nombre);
                     $emisor->nombre = $nombre;
+
+                    //Tratar los & de la imagen
+                    $imagen = str_replace('&', '%26', $emisor->imagen);
+                    $emisor->imagen = $imagen;
 
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
@@ -252,17 +260,21 @@ class ChatRepartidorController extends Controller
 
                     // Orden del reemplazo
                     //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
-                    $order   = array("\r\n", "\n", "\r", " ");
-                    $replace = '%20';
+                    $order   = array("\r\n", "\n", "\r", " ", "&");
+                    $replace = array('%20', '%20', '%20', '%20', '%26');
 
                     // Procesa primero \r\n así no es convertido dos veces.
                     $newstr = str_replace($order, $replace, $request->input('msg'));
 
-                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+                    $emisor = \App\User::select('id', 'nombre', 'tipo_usuario', 'token_notificacion', 'imagen')->find($msg->emisor_id);
 
                     //Tratar los espacios del nombre
                     $nombre = str_replace($order, $replace, $emisor->nombre);
                     $emisor->nombre = $nombre;
+
+                    //Tratar los & de la imagen
+                    $imagen = str_replace('&', '%26', $emisor->imagen);
+                    $emisor->imagen = $imagen;
 
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
@@ -289,17 +301,21 @@ class ChatRepartidorController extends Controller
 
                     // Orden del reemplazo
                     //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
-                    $order   = array("\r\n", "\n", "\r", " ");
-                    $replace = '%20';
+                    $order   = array("\r\n", "\n", "\r", " ", "&");
+                    $replace = array('%20', '%20', '%20', '%20', '%26');
 
                     // Procesa primero \r\n así no es convertido dos veces.
                     $newstr = str_replace($order, $replace, $request->input('msg'));
 
-                    $emisor = \App\User::select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion')->find($msg->emisor_id);
+                    $emisor = \App\User::select('id', 'nombre', 'tipo_usuario', 'token_notificacion', 'imagen')->find($msg->emisor_id);
 
                     //Tratar los espacios del nombre
                     $nombre = str_replace($order, $replace, $emisor->nombre);
                     $emisor->nombre = $nombre;
+
+                    //Tratar los & de la imagen
+                    $imagen = str_replace('&', '%26', $emisor->imagen);
+                    $emisor->imagen = $imagen;
 
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
                     $obj = json_encode($obj);
