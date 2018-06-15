@@ -47,7 +47,7 @@ class Pedido extends Model
     public function productos(){
         // 1 pedido contiene muchos productos
         return $this->belongsToMany('\App\Producto','pedido_productos','pedido_id','producto_id')
-            ->withPivot('cantidad','precio_unitario','observacion')/*->withTimestamps()*/; 
+            ->withPivot('estado_deuda','cantidad','precio_unitario','observacion')/*->withTimestamps()*/; 
     }
 
     /*// Relación de pedidos con establecimiento:

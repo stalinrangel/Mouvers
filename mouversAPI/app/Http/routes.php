@@ -18,6 +18,15 @@ Route::get('/', function () {
 
 Route::group(  ['middleware' =>'cors'], function(){
 
+        //----Pruebas PagoController
+        Route::get('/pagos/pendientes/{establecimiento_id}','PagoController@indexDeuda');
+        Route::get('/pagos/realizados','PagoController@indexPagos');
+        Route::post('/pagos','PagoController@store');
+        //Route::put('/pagos/{id}','PagoController@update');
+        //Route::delete('/pagos/{id}','PagoController@destroy');
+        Route::get('/pagos/{id}','PagoController@show');
+
+
     //----Pruebas DashboardController
     Route::get('/dashboard/contadores','DashboardController@contadores');
     Route::get('/dashboard/diagram1','DashboardController@filterCategorias');

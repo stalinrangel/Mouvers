@@ -115,6 +115,7 @@ class PedidoController extends Controller
             for ($i=0; $i < count($productos) ; $i++) { 
 
                 $nuevoPedido->productos()->attach($productos[$i]->producto_id, [
+                    'estado_deuda' => 1,
                     'cantidad' => $productos[$i]->cantidad,
                     'precio_unitario' => $productos[$i]->precio_unitario,
                     'observacion' => $productos[$i]->observacion]);
@@ -368,6 +369,7 @@ class PedidoController extends Controller
                     ->orWhere('estado',2)
                     ->orWhere('estado',3);
             })
+            ->where(DB::raw("PERIOD_DIFF(DATE_FORMAT(now(), '%y%m') ,DATE_FORMAT(created_at, '%y%m'))"), '<=', 1)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -386,6 +388,7 @@ class PedidoController extends Controller
             ->with('productos.establecimiento')
             ->with('calificacion')
             ->where('estado',4)
+            ->where(DB::raw("PERIOD_DIFF(DATE_FORMAT(now(), '%y%m') ,DATE_FORMAT(created_at, '%y%m'))"), '<=', 1)
             ->orderBy('id', 'desc')
             ->get();
 
