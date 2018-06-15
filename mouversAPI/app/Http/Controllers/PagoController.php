@@ -21,6 +21,7 @@ class PagoController extends Controller
         relacionados con el establecimiento_id*/
         $pedidos = \App\Pedido::select('id', 'usuario_id', 'created_at')
             ->where(DB::raw("PERIOD_DIFF(DATE_FORMAT(now(), '%y%m') ,DATE_FORMAT(created_at, '%y%m'))"), '<=', 1)
+            ->where('estado_pago','aprobado')
             ->with(['productos' => function ($query) use ($establecimiento_id) {
                 $query->where('productos.establecimiento_id', $establecimiento_id)
                 ->where('pedido_productos.estado_deuda', 1)
