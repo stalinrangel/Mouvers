@@ -16,6 +16,7 @@ export class ChatMessage {
   created_at: number | string;
   msg: string;
   status: number;
+  nameAvatar: string;
 }
 
 export class UserInfo {
@@ -42,6 +43,7 @@ export class ComentariosService {
 	      id: Date.now().toString(),
 	      usuario_id: 2329382,
 	      userAvatar: msg.toUserAvatar,
+	      nameAvatar: msg.nameAvatar,
 	      created_at: Date.now(),
 	      msg: msg.message,
 	      status: 1
@@ -64,6 +66,7 @@ export class ComentariosService {
 				this.mensajes = this.datos.blog.msgs;
 				for (var i = 0; i < this.mensajes.length; ++i) {
 					this.mensajes[i].userAvatar = this.mensajes[i].usuario.imagen;
+					this.mensajes[i].nameAvatar = this.mensajes[i].usuario.nombre;
 				}
 				observer.next(this.mensajes);
 				observer.complete();

@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
+import * as distanceInWordsToNow from 'date-fns/distance_in_words_to_now/index.js';
+//import distanceInWords from 'date-fns/distance_in_words'
 import * as esLocale from 'date-fns/locale/es/index.js'
 /**
  * Generated class for the RelativeTimePipe pipe.

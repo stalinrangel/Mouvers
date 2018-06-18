@@ -6,7 +6,7 @@ import { BlogsRoutingModule, routedComponents } from './blogs-routing.module';
 import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
 import { ToasterModule } from 'angular2-toaster';
 
-//import { RelativeTimePipe } from '../../pipes/relative-time/relative-time';
+import { RelativeTimePipe } from '../../pipes/relative-time/relative-time';
 
 @NgModule({
   imports: [
@@ -25,6 +25,7 @@ import { ToasterModule } from 'angular2-toaster';
   ],
   declarations: [
     ...routedComponents,
+    RelativeTimePipe
   ],
    providers: [
 

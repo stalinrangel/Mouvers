@@ -29,24 +29,23 @@
             </div>
 			<div class="chatbox">
 				<div #scrollChat class="chatlogs message-wrap">
-			    <div *ngFor="let msg of msgList"
-			         class="message"
-			         [class.leftmsg]=" true ">
-			      <img class="user-img" [src]="msg.userAvatar" alt="" >
-			      <!--ion-spinner name="dots" *ngIf="msg.status === 1"></ion-spinner-->
-			      <div class="msg-detail">
-			        <div class="msg-info">
-			          <!--p>{{msg.created_at | relativeTime}}</p-->
-			        </div>
-			        <div class="msg-content">
-			          <span class="triangle"></span>
-			          <p class="line-breaker ">{{msg.msg}}</p>
-			        </div>
-			      </div>
-			    </div>
+			   		<div *ngFor="let msg of msgList"
+				         class="message left">
+				      <img class="user-img" [src]="msg.userAvatar" alt="" >
+				      <div class="msg-detail">
+				        <div class="msg-info">
+				          <p>{{msg.nameAvatar}}&nbsp;·&nbsp;{{msg.created_at | relativeTime}}</p>
+				        </div>
+				        <div class="msg-content">
+				          <span class="triangle"></span>
+				          <p class="line-breaker ">{{msg.msg}}</p>
+				        </div>
+				      </div>
+				      <hr>
+				    </div>
 				</div>
 			    <div class="chat-form">
-					<textarea name="msg" [(ngModel)]="editorMsg" id="msg" placeholder="Escribe un mensaje..." (keydown)="enterMsg($event)"></textarea>
+					<textarea name="msg" [(ngModel)]="editorMsg" id="msg" placeholder="Agregar un comentario..." (keydown)="enterMsg($event)"></textarea>
 					<button type="button" class="btn btn-primary btn-icon btn-send" [disabled]="!editorMsg || editorMsg == ''" (click)="sendMsg()">
 						<i class="ion-android-send icon-send"></i>
 					</button>

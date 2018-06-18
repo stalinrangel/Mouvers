@@ -35,10 +35,8 @@ import { ViewHeaderEventService } from './services/eventos-services/view-header-
 import { HeaderToChatEventService } from './services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
 import { HeaderToBlogEventService } from './services/eventos-services/header-to-blog-event-service/header-to-blog-event.service';
 
-import { RelativeTimePipe } from './pipes/relative-time/relative-time';
-
 @NgModule({
-  declarations: [AppComponent, RelativeTimePipe],
+  declarations: [AppComponent],
   imports: [
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCr8zuLtOO7IoK_rC948rLcqyqsIaZOouY',
@@ -55,7 +53,7 @@ import { RelativeTimePipe } from './pipes/relative-time/relative-time';
     CoreModule.forRoot(),
     LoadingModule.forRoot({
         animationType: ANIMATION_TYPES.wanderingCubes,
-        backdropBackgroundColour: 'rgba(0,0,0,0.5)', 
+        backdropBackgroundColour: 'rgba(0,0,0,0.7)', 
         backdropBorderRadius: '4px',
         primaryColour: '#ffffff', 
         secondaryColour: '#ffffff', 

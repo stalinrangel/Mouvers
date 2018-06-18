@@ -270,8 +270,9 @@ export class BlogsComponent implements OnInit, OnDestroy{
 		
 		let newMsg: ChatMessage = {
 		  id: Date.now().toString(),
-		  usuario_id: parseInt(this.user.id),
-		  userAvatar: this.user.avatar,
+		  usuario_id: parseInt(this.admin_id),
+		  userAvatar: this.admin_imagen,
+		  nameAvatar: this.admin_nombre,
 		  created_at: Date.now(),
 		  msg: this.editorMsg,
 		  status: 1
@@ -324,6 +325,7 @@ export class BlogsComponent implements OnInit, OnDestroy{
 		
 		if (msg.usuario_id === userId ) {
 		  this.msgList.push(msg);
+		  console.log(this.msgList);
 		} 
 		this.scrollToBottom();
 	}

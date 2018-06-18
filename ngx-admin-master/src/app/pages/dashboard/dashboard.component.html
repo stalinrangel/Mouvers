@@ -66,7 +66,7 @@
         <div style="text-align: center;" class="row show-grid">
           <div class="col-12">
             <div>
-              Productos solicitados por categoría
+              Productos solicitados <br>por categoría
               <i class="fa fa-refresh icon-refresh" (click)="getDiagram1()"></i>
             </div>
           </div>
@@ -81,7 +81,8 @@
               </label>
             </div> 
           </div>
-          <div *ngIf="radioModelD1 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
+          <div class="col-12" *ngIf="radioModelD1 == 'left'" style="margin-top: 10px;">
+            <div class="row">
             <div class="col-4">
               <div class="form-group">
                 <label>Día</label>
@@ -107,7 +108,9 @@
               </div>
             </div>
           </div>
-          <div *ngIf="radioModelD1 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
+          </div>
+          <div class="col-12" *ngIf="radioModelD1 != 'left'" style="margin-top: 10px;" >
+            <div class="row">
             <div class="col-6">
               <div class="form-group">
                 <label>Mes</label>
@@ -124,6 +127,7 @@
                 </select>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </nb-card-header>
@@ -162,47 +166,51 @@
               </label>
             </div> 
           </div>
-          <div *ngIf="radioModelD2 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-4">
-              <div class="form-group">
-                <label>Día</label>
-                <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD2">
-                  <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD2 == 'left'">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Día</label>
+                  <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD2">
+                    <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD2">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD2">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD2">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD2">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-          <div *ngIf="radioModelD2 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD2">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD2 != 'left'">
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD2">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD2">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD2">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -242,47 +250,51 @@
               </label>
             </div> 
           </div>
-          <div *ngIf="radioModelD3 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-4">
-              <div class="form-group">
-                <label>Día</label>
-                <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD3">
-                  <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD3 == 'left'">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Día</label>
+                  <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD3">
+                    <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD3">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD3">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD3">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD3">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-          <div *ngIf="radioModelD3 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD3">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD3 != 'left'">
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD3">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD3">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD3">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -344,47 +356,51 @@
               </label>
             </div> 
           </div>
-          <div *ngIf="radioModelD4 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-4">
-              <div class="form-group">
-                <label>Día</label>
-                <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD4">
-                  <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
-                </select>
+          <div style="margin-top: 10px" *ngIf="radioModelD4 == 'left'" class="col-12">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Día</label>
+                  <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD4">
+                    <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD4">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD4">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD4">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD4">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-          <div *ngIf="radioModelD4 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD4">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD4 != 'left'">
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD4">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD4">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD4">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -424,47 +440,51 @@
               </label>
             </div> 
           </div>
-          <div *ngIf="radioModelD5 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-4">
-              <div class="form-group">
-                <label>Día</label>
-                <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD5">
-                  <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD5 == 'left'">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Día</label>
+                  <select id="dia" name="dia" class="form-control" [(ngModel)]="diaD5">
+                    <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD5">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD5">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD5">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD5">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-          <div *ngIf="radioModelD5 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Mes</label>
-                <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD5">
-                  <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                </select>
+          <div style="margin-top: 10px" class="col-12" *ngIf="radioModelD5 != 'left'">
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Mes</label>
+                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesD5">
+                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="form-group">
-                <label>Año</label>
-                <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD5">
-                  <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                </select>
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Año</label>
+                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioD5">
+                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -490,7 +510,7 @@
     <div class="col-md-12">
       <nb-card>
         <nb-card-header>
-          <div style="text-align: center;" class="row show-grid">
+          <div style="text-align: center;" class="row">
             <div class="col-12">
               <div>
                 Kms recorridos por repartidor
@@ -508,47 +528,51 @@
                 </label>
               </div> 
             </div>
-            <div *ngIf="radioModelT1 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label>Día</label>
-                  <select id="dia" name="dia" class="form-control" [(ngModel)]="diaT1">
-                    <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
-                  </select>
+            <div style="margin-top: 10px" class="col-12" *ngIf="radioModelT1 == 'left'">
+              <div class="row">
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>Día</label>
+                    <select id="dia" name="dia" class="form-control" [(ngModel)]="diaT1">
+                      <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label>Mes</label>
-                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT1">
-                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                  </select>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>Mes</label>
+                    <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT1">
+                      <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label>Año</label>
-                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT1">
-                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                  </select>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>Año</label>
+                    <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT1">
+                      <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="radioModelT1 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
-              <div class="col-6">
-                <div class="form-group">
-                  <label>Mes</label>
-                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT1">
-                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                  </select>
+            <div style="margin-top: 10px" class="col-12" *ngIf="radioModelT1 != 'left'">
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Mes</label>
+                    <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT1">
+                      <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-6">
-                <div class="form-group">
-                  <label>Año</label>
-                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT1">
-                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                  </select>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Año</label>
+                    <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT1">
+                      <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -600,10 +624,10 @@
     <div class="col-md-12">
       <nb-card>
         <nb-card-header>
-          <div style="text-align: center;" class="row show-grid">
+          <div style="text-align: center;" class="row">
             <div class="col-12">
               <div>
-                Calificaiones
+                Calificaciones
                 <i class="fa fa-refresh icon-refresh" (click)="getTabla2()"></i>
               </div>
             </div>
@@ -618,47 +642,51 @@
                 </label>
               </div> 
             </div>
-            <div *ngIf="radioModelT2 == 'left'" style="margin-top: 10px; text-align: center;" class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label>Día</label>
-                  <select id="dia" name="dia" class="form-control" [(ngModel)]="diaT2">
-                    <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
-                  </select>
+            <div style="margin-top: 10px" class="col-12" *ngIf="radioModelT2 == 'left'">
+              <div class="row">
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>Día</label>
+                    <select id="dia" name="dia" class="form-control" [(ngModel)]="diaT2">
+                      <option [value]="dia" *ngFor ="let dia of dias">{{dia}}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label>Mes</label>
-                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT2">
-                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                  </select>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>Mes</label>
+                    <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT2">
+                      <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label>Año</label>
-                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT2">
-                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                  </select>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>Año</label>
+                    <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT2">
+                      <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="radioModelT2 != 'left'" style="margin-top: 10px; text-align: center;" class="row">
-              <div class="col-6">
-                <div class="form-group">
-                  <label>Mes</label>
-                  <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT2">
-                    <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
-                  </select>
+            <div style="margin-top: 10px" class="col-12" *ngIf="radioModelT2 != 'left'">
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Mes</label>
+                    <select id="mes" name="mes" class="form-control" [(ngModel)]="mesT2">
+                      <option [value]="mes" *ngFor ="let mes of meses">{{mes}}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-6">
-                <div class="form-group">
-                  <label>Año</label>
-                  <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT2">
-                    <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
-                  </select>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Año</label>
+                    <select id="anio" name="anio" class="form-control" [(ngModel)]="anioT2">
+                      <option [value]="anio" *ngFor ="let anio of anios">{{anio}}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
