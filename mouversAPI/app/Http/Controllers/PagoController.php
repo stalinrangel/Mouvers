@@ -36,8 +36,20 @@ class PagoController extends Controller
         }else{
 
             $pedidosAux = [];
+            $total_deuda = 0;
             for ($i=0; $i < count($pedidos); $i++) { 
                 if (count($pedidos[$i]->productos) > 0) {
+
+                    $total_pedido = 0;
+
+                    for ($j=0; $j < count($pedidos[$i]->productos); $j++) { 
+                        $total_pedido = $total_pedido + ($pedidos[$i]->productos[$j]->pivot->cantidad * $pedidos[$i]->productos[$j]->pivot->precio_unitario);
+                    }
+
+                    $pedidos[$i]->total_pedido = $total_pedido;
+                    $pedidos[$i]->cancelar = 'NO';
+                    $total_deuda = $total_deuda + $total_pedido;
+
                     array_push($pedidosAux, $pedidos[$i]);
                 }
             }
@@ -45,7 +57,7 @@ class PagoController extends Controller
             if (count($pedidosAux) == 0) {
                 return response()->json(['error'=>'No hay deuda con el establecimiento en los ultimos 30 días.'], 404);
             }else{
-                return response()->json(['pedidos'=>$pedidosAux], 200);
+                return response()->json(['pedidos'=>$pedidosAux, 'total_deuda'=>$total_deuda], 200);
             }  
         }
     }
@@ -149,6 +161,19 @@ class PagoController extends Controller
         if(count($pago)==0){
             return response()->json(['error'=>'No existe el pago con id '.$id], 404);          
         }else{
+
+            for ($i=0; $i < count($pago->pedidos); $i++) { 
+                if (count($pago->pedidos[$i]->productos) > 0) {
+
+                    $total_pedido = 0;
+
+                    for ($j=0; $j < count($pago->pedidos[$i]->productos); $j++) { 
+                        $total_pedido = $total_pedido + ($pago->pedidos[$i]->productos[$j]->pivot->cantidad * $pago->pedidos[$i]->productos[$j]->pivot->precio_unitario);
+                    }
+
+                    $pago->pedidos[$i]->total_pedido = $total_pedido;
+                }
+            }
 
             return response()->json(['pago'=>$pago], 200);
         }

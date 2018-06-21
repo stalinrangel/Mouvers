@@ -1,19 +1,18 @@
 import { NgModule } from '@angular/core';
 import { ThemeModule } from '../../@theme/theme.module';
-import { ChatBoxRoutingModule, routedComponents } from './chat-box-routing.module';
+import { PagosRoutingModule, routedComponents } from './pagos-routing.module';
 
 //Mis imports
 import { LoadingModule, ANIMATION_TYPES  } from 'ngx-loading';
 import { ToasterModule } from 'angular2-toaster';
-
-import { RelativeTimePipe2 } from '../../pipes/relative-time2/relative-time2';
+//import { Ng2UploaderModule } from 'ng2-uploader';
 
 
 @NgModule({
   imports: [
     ToasterModule,
     ThemeModule,
-    ChatBoxRoutingModule,
+    PagosRoutingModule,
     LoadingModule.forRoot({
         animationType: ANIMATION_TYPES.chasingDots,
         backdropBackgroundColour: 'rgba(0,0,0,0.5)', 
@@ -26,10 +25,9 @@ import { RelativeTimePipe2 } from '../../pipes/relative-time2/relative-time2';
   ],
   declarations: [
     ...routedComponents,
-    RelativeTimePipe2
   ],
    providers: [
 
   ],
 })
-export class ChatBoxModule { }
+export class PagosModule { }

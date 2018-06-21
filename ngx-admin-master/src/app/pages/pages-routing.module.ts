@@ -64,6 +64,9 @@ const routes: Routes = [{
     path: 'sistema',
     loadChildren: './sistema/sistema.module#SistemaModule',
   },{
+    path: 'pagos',
+    loadChildren: './pagos/pagos.module#PagosModule',
+  },{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

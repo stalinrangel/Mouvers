@@ -1,0 +1,187 @@
+<nb-card *ngIf="!pagando && mostrar">
+  <nb-card-header>
+    <div class="row show-grid">
+          <div class="col-6">
+            <div>Lista de Establecimientos</div>
+          </div>
+          <div class="col-6">
+            <div>
+              <div style="text-align: right;">
+               <strong>Buscar: </strong>
+               <input  type="text"  id="inputName" [(ngModel)]="inputName" (ngModelChange)="FilterByName()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+  </nb-card-header>
+
+  <nb-card-body>
+
+    <table class="table">
+      <thead>
+         <!-- <th style="text-align: center;">ID</th> -->
+         <th style="text-align: center;">Nombre</th>
+         <th style="text-align: center;">Dirección</th>
+         <th style="text-align: center;">Acciones</th>
+      </thead>
+      <tbody>
+         <tr *ngFor="let item of items" >
+            <td style="text-align: center; vertical-align:middle;">{{item.nombre}}</td>
+            <td style="text-align: center; vertical-align:middle;">{{item.direccion}}</td> 
+            <td style="text-align: center; vertical-align:middle;">
+              <button type="button" class="btn btn-primary btn-icon btn-sm btn-table" title="Consultar deuda" (click)="getDeuda(item)">
+                <i class="fa fa-eye"></i>
+              </button>
+            </td>
+         </tr>
+      </tbody>
+    </table>
+      
+  </nb-card-body>
+  <nb-card-footer>
+    <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+      <div class="btn-group">
+         <label style="margin-top:10px">Página {{currentIndex}}/{{pageNumber}} </label>
+      </div>
+      <div class="btn-group pull-right">
+         <ul class="pagination" >
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == 1 || pageNumber == 0)}" ><a class="page-link"  (click)="prevPage()" >Atrás</a></li>
+               <li class="page-item" *ngFor="let page of pagesIndex"  [ngClass]="{'active': (currentIndex == page)}">
+                  <a class="page-link" (click)="setPage(page)"  >{{page}} </a>
+               </li>
+            <li class="page-item" [ngClass]="{'disabled': (currentIndex == pageNumber || pageNumber == 0)}" ><a class="page-link"   (click)="nextPage()" >Siguiente</a></li>
+         </ul>
+      </div>
+    </div>  
+  </nb-card-footer>
+</nb-card>
+
+<div class="pagando" *ngIf="pagando">
+  <div class="row">
+    <div class="col-md-12">
+      <nb-card>
+        <nb-card-header>
+          Detalles de la deuda
+        </nb-card-header>
+        <nb-card-body>
+
+          <h5 class="grid-h">Deuda total</h5>
+          <div class="row show-grid">
+
+            <div class="col-md-4">
+              <div>Monto <small>($ MXN)</small></div>
+            </div>
+            <div class="col-md-8">
+              <div>{{total_deuda}}</div>
+            </div>
+
+          </div>
+
+          <h5 class="grid-h">Pedidos</h5>
+          <div *ngFor="let pedido of pedidos">
+
+            <div class="row show-grid">
+
+              <div class="col-md-4">
+                <div>Fecha - Hora</div>
+              </div>
+              <div class="col-md-8">
+                <div>{{pedido.created_at | date:'dd/MM/yyyy'}} - {{pedido.created_at | date:'HH:mm:ss'}}</div>
+              </div>
+
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                     Producto
+                    </th>
+                    <th>
+                     Solicitados
+                    </th>
+                    <th>
+                     Precio Unit. <small>($ MXN)</small>
+                    </th>
+                    <th>
+                     Sub-total <small>($ MXN)</small>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let producto of pedido.productos">
+                       <td class="text-center">
+                         {{producto.nombre}}
+                       </td>
+                       <td class="text-center">
+                         {{producto.pivot.cantidad}}
+                       </td>
+                       <td class="text-center">
+                         {{producto.pivot.precio_unitario}}
+                       </td>
+                       <td class="text-center">
+                         {{producto.pivot.precio_unitario * producto.pivot.cantidad}}
+                       </td>
+                     </tr>
+                     
+                     <tr>
+                       <td colspan="4"></td>
+                     </tr>
+                     <tr>
+                       <td colspan="3" style="text-align: right;"><strong>Total</strong> <small>($ MXN)</small></td>
+                       <td class="text-center">{{pedido.total_pedido}}</td>
+                     </tr> 
+                     <tr>
+                       <td colspan="3" style="text-align: right;"><strong>Cancelar</strong></td>
+                       <td class="text-center"><nb-checkbox [value]="false" (change)="addPago(pedido)">{{pedido.cancelar}}</nb-checkbox></td>
+                     </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h5 class="grid-h">Monto a cancelar</h5>
+          <div class="row show-grid">
+
+            <div class="col-md-4">
+              <div>Monto <small>($ MXN)</small></div>
+            </div>
+            <div class="col-md-8">
+              <div>{{cancelar_monto}}</div>
+            </div>
+
+          </div>
+
+        </nb-card-body>
+        <nb-card-footer>
+          <button  class="btn btn-tn btn-secondary" (click)="atras()"><i class="fa fa-arrow-left"></i> Atrás</button>
+          <button  class="btn btn-tn btn-info pull-right" style="margin-right:15px;" (click)="confirmarPago(modal1)" [disabled]="cancelar_monto == 0">Generar Pago</button>
+        </nb-card-footer>
+      </nb-card>
+    </div>
+  </div>
+</div>
+
+<ng-template #modal1 let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Confirmar Pago: </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>¿Realmente desea generar un pago para el establecimiento {{selectedObj.nombre}}?</p>
+    <p><strong>Monto</strong> = {{cancelar_monto}} $ MXN</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="c('Close click'); registrarPago()">Aceptar</button>
+  </div>
+</ng-template>
+
+<toaster-container [toasterconfig]="config"></toaster-container>
+
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+</div>

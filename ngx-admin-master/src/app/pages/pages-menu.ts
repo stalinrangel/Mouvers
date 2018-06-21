@@ -126,6 +126,21 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true,
   },
   {
+    title: 'Pagos',
+    icon: 'ion-social-usd',
+    children: [
+      {
+        title: 'Pendientes',
+        link: '/pages/pagos/pendientes',
+      },
+      {
+        title: 'Realizados',
+        link: '/pages/pagos/realizados',
+      },
+     
+    ],
+  },
+  {
     title: 'Sistema',
     icon: 'ion-wrench',
     link: '/pages/sistema',

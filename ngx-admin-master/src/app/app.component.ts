@@ -71,7 +71,15 @@ export class AppComponent implements OnInit {
 	        "message": "Gracias por suscribirse a las notificaciones!"
 	      },
 	      notifyButton: {
-	          enable: false, 
+	          	/* Your other notify button settings here ... */
+		        enable: true,
+		        displayPredicate: function() {
+		            return OneSignal.isPushNotificationsEnabled()
+		                .then(function(isPushEnabled) {
+		                    /* The user is subscribed, so we want to return "false" to hide the notify button */
+		                    return !isPushEnabled;
+		                });
+		        }, 
 	      }
 	    }]);
 	    console.log('OneSignal Initialized');

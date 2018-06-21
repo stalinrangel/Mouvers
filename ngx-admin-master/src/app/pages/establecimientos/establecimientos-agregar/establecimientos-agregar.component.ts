@@ -53,8 +53,8 @@ export class EstablecimientosAgregarComponent implements OnInit{
   //Mapa
   private zone: NgZone;
 
-  lat: number = -38.938771;
-  lng: number = -67.995493;
+  lat: number = 26.047172833607;
+  lng: number = -98.292354481476;
   zoom: number = 16;
 
   public searchControl: FormControl;
@@ -97,10 +97,10 @@ export class EstablecimientosAgregarComponent implements OnInit{
     this.mapsAPILoader.load().then(() => {
 
     var defaultBounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(-38.512445, -70.482788),
-      new google.maps.LatLng(-37.673767, -67.692261),
-      new google.maps.LatLng(-38.778443, -62.616577),
-      new google.maps.LatLng(-40.009472, -68.076782)
+      new google.maps.LatLng(26.077848, -98.375664),
+      new google.maps.LatLng(26.077543, -98.276901),
+      new google.maps.LatLng(26.058949, -98.283691),
+      new google.maps.LatLng(26.041180, -98.366295)
     );
 
     var options = { 
@@ -113,7 +113,7 @@ export class EstablecimientosAgregarComponent implements OnInit{
       types: ["address"]
     }, options);
      var circle = new google.maps.Circle({
-            center: {lat:  -38.938771, lng: -67.995493},
+            center: {lat:  26.047172833607, lng: -98.292354481476},
             radius: 10*1000
           });
           autocomplete.setBounds(circle.getBounds());

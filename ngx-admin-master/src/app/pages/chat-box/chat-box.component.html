@@ -55,7 +55,7 @@
 		                	<i class="ion-close-round icon-delete" (click)="open(modal1); aEliminar(item)"></i>
 		                    <img src="{{item.usuario.imagen}}" alt="" />
 		                    <span class="name">{{item.usuario.nombre}}</span>
-		                    <span class="time">{{item.ultimo_msg.created_at}}</span>
+		                    <span class="time">{{item.ultimo_msg.created_at | relativeTime}}</span>
 		                    <span class="preview">{{item.ultimo_msg.msg}}</span>
 		                </li>  
 		            </ul>
@@ -69,7 +69,7 @@
 		                	<i class="ion-close-round icon-delete" (click)="open(modal1); aEliminar(item)"></i>
 		                    <img src="{{item.usuario.imagen}}" alt="" />
 		                    <span class="name">{{item.usuario.nombre}}</span>
-		                    <span class="time">{{item.ultimo_msg.created_at}}</span>
+		                    <span class="time">{{item.ultimo_msg.created_at | relativeTime}}</span>
 		                    <span class="preview">{{item.ultimo_msg.msg}}</span>
 		                </li> 
 		            </ul>
@@ -91,7 +91,7 @@
 			      <!--ion-spinner name="dots" *ngIf="msg.status === 1"></ion-spinner-->
 			      <div class="msg-detail">
 			        <div class="msg-info">
-			          <!--p>{{msg.created_at | relativeTime}}</p-->
+			          <p>{{msg.created_at | relativeTime}}</p>
 			        </div>
 			        <div class="msg-content">
 			          <span class="triangle"></span>

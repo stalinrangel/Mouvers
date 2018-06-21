@@ -63,11 +63,18 @@
   <div class="col-lg-4">
     <nb-card>
       <nb-card-header>
-        <div style="text-align: center;" class="row show-grid">
+
+        <div style="position: absolute; top: 0px; right:15px;" >
+          <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getDiagram1()">
+            <i class="fa fa-refresh icon-refresh"></i>
+          </button>
+        </div>
+
+        <div style="text-align: center" class="row show-grid">
           <div class="col-12">
             <div>
-              Productos solicitados <br>por categoría
-              <i class="fa fa-refresh icon-refresh" (click)="getDiagram1()"></i>
+              Productos solicitados por <br>categoría
+              <!-- <i class="fa fa-refresh icon-refresh" (click)="getDiagram1()"></i> -->
             </div>
           </div>
           <div style="margin-top: 10px" class="col-12">
@@ -148,11 +155,18 @@
   <div class="col-lg-4">
     <nb-card>
       <nb-card-header>
+
+        <div style="position: absolute; top: 0px; right:15px;" >
+          <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getDiagram2()">
+            <i class="fa fa-refresh icon-refresh"></i>
+          </button>
+        </div>
+
         <div style="text-align: center;" class="row show-grid">
           <div class="col-12">
             <div>
-              Productos solicitados por subcategoría
-              <i class="fa fa-refresh icon-refresh" (click)="getDiagram2()"></i>
+              Productos solicitados por <br>subcategoría
+              <!-- <i class="fa fa-refresh icon-refresh" (click)="getDiagram2()"></i> -->
             </div>
           </div>
           <div style="margin-top: 10px" class="col-12">
@@ -232,11 +246,18 @@
   <div class="col-lg-4">
     <nb-card>
       <nb-card-header>
+
+        <div style="position: absolute; top: 0px; right:15px;" >
+          <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getDiagram3()">
+            <i class="fa fa-refresh icon-refresh"></i>
+          </button>
+        </div>
+
         <div style="text-align: center;" class="row show-grid">
           <div class="col-12">
             <div>
-              Productos solicitados por establecimiento
-              <i class="fa fa-refresh icon-refresh" (click)="getDiagram3()"></i>
+              Productos solicitados por <br>establecimiento
+              <!-- <i class="fa fa-refresh icon-refresh" (click)="getDiagram3()"></i> -->
             </div>
           </div>
           <div style="margin-top: 10px" class="col-12">
@@ -315,34 +336,22 @@
   </div>
 </div>
 
-<!-- <div class="row">
-  <div style="display:block; margin:auto" class="col-lg-6">
-    <nb-card>
-      <nb-card-header>Pedidos por establecimiento</nb-card-header>
-      <nb-card-body>
-        <div *ngIf="loadDiagram3" style="height: 458px;">
-          <div class="loader" style="display:block; margin:auto;"></div>
-        </div>
-        <div *ngIf="!loadDiagram3 && !diagram3" style="height: 458px; text-align: center;">
-          <p>Data no disponible.</p>
-        </div>
-        <div *ngIf="!loadDiagram3 && diagram3">
-         <ngx-chartjs-pie [dataDiagrama]="establecimientos"></ngx-chartjs-pie>
-        </div>
-      </nb-card-body>
-    </nb-card>
-  </div>
-</div>
- -->
 <div class="row">
   <div class="col-lg-6">
     <nb-card>
       <nb-card-header>
+
+        <div style="position: absolute; top: 0px; right:15px;" >
+          <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getDiagram4()">
+            <i class="fa fa-refresh icon-refresh"></i>
+          </button>
+        </div>
+
         <div style="text-align: center;" class="row show-grid">
           <div class="col-12">
             <div>
-              Pedidos por hora
-              <i class="fa fa-refresh icon-refresh" (click)="getDiagram4()"></i>
+              Pedidos registrados por <br>hora
+              <!-- <i class="fa fa-refresh icon-refresh" (click)="getDiagram4()"></i> -->
             </div>
           </div>
           <div style="margin-top: 10px" class="col-12">
@@ -422,11 +431,18 @@
   <div class="col-lg-6">
     <nb-card>
       <nb-card-header>
+
+        <div style="position: absolute; top: 0px; right:15px;" >
+          <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getDiagram5()">
+            <i class="fa fa-refresh icon-refresh"></i>
+          </button>
+        </div>
+
         <div style="text-align: center;" class="row show-grid">
           <div class="col-12">
             <div>
-              Pedidos por hora categoría comida
-              <i class="fa fa-refresh icon-refresh" (click)="getDiagram5()"></i>
+              Pedidos registrados por <br>hora, categoría comida
+              <!-- <i class="fa fa-refresh icon-refresh" (click)="getDiagram5()"></i> -->
             </div>
           </div>
           <div style="margin-top: 10px" class="col-12">
@@ -510,11 +526,18 @@
     <div class="col-md-12">
       <nb-card>
         <nb-card-header>
+
+          <div style="position: absolute; top: 0px; right:15px;" >
+            <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getTabla1()">
+              <i class="fa fa-refresh icon-refresh"></i>
+            </button>
+          </div>
+
           <div style="text-align: center;" class="row">
             <div class="col-12">
               <div>
                 Kms recorridos por repartidor
-                <i class="fa fa-refresh icon-refresh" (click)="getTabla1()"></i>
+                <!-- <i class="fa fa-refresh icon-refresh" (click)="getTabla1()"></i> -->
               </div>
             </div>
             <div style="margin-top: 10px" class="col-12">
@@ -624,11 +647,18 @@
     <div class="col-md-12">
       <nb-card>
         <nb-card-header>
+
+          <div style="position: absolute; top: 0px; right:15px;" >
+            <button  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="getTabla2()">
+              <i class="fa fa-refresh icon-refresh"></i>
+            </button>
+          </div>
+
           <div style="text-align: center;" class="row">
             <div class="col-12">
               <div>
                 Calificaciones
-                <i class="fa fa-refresh icon-refresh" (click)="getTabla2()"></i>
+                <!-- <i class="fa fa-refresh icon-refresh" (click)="getTabla2()"></i> -->
               </div>
             </div>
             <div style="margin-top: 10px" class="col-12">
