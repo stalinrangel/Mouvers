@@ -220,7 +220,7 @@ export class DashboardComponent implements OnInit {
 	//Obtener los contadores del dia
 	getContadores() {
 
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/contadores?token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/contadores?token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -246,6 +246,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }else{
 	            	this.showToast('info', 'Info!', 'Algo salió mal.');
@@ -271,7 +274,7 @@ export class DashboardComponent implements OnInit {
 		this.diagram1 = false;
 		this.loadDiagram1 = true;
 		this.categorias = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/diagram1?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/diagram1?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -301,6 +304,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data
@@ -330,7 +336,7 @@ export class DashboardComponent implements OnInit {
 		this.diagram2 = false;
 		this.loadDiagram2 = true;
 		this.subcategorias = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/diagram2?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/diagram2?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -358,6 +364,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data
@@ -387,7 +396,7 @@ export class DashboardComponent implements OnInit {
 		this.diagram3 = false;
 		this.loadDiagram3 = true;
 		this.establecimientos = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/diagram3?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/diagram3?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -415,6 +424,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data
@@ -444,7 +456,7 @@ export class DashboardComponent implements OnInit {
 		this.diagram4 = false;
 		this.loadDiagram4 = true;
 		this.pedidosA = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/diagram4?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/diagram4?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -472,6 +484,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data
@@ -501,7 +516,7 @@ export class DashboardComponent implements OnInit {
 		this.diagram5 = false;
 		this.loadDiagram5 = true;
 		this.pedidosB = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/diagram5?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/diagram5?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -529,6 +544,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data
@@ -558,7 +576,7 @@ export class DashboardComponent implements OnInit {
 		this.tabla1 = false;
 		this.loadTabla1 = true;
 		this.repartidores = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/tabla1?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/tabla1?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -586,6 +604,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data
@@ -615,7 +636,7 @@ export class DashboardComponent implements OnInit {
 		this.tabla2 = false;
 		this.loadTabla2 = true;
 		this.calificaciones = [];
-	    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/dashboard/tabla2?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
+	    this.http.get(this.rutaService.getRutaApi()+'dashboard/tabla2?dia='+dia+'&mes='+mes+'&anio='+anio+'&token='+localStorage.getItem('mouvers_token'))
 	       .toPromise()
 	       .then(
 	         data => { // Success
@@ -643,6 +664,9 @@ export class DashboardComponent implements OnInit {
 	                //alert(msg.error.error);
 
 	                this.showToast('warning', 'Warning!', msg.error.error);
+	                setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 	                   
 	            }
 	            //sin data

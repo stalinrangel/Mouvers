@@ -97,7 +97,7 @@ export class SubcategoriasVerComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/categoria?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'subcategorias/categoria?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -127,6 +127,9 @@ export class SubcategoriasVerComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin usuarios
             else if(msg.status == 404){ 
@@ -171,7 +174,7 @@ export class SubcategoriasVerComponent implements OnInit{
   }
 
     getCategorias(): void {
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/categorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'categorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
     
          .toPromise()
          .then(
@@ -189,6 +192,9 @@ export class SubcategoriasVerComponent implements OnInit{
                   //alert(msg.error.error);
                   //ir a login
                   this.showToast('warning', 'Warning!', msg.error.error);
+                  setTimeout(()=>{
+                    this.router.navigateByUrl('/pagessimples/loginf');
+                  },1000);
               }
               //sin categorias o todas deshabilitadas OFF
               else if(msg.status == 404){ 
@@ -243,7 +249,7 @@ export class SubcategoriasVerComponent implements OnInit{
         categoria_id: this.myFormEditar.value.categoria_id
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+this.myFormEditar.value.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'subcategorias/'+this.myFormEditar.value.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -308,7 +314,7 @@ export class SubcategoriasVerComponent implements OnInit{
 
       const formModel = this.prepareSave();
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
+      this.http.post(this.rutaService.getRutaApi()+'imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
          .toPromise()
          .then(
            data => { // Success
@@ -397,7 +403,7 @@ export class SubcategoriasVerComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'subcategorias/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -476,7 +482,7 @@ export class SubcategoriasVerComponent implements OnInit{
         estado: v_estado
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+obj.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'subcategorias/'+obj.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -518,7 +524,7 @@ export class SubcategoriasVerComponent implements OnInit{
 
       this.loading = true;
 
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+obj.id+'/productos?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'subcategorias/'+obj.id+'/productos?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -596,7 +602,7 @@ export class SubcategoriasVerComponent implements OnInit{
           //productos: '[{"id":1,"cantidad":3,"estado":"ON"},{"id":3,"cantidad":3,"estado":"OFF"}]'
         }
 
-        this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/'+this.habSubcategoria.id, datos)
+        this.http.put(this.rutaService.getRutaApi()+'subcategorias/'+this.habSubcategoria.id, datos)
            .toPromise()
            .then(
              data => { // Success

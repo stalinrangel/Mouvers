@@ -73,7 +73,7 @@ export class ProductosAgregarComponent implements OnInit{
 
     this.loading = true;
 
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'subcategorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -94,6 +94,9 @@ export class ProductosAgregarComponent implements OnInit{
                 //alert(msg.error.error);
                 //ir a login
                 this.showToast('warning', 'Warning!', msg.error.error);
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin categorias o todas deshabilitadas OFF
             else if(msg.status == 404){ 
@@ -128,7 +131,7 @@ export class ProductosAgregarComponent implements OnInit{
 
   getEstablecimientos() {
 
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/habilitados?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'establecimientos/habilitados?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -148,6 +151,9 @@ export class ProductosAgregarComponent implements OnInit{
                 //alert(msg.error.error);
                 //ir a login
                 this.showToast('warning', 'Warning!', msg.error.error);
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin establecimientos o todos deshabilitados OFF
             else if(msg.status == 404){ 
@@ -175,7 +181,7 @@ export class ProductosAgregarComponent implements OnInit{
         establecimiento_id: this.myFormAgregar.value.establecimiento_id
       }
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/productos', datos)
+      this.http.post(this.rutaService.getRutaApi()+'productos', datos)
          .toPromise()
          .then(
            data => { // Success
@@ -219,7 +225,7 @@ export class ProductosAgregarComponent implements OnInit{
 
       const formModel = this.prepareSave();
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
+      this.http.post(this.rutaService.getRutaApi()+'imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
          .toPromise()
          .then(
            data => { // Success

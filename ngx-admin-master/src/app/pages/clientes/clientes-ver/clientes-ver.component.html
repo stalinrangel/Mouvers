@@ -29,6 +29,7 @@
          <th style="text-align: center;">Teléfono</th>
          <th style="text-align: center;">Ciudad</th>
          <th style="text-align: center;">Estado</th>
+         <th style="text-align: center;">Status</th>
          <th style="text-align: center;">Acciones</th>
       </thead>
       <tbody>
@@ -39,6 +40,18 @@
             <td style="text-align: center;">{{item.telefono}}</td>
             <td style="text-align: center;">{{item.ciudad}}</td>
             <td style="text-align: center;">{{item.estado}}</td>
+            <td style=" vertical-align:middle;">
+              <div class="estado" style="display:block; margin:auto">
+                <label class="theme-switch">
+                  <span class="light">OFF</span>
+                  <div class="switch">
+                    <input type="checkbox" [checked]="item.status === 'ON'" (change)="cambiarStatus(item)" #theme>
+                    <span class="slider"></span>
+                  </div>
+                  <span class="cosmic">ON</span>
+                </label>
+              </div>
+            </td>
             <td style="text-align: center;">
               <button type="button" class="btn btn-danger btn-icon btn-sm btn-table" title="Eliminar" (click)="open(modal1); aEliminar(item)">
                 <i class="nb-trash"></i>

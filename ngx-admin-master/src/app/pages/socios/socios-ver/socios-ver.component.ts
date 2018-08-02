@@ -94,7 +94,7 @@ export class SociosVerComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'repartidores?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -124,6 +124,9 @@ export class SociosVerComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin usuarios
             else if(msg.status == 404){ 
@@ -155,7 +158,7 @@ export class SociosVerComponent implements OnInit{
   }
 
   getEstados(): void {
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/entidades/municipios?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'entidades/municipios?token='+localStorage.getItem('mouvers_token'))
   
        .toPromise()
        .then(
@@ -173,6 +176,9 @@ export class SociosVerComponent implements OnInit{
                 //alert(msg.error.error);
                 //ir a login
                 this.showToast('warning', 'Warning!', msg.error.error);
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin categorias o todas deshabilitadas OFF
             else if(msg.status == 404){ 
@@ -274,7 +280,7 @@ export class SociosVerComponent implements OnInit{
         estado: this.myFormEditar.value.estado,
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/'+this.myFormEditar.value.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'repartidores/'+this.myFormEditar.value.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -339,7 +345,7 @@ export class SociosVerComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'repartidores/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -404,7 +410,7 @@ export class SociosVerComponent implements OnInit{
         rep_estado: v_estado
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/'+obj.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'repartidores/'+obj.id, datos)
          .toPromise()
          .then(
            data => { // Success

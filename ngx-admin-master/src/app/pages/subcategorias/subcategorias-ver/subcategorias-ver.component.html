@@ -100,8 +100,12 @@
             <div [hidden]="clear">
               <label for="exampleInputImagen">Imagen</label>
               <input type="file" name="imagen" id="imagen" (change)="onFileChange($event)" #fileInput accept="image/*">
+              
               <br>
               <br>
+
+              <p [hidden]="clear" style="color: #c71717"><b>Sugerencia:</b> La dimensión de la imagen no debe ser mayor a 870x370 px.</p>
+
               <img src = "{{objAEditar.imagen}}" alt="" height="160px">
             </div>
               <div *ngIf="clear">

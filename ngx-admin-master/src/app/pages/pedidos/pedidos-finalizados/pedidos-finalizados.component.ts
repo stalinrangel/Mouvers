@@ -73,7 +73,7 @@ export class PedidosFinalizadosComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/pedidos/estado/finalizados?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'pedidos/estado/finalizados?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -138,6 +138,9 @@ export class PedidosFinalizadosComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin usuarios
             else if(msg.status == 404){ 
@@ -204,7 +207,7 @@ export class PedidosFinalizadosComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'productos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success

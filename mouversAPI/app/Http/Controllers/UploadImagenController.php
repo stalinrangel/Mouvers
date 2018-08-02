@@ -47,7 +47,8 @@ class UploadImagenController extends Controller
 
         $hoy = date("m.d.y.H.i.s");
 
-        $destinationPath = public_path().'/../../images_uploads/'.$request->input('carpeta').'/';
+        $destinationPath = public_path().'/images_uploads/'.$request->input('carpeta').'/';
+        //$destinationPath = public_path().'/../../images_uploads/'.$request->input('carpeta').'/';
         $fileName = $hoy.'.png';
         $request->file('imagen')->move($destinationPath,$fileName);
 

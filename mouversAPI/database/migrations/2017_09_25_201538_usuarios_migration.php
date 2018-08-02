@@ -28,7 +28,8 @@ class UsuariosMigration extends Migration
             $table->string('id_instagram')->nullable();
             $table->string('codigo_verificacion')->nullable();
             $table->integer('validado'); //0=no validado 1=validado
-            $table->text('token_notificacion')->nullable(); 
+            $table->text('token_notificacion')->nullable();
+            $table->string('status'); // ON/OFF 
             $table->timestamps();
         });
     }

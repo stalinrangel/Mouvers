@@ -103,7 +103,7 @@ export class CategoriasAgregarComponent implements OnInit{
       }
       console.log(datos);
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/categorias', datos)
+      this.http.post(this.rutaService.getRutaApi()+'categorias', datos)
          .toPromise()
          .then(
            data => { // Success
@@ -146,7 +146,7 @@ export class CategoriasAgregarComponent implements OnInit{
 
       const formModel = this.prepareSave();
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
+      this.http.post(this.rutaService.getRutaApi()+'imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
          .toPromise()
          .then(
            data => { // Success

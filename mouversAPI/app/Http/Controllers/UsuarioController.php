@@ -25,7 +25,7 @@ class UsuarioController extends Controller
     public function index()
     {
         //cargar todos los usuarios clientes
-        $usuarios = \App\User::select('id', 'email', 'nombre', 'ciudad', 'estado', 'telefono', 'imagen', 'tipo_usuario', 'token_notificacion')
+        $usuarios = \App\User::select('id', 'email', 'nombre', 'ciudad', 'estado', 'telefono', 'imagen', 'tipo_usuario', 'token_notificacion', 'status')
             ->with(['chat_cliente' => function ($query) {
                 $query->select('id', 'admin_id', 'usuario_id');
             }])
@@ -161,6 +161,7 @@ class UsuarioController extends Controller
         $usuario->id_twitter = $request->input('id_twitter');
         $usuario->id_instagram = $request->input('id_instagram');
         $usuario->validado = $validado;
+        $usuario->status = 'ON';
 
         if ($request->has('token_notificacion')) {
             if ($request->input('token_notificacion') != 'null' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != '') {
@@ -249,6 +250,7 @@ class UsuarioController extends Controller
         //$codigo_verificacion=$request->input('codigo_verificacion');
         $validado=$request->input('validado');
         $token_notificacion=$request->input('token_notificacion');
+        $status=$request->input('status');
 
         // Creamos una bandera para controlar si se ha modificado algún dato.
         $bandera = false;
@@ -325,6 +327,12 @@ class UsuarioController extends Controller
         if ($token_notificacion != null && $token_notificacion!='')
         {
             $usuario->token_notificacion = $token_notificacion;
+            $bandera=true;
+        }
+
+        if ($status != null && $status!='')
+        {
+            $usuario->status = $status;
             $bandera=true;
         }
 
@@ -429,7 +437,8 @@ class UsuarioController extends Controller
     {
         //$enlace = 'http://localhost/gitHub/Mouvers/mouversAPI/public/usuarios/validar/'.$email;
 
-        $enlace = 'http://mouvers.mx/mouversAPI/public/usuarios/validar/'.$email;
+        //$enlace = 'http://mouvers.mx/mouversAPI/public/usuarios/validar/'.$email;
+        $enlace = 'http://api.mouvers.mx/usuarios/validar/'.$email;
 
         //return response()->view('emails.validar_cuenta', ['enlace' => $enlace], 200);
 

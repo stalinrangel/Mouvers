@@ -57,7 +57,7 @@ export class ComentariosService {
 	getMsgList(blog_id): Observable<ChatMessage[]> {
 
 		return Observable.create(observer => {
-		    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/blogs/'+blog_id+'?token='+localStorage.getItem('mouvers_token'))
+		    this.http.get(this.rutaService.getRutaApi()+'blogs/'+blog_id+'?token='+localStorage.getItem('mouvers_token'))
 		    .toPromise()
 		    .then(
 			data => {

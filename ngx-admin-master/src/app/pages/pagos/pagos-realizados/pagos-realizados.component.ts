@@ -68,7 +68,7 @@ export class PagosRealizadosComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/pagos/realizados?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'pagos/realizados?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -125,6 +125,9 @@ export class PagosRealizadosComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin establecimientos
             else if(msg.status == 404){ 
@@ -180,7 +183,7 @@ export class PagosRealizadosComponent implements OnInit{
     console.log(this.selectedObj);
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/pagos/'+this.selectedObj.id+'?establecimiento_id='+this.selectedObj.establecimiento.id+'&token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'pagos/'+this.selectedObj.id+'?establecimiento_id='+this.selectedObj.establecimiento.id+'&token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success

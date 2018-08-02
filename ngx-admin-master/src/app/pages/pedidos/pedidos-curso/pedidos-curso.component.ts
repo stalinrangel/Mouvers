@@ -75,7 +75,7 @@ export class PedidosCursoComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/pedidos/estado/curso?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'pedidos/estado/curso?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -139,6 +139,9 @@ export class PedidosCursoComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin usuarios
             else if(msg.status == 404){ 
@@ -206,7 +209,7 @@ export class PedidosCursoComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/productos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'productos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -261,7 +264,7 @@ export class PedidosCursoComponent implements OnInit{
       console.log(this.selectedObj);
 
       this.loading = true;
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores/disponibles?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'repartidores/disponibles?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -314,7 +317,7 @@ export class PedidosCursoComponent implements OnInit{
         pedido_id: this.selectedObj.id,
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/notificaciones/'+this.repartidor_id+'/asignar/pedido', datos)
+      this.http.put(this.rutaService.getRutaApi()+'notificaciones/'+this.repartidor_id+'/asignar/pedido', datos)
          .toPromise()
          .then(
            data => { // Success

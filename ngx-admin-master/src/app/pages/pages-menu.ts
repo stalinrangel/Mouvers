@@ -7,12 +7,12 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/dashboard',
     home: true,
   },
-  {
+  /*{
     title: 'Login',
     icon: 'nb-locked',
     link: '/pagessinples/loginf',
     home: true,
-  },
+  },*/
   {
     title: 'Clientes',
     icon: 'ion-ios-people-outline',

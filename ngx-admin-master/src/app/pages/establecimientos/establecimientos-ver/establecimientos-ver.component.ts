@@ -118,7 +118,7 @@ export class EstablecimientosVerComponent implements OnInit{
     this.inicializarMapa();
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'establecimientos?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -146,6 +146,9 @@ export class EstablecimientosVerComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin establecimientos
             else if(msg.status == 404){ 
@@ -344,7 +347,7 @@ export class EstablecimientosVerComponent implements OnInit{
         lng: this.myFormEditar.value.lng
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+this.myFormEditar.value.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'establecimientos/'+this.myFormEditar.value.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -409,7 +412,7 @@ export class EstablecimientosVerComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'establecimientos/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -489,7 +492,7 @@ export class EstablecimientosVerComponent implements OnInit{
         estado: v_estado
       }
 
-      this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+obj.id, datos)
+      this.http.put(this.rutaService.getRutaApi()+'establecimientos/'+obj.id, datos)
          .toPromise()
          .then(
            data => { // Success
@@ -531,7 +534,7 @@ export class EstablecimientosVerComponent implements OnInit{
 
       this.loading = true;
 
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+obj.id+'/productos?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'establecimientos/'+obj.id+'/productos?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -609,7 +612,7 @@ export class EstablecimientosVerComponent implements OnInit{
           //productos: '[{"id":1,"cantidad":3,"estado":"ON"},{"id":3,"cantidad":3,"estado":"OFF"}]'
         }
 
-        this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos/'+this.habEstablecimiento.id, datos)
+        this.http.put(this.rutaService.getRutaApi()+'establecimientos/'+this.habEstablecimiento.id, datos)
            .toPromise()
            .then(
              data => { // Success

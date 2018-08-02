@@ -19,7 +19,6 @@
 
     <table class="table">
       <thead>
-         <!-- <th style="text-align: center;">ID</th> -->
          <th style="text-align: center;">Nombre</th>
          <th style="text-align: center;">Email</th>
          <th style="text-align: center;">Teléfono</th>
@@ -31,7 +30,8 @@
       <tbody>
          <tr *ngFor="let item of items" >
             <td style="text-align: center; vertical-align:middle;">{{item.usuario.nombre}}</td>
-            <td style="text-align: center; vertical-align:middle;">{{item.usuario.email}}</td>
+            <td style="text-align: center; vertical-align:middle;">
+            {{item.usuario.email}}</td>
             <td style="text-align: center; vertical-align:middle;">{{item.usuario.telefono}}</td>
             <td style="text-align: center; vertical-align:middle;">{{item.usuario.estado}}</td>
             <td style="text-align: center; vertical-align:middle;">{{item.usuario.ciudad}}</td>
@@ -112,14 +112,14 @@
             <label for="exampleInputEstado">Estado</label>
             <select class="form-control" id="exampleInputEstado" formControlName="estado"
             (change)="setEstado2($event.target.value)">
-              <!-- <option disabled selected>Selecciona una categoría</option> -->
+              <option disabled selected>Selecciona una categoría</option>
               <option *ngFor="let estado of estados" [value]="estado.nom_ent">{{estado.nom_ent}}</option>
             </select>
           </div>
           <div *ngIf="estados" class="form-group">
             <label for="exampleInputCiudad">Ciudad</label>
             <select class="form-control" id="exampleInputCiudad" formControlName="ciudad">
-              <!-- <option disabled selected>Selecciona una categoría</option> -->
+              <option disabled selected>Selecciona una categoría</option>
               <option *ngFor="let ciudad of ciudades" [value]="ciudad.nom_mun">{{ciudad.nom_mun}}</option>
             </select>
           </div>

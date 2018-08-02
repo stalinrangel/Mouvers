@@ -69,7 +69,7 @@ export class PagosPendientesComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'establecimientos?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -97,6 +97,9 @@ export class PagosPendientesComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin establecimientos
             else if(msg.status == 404){ 
@@ -153,7 +156,7 @@ export class PagosPendientesComponent implements OnInit{
     console.log(this.selectedObj);
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/pagos/pendientes/'+this.selectedObj.id+'?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'pagos/pendientes/'+this.selectedObj.id+'?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -231,7 +234,7 @@ export class PagosPendientesComponent implements OnInit{
 
     //console.log(datos);
 
-    this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/pagos', datos)
+    this.http.post(this.rutaService.getRutaApi()+'pagos', datos)
        .toPromise()
        .then(
          data => { // Success

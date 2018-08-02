@@ -18,25 +18,7 @@ Route::get('/', function () {
 
 Route::group(  ['middleware' =>'cors'], function(){
 
-        //----Pruebas PagoController
-        Route::get('/pagos/pendientes/{establecimiento_id}','PagoController@indexDeuda');
-        Route::get('/pagos/realizados','PagoController@indexPagos');
-        Route::post('/pagos','PagoController@store');
-        //Route::put('/pagos/{id}','PagoController@update');
-        //Route::delete('/pagos/{id}','PagoController@destroy');
-        Route::get('/pagos/{id}','PagoController@show');
-
-
-    //----Pruebas DashboardController
-    Route::get('/dashboard/contadores','DashboardController@contadores');
-    Route::get('/dashboard/diagram1','DashboardController@filterCategorias');
-    Route::get('/dashboard/diagram2','DashboardController@filterSubcateogrias');
-    Route::get('/dashboard/diagram3','DashboardController@filterEstablecimientos');
-    Route::get('/dashboard/diagram4','DashboardController@filterHora');
-    Route::get('/dashboard/diagram5','DashboardController@filterHoraComida');
-    Route::get('/dashboard/tabla1','DashboardController@filterRepartidores');
-    Route::get('/dashboard/tabla2','DashboardController@filterCalificaciones');
-    
+        
     //----Pruebas ErrorController
     Route::get('/error','ErrorController@index');
     Route::post('/error','ErrorController@store');
@@ -57,11 +39,22 @@ Route::group(  ['middleware' =>'cors'], function(){
     Route::get('/coordenadas','CoordenadasController@index');
 
     Route::post('/usuarios','UsuarioController@store');
+    Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
 
     //----Pruebas EntidadMunicipioController
     Route::get('/entidades/municipios','EntidadMunicipioController@index');
 
     Route::group(['middleware' => 'jwt-auth'], function(){
+
+        //----Pruebas DashboardController
+        Route::get('/dashboard/contadores','DashboardController@contadores');
+        Route::get('/dashboard/diagram1','DashboardController@filterCategorias');
+        Route::get('/dashboard/diagram2','DashboardController@filterSubcateogrias');
+        Route::get('/dashboard/diagram3','DashboardController@filterEstablecimientos');
+        Route::get('/dashboard/diagram4','DashboardController@filterHora');
+        Route::get('/dashboard/diagram5','DashboardController@filterHoraComida');
+        Route::get('/dashboard/tabla1','DashboardController@filterRepartidores');
+        Route::get('/dashboard/tabla2','DashboardController@filterCalificaciones');
 
 
         //----Pruebas UsuarioController
@@ -71,7 +64,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/usuarios/{id}','UsuarioController@update');
         Route::delete('/usuarios/{id}','UsuarioController@destroy');
         Route::get('/usuarios/{id}','UsuarioController@show');
-        Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
+        //Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
         Route::get('/usuarios/email/validar/{email}','UsuarioController@emailDeValidacion');
         //Route::get('/usuarios/{id}/pedidos/historial','UsuarioController@misPedidosHistorial');
         //Route::get('/usuarios/{id}/pedidos/hoy','UsuarioController@misPedidosHoy');
@@ -164,7 +157,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/mensajes/blogs/{id}','MsgBlogController@destroy');
         //Route::get('/mensajes/blogs/{id}','MsgBlogController@show');
 
-        //----Pruebas MsgClienteAdminController
+        /*//----Pruebas MsgClienteAdminController
         Route::get('/mensajes/cliente','MsgClienteAdminController@index');
         Route::post('/mensajes/cliente','MsgClienteAdminController@store');
         //Route::put('/mensajes/cliente/{id}','MsgClienteAdminController@update');
@@ -180,7 +173,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::delete('/mensajes/repartidor/{id}','MsgRepAdminController@destroy');
         //Route::get('/mensajes/repartidor/{id}','MsgRepAdminController@show');
         Route::get('/mensajes/repartidor/chat/{cliente_id}','MsgRepAdminController@miChat');
-        Route::put('/mensajes/repartidor/leer','MsgRepAdminController@leerMensajes');
+        Route::put('/mensajes/repartidor/leer','MsgRepAdminController@leerMensajes');*/
 
         //----Pruebas NotificacionController
         Route::get('/notificaciones/localizar/repartidores/pedido_id/{id}','NotificacionController@localizarRepartidores');
@@ -194,9 +187,13 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::post('/sistema','VarSistemaController@store');
         Route::put('/sistema/{id}','VarSistemaController@update');
 
-
-
-    });
+        //----Pruebas PagoController
+        Route::get('/pagos/pendientes/{establecimiento_id}','PagoController@indexDeuda');
+        Route::get('/pagos/realizados','PagoController@indexPagos');
+        Route::post('/pagos','PagoController@store');
+        //Route::put('/pagos/{id}','PagoController@update');
+        //Route::delete('/pagos/{id}','PagoController@destroy');
+        Route::get('/pagos/{id}','PagoController@show');
 
         //----Pruebas ChatClienteController
         Route::get('/chats/clientes','ChatClienteController@index');
@@ -217,4 +214,8 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/chats/repartidores/{id}','ChatRepartidorController@show');
         Route::get('/chats/repartidores/michat/{usuario_id}','ChatRepartidorController@miChat');
         Route::put('/chats/repartidores/leer','ChatRepartidorController@leerMensajes');
+
+    });
+
+        
 });

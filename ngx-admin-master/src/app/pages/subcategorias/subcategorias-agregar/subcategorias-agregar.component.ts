@@ -68,7 +68,7 @@ export class SubcategoriasAgregarComponent implements OnInit{
 
     this.loading = true;
 
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/categorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'categorias/habilitadas?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -88,6 +88,9 @@ export class SubcategoriasAgregarComponent implements OnInit{
                 //alert(msg.error.error);
                 //ir a login
                 this.showToast('warning', 'Warning!', msg.error.error);
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             //sin categorias o todas deshabilitadas OFF
             else if(msg.status == 404){ 
@@ -133,7 +136,7 @@ export class SubcategoriasAgregarComponent implements OnInit{
         categoria_id: this.myFormAgregar.value.categoria_id
       }
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/subcategorias', datos)
+      this.http.post(this.rutaService.getRutaApi()+'subcategorias', datos)
          .toPromise()
          .then(
            data => { // Success
@@ -176,7 +179,7 @@ export class SubcategoriasAgregarComponent implements OnInit{
 
       const formModel = this.prepareSave();
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
+      this.http.post(this.rutaService.getRutaApi()+'imagenes?token='+localStorage.getItem('mouvers_token'), formModel)
          .toPromise()
          .then(
            data => { // Success

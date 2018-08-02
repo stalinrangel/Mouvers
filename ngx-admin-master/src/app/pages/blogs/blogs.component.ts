@@ -173,7 +173,7 @@ export class BlogsComponent implements OnInit, OnDestroy{
 
       this.loading2 = true;
 
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/blogs?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'blogs?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -212,6 +212,9 @@ export class BlogsComponent implements OnInit, OnDestroy{
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
                   this.showToast('warning', 'Warning!', msg.error.error);
+	              	setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
               }
               else if(msg.status == 404){ 
                   //alert(msg.error.error);
@@ -294,7 +297,7 @@ export class BlogsComponent implements OnInit, OnDestroy{
 		this.send_msg.token = localStorage.getItem('mouvers_token');
 		console.log(this.send_msg);
 
-		this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/mensajes/blogs', this.send_msg)
+		this.http.post(this.rutaService.getRutaApi()+'mensajes/blogs', this.send_msg)
 	    .toPromise()
 	    .then(
 		data => {
@@ -356,7 +359,7 @@ export class BlogsComponent implements OnInit, OnDestroy{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/blogs/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'blogs/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -492,7 +495,7 @@ export class BlogsComponent implements OnInit, OnDestroy{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/blogs', datos)
+      this.http.post(this.rutaService.getRutaApi()+'blogs', datos)
          .toPromise()
          .then(
            data => { // Success

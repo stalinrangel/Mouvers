@@ -67,7 +67,7 @@ export class ClientesVerComponent implements OnInit{
   ngOnInit() {
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/usuarios?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'usuarios?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success
@@ -96,11 +96,16 @@ export class ClientesVerComponent implements OnInit{
 
                 this.showToast('warning', 'Warning!', msg.error.error);
                 this.mostrar = false;
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
+                
             }
             //sin usuarios
             else if(msg.status == 404){ 
                 //alert(msg.error.error);
                 this.showToast('info', 'Info!', msg.error.error);
+                
             }
             
 
@@ -172,7 +177,7 @@ export class ClientesVerComponent implements OnInit{
         token: localStorage.getItem('mouvers_token')
       }
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/usuarios/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'usuarios/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -215,6 +220,62 @@ export class ClientesVerComponent implements OnInit{
                   this.showToast('error', 'Erro!', msg.error.error);
               }
 
+           }
+         );
+    }
+
+    //Para el cliente
+    cambiarStatus(obj): void {
+
+      var v_status: any;
+
+      if (obj.status == 'ON') {
+        //obj.status = 'OFF';
+        v_status = 'OFF';
+      }else{
+        //obj.status = 'ON';
+        v_status = 'ON';
+      }
+
+      var datos= {
+        token: localStorage.getItem('mouvers_token'),
+        status: v_status
+      }
+
+      this.http.put(this.rutaService.getRutaApi()+'usuarios/'+obj.id, datos)
+         .toPromise()
+         .then(
+           data => { // Success
+              console.log(data);
+              this.data = data;
+              this.showToast('success', 'Success!', this.data.message);
+              obj.status = v_status;
+              
+           },
+           msg => { // Error
+             console.log(msg);
+             console.log(msg.error.error);
+
+              //Regresar el switch en caso de error
+              if (v_status == 'ON') {
+                //obj.status = 'OFF';
+                obj.status = 'OFF';
+              }else{
+                //obj.status = 'ON';
+                obj.status = 'ON';
+              }
+
+             //token invalido/ausente o token expiro
+             if(msg.status == 400 || msg.status == 401){ 
+                  //alert(msg.error.error);
+                  //ir a login
+
+                  this.showToast('warning', 'Warning!', msg.error.error);
+              }
+              else { 
+                  //alert(msg.error.error);
+                  this.showToast('error', 'Erro!', msg.error.error);
+              }
            }
          );
     }

@@ -61,7 +61,7 @@ export class SistemaComponent implements OnInit{
 	ngOnInit() {
 
 		this.loading = true;
-		this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/sistema?token='+localStorage.getItem('mouvers_token'))
+		this.http.get(this.rutaService.getRutaApi()+'sistema?token='+localStorage.getItem('mouvers_token'))
 		   .toPromise()
 		   .then(
 		     data => { // Success
@@ -85,6 +85,9 @@ export class SistemaComponent implements OnInit{
 		       if(msg.status == 400 || msg.status == 401){ 
 		            //alert(msg.error.error);
 		            this.showToast('warning', 'Warning!', msg.error.error);
+		            setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
 		        }
 		        //sin usuarios
 		        else if(msg.status == 404){ 
@@ -136,7 +139,7 @@ export class SistemaComponent implements OnInit{
 	      }
 	    console.log(datos);
 
-		this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/sistema', datos)
+		this.http.post(this.rutaService.getRutaApi()+'sistema', datos)
 		   .toPromise()
 		   .then(
 		     data => { // Success
@@ -182,7 +185,7 @@ export class SistemaComponent implements OnInit{
 	      }
 	    console.log(datos);
 
-		this.http.put(this.rutaService.getRutaApi()+'mouversAPI/public/sistema/'+this.idVarSistema, datos)
+		this.http.put(this.rutaService.getRutaApi()+'sistema/'+this.idVarSistema, datos)
 		   .toPromise()
 		   .then(
 		     data => { // Success

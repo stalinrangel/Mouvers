@@ -65,7 +65,7 @@ export class ChatService {
 		}
 
 		return Observable.create(observer => {
-		    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/chats/'+url_final+'/'+chat_id+'?token='+localStorage.getItem('mouvers_token'))
+		    this.http.get(this.rutaService.getRutaApi()+'chats/'+url_final+'/'+chat_id+'?token='+localStorage.getItem('mouvers_token'))
 		    .toPromise()
 		    .then(
 			data => {

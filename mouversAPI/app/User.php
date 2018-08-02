@@ -37,7 +37,7 @@ class User extends Model implements AuthenticatableContract,
          'ciudad', 'estado', 'telefono',
          'imagen', 'tipo_usuario', 'tipo_registro',
          'id_facebook', 'id_twitter', 'id_instagram',
-         'codigo_verificacion', 'validado', 'token_notificacion'];
+         'codigo_verificacion', 'validado', 'token_notificacion', 'status'];
 
     /**
      * The attributes excluded from the model's JSON form.

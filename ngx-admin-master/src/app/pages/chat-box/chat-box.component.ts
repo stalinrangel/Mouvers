@@ -200,7 +200,7 @@ export class ChatBoxComponent implements OnInit{
 
       this.loading2 = true;
 
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/chats/clientes?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'chats/clientes?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -249,6 +249,9 @@ export class ChatBoxComponent implements OnInit{
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
                   this.showToast('warning', 'Warning!', msg.error.error);
+	              	setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
               }
 
               
@@ -262,7 +265,7 @@ export class ChatBoxComponent implements OnInit{
 
       this.loading3 = true;
 
-      this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/chats/repartidores?token='+localStorage.getItem('mouvers_token'))
+      this.http.get(this.rutaService.getRutaApi()+'chats/repartidores?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -311,6 +314,9 @@ export class ChatBoxComponent implements OnInit{
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
                   this.showToast('warning', 'Warning!', msg.error.error);
+                  setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
               }
 
               
@@ -400,7 +406,7 @@ export class ChatBoxComponent implements OnInit{
 		this.send_msg.token = localStorage.getItem('mouvers_token');
 		console.log(this.send_msg);
 
-		this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/chats/'+url_final+'/mensaje', this.send_msg)
+		this.http.post(this.rutaService.getRutaApi()+'chats/'+url_final+'/mensaje', this.send_msg)
 	    .toPromise()
 	    .then(
 		data => {
@@ -504,7 +510,7 @@ export class ChatBoxComponent implements OnInit{
       localStorage.setItem('mouvers_chat_id', '');
 	  localStorage.setItem('mouvers_usuario_nombre', '');
 
-      this.http.delete(this.rutaService.getRutaApi()+'mouversAPI/public/chats/'+url_final+'/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
+      this.http.delete(this.rutaService.getRutaApi()+'chats/'+url_final+'/'+this.eliminar_id+'?token='+localStorage.getItem('mouvers_token'))
          .toPromise()
          .then(
            data => { // Success
@@ -737,7 +743,7 @@ export class ChatBoxComponent implements OnInit{
 	}
     
     this.loading = true;
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/'+url_final+'?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+url_final+'?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
        .then(
          data => { // Success

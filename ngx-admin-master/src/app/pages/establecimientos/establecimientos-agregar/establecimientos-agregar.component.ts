@@ -243,7 +243,7 @@ export class EstablecimientosAgregarComponent implements OnInit{
         estado: 'ON',
       }
 
-      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/establecimientos', datos)
+      this.http.post(this.rutaService.getRutaApi()+'establecimientos', datos)
          .toPromise()
          .then(
            data => { // Success

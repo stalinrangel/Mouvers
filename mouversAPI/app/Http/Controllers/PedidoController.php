@@ -73,6 +73,10 @@ class PedidoController extends Controller
            // Devolvemos un código 409 Conflict. 
             return response()->json(['error'=>'No existe el usuario al cual se quiere asociar el pedido.'], 409);
         } 
+        if($aux1->status == 'OFF' || $aux1->status == ''){
+           // Devolvemos un código 403 Acceso prohibido. 
+            return response()->json(['error'=>'Esta operación no está disponible para ti. Ponte en contacto con Soporte para solucionarlo.'], 403);
+        } 
 
         /*$establecimiento = \App\Establecimiento::find($request->input('establecimiento_id'));
         if(count($establecimiento) == 0){

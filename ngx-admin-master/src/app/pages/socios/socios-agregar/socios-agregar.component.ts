@@ -94,7 +94,7 @@ export class SociosAgregarComponent implements OnInit{
 
   	this.loading = true;
 
-    this.http.get(this.rutaService.getRutaApi()+'mouversAPI/public/entidades/municipios?token='+localStorage.getItem('mouvers_token'))
+    this.http.get(this.rutaService.getRutaApi()+'entidades/municipios?token='+localStorage.getItem('mouvers_token'))
   
        .toPromise()
        .then(
@@ -114,6 +114,9 @@ export class SociosAgregarComponent implements OnInit{
                 //alert(msg.error.error);
                 //ir a login
                 this.showToast('warning', 'Warning!', msg.error.error);
+                setTimeout(()=>{
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
             }
             else if(msg.status == 404){ 
                 //alert(msg.error.error);
@@ -157,7 +160,7 @@ export class SociosAgregarComponent implements OnInit{
 	        
 	      }
 
-	      this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/repartidores', datos)
+	      this.http.post(this.rutaService.getRutaApi()+'repartidores', datos)
 	         .toPromise()
 	         .then(
 	           data => { // Success

@@ -110,8 +110,7 @@ export class LoginfComponent implements OnInit {
 	    	token_notificacion: localStorage.getItem('mouvers_token_notificacion')
 	    }
 	    
-		//this.http.post('http://rattios.com/mouversAPI/public/login/web', datos)
-		this.http.post(this.rutaService.getRutaApi()+'mouversAPI/public/login/web', datos)
+		this.http.post(this.rutaService.getRutaApi()+'login/web', datos)
 		.toPromise()
 		.then(
 		  data => { // Success
