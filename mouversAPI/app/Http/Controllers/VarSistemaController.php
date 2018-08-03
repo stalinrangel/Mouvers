@@ -123,4 +123,15 @@ class VarSistemaController extends Controller
     {
         //
     }
+
+    public function getContacto()
+    {
+        $dataArray = array("direccion" => "Boulevard IMAQ número exterior: 323 Fracc villas de IMAQ",
+            "correo" => "soporte@mouvers.mx",
+            "telefono" => "+52 1 899 124 9038",);
+
+        //$contacto = json_encode($dataArray);
+
+        return response()->json(['contacto'=>$dataArray], 200);
+    }
 }

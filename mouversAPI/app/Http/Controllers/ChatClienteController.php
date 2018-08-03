@@ -444,19 +444,34 @@ class ChatClienteController extends Controller
         return response()->json(['status'=>'ok'], 200);
     }
 
-    /*Retorna los mensajes sin leer (estado=1) de un receptor_id*/
+    /*Retorna los ultimos 10 mensajes sin leer (estado=1) de un receptor_id*/
     public function getMsgsSinLeer($receptor_id)
     {
-        //cargar los mensajes sin leer
-        $msgs = \App\MsgChatCliente::where('receptor_id', $receptor_id)
-            ->where('estado', 1)->get();
+        //cargar los ultimos 10 ids de mensajes sin leer
+        $idsSinLeer = \App\MsgChatCliente::
+            select(/*'id', 'estado', 'msg', 'created_at',*/ DB::raw('Max(id) AS max_id'))
+            ->where('estado', 1)
+            ->where('receptor_id', $receptor_id)
+            ->groupBy('chat_id')
+            ->orderBy('max_id', 'desc')
+            ->take(10)
+            ->get();
 
-        if(count($msgs)==0){
-            return response()->json(['error'=>'No tienes mensajes sin leer.'], 404);          
-        }else{
+        $idsAux = [];
+        for ($i=0; $i < count($idsSinLeer); $i++) { 
+            array_push($idsAux, $idsSinLeer[$i]->max_id);
+        }
 
-            return response()->json(['msgs'=>$msgs], 200);
-        } 
+        //cargar toda la info de los mensajes sin leer
+        $msgs = \App\MsgChatCliente::select('id', 'msg', 'estado', 'chat_id', 'emisor_id', 'receptor_id', 'created_at')
+            ->whereIn('id', $idsAux)
+            ->with(['emisor' => function ($query) {
+                $query->select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion');
+            }])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json([/*'idsSinLeer'=>$idsAux,*/ 'msgs'=>$msgs], 200); 
     }
 
     /*Retorna el chat de un cliente*/

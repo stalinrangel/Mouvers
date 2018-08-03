@@ -22,7 +22,7 @@ class EntidadMunicipioController extends Controller
         if(count($entidades) == 0){
             return response()->json(['error'=>'No existen entidades.'], 404);          
         }else{
-            return response()->json(['entidades'=>$entidades], 200);
+            return response()->json(['contador'=>count($entidades), 'entidades'=>$entidades], 200);
         } 
     }
 

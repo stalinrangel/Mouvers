@@ -44,6 +44,8 @@ Route::group(  ['middleware' =>'cors'], function(){
     //----Pruebas EntidadMunicipioController
     Route::get('/entidades/municipios','EntidadMunicipioController@index');
 
+    Route::get('/sistema/contacto','VarSistemaController@getContacto');
+
     Route::group(['middleware' => 'jwt-auth'], function(){
 
         //----Pruebas DashboardController
@@ -187,6 +189,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::post('/sistema','VarSistemaController@store');
         Route::put('/sistema/{id}','VarSistemaController@update');
 
+
         //----Pruebas PagoController
         Route::get('/pagos/pendientes/{establecimiento_id}','PagoController@indexDeuda');
         Route::get('/pagos/realizados','PagoController@indexPagos');
@@ -194,6 +197,12 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::put('/pagos/{id}','PagoController@update');
         //Route::delete('/pagos/{id}','PagoController@destroy');
         Route::get('/pagos/{id}','PagoController@show');
+
+        
+
+    });
+
+
 
         //----Pruebas ChatClienteController
         Route::get('/chats/clientes','ChatClienteController@index');
@@ -204,6 +213,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/chats/clientes/{id}','ChatClienteController@show');
         Route::get('/chats/clientes/michat/{usuario_id}','ChatClienteController@miChat');
         Route::put('/chats/clientes/leer','ChatClienteController@leerMensajes');
+        Route::get('/chats/sinleer/clientes/{receptor_id}','ChatClienteController@getMsgsSinLeer');
 
         //----Pruebas ChatRepartidorController
         Route::get('/chats/repartidores','ChatRepartidorController@index');
@@ -214,8 +224,6 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/chats/repartidores/{id}','ChatRepartidorController@show');
         Route::get('/chats/repartidores/michat/{usuario_id}','ChatRepartidorController@miChat');
         Route::put('/chats/repartidores/leer','ChatRepartidorController@leerMensajes');
-
-    });
 
         
 });

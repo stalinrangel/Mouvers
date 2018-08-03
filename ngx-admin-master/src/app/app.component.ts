@@ -36,11 +36,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.analytics.trackPageViews();
 
-    	if (!localStorage.getItem('mouvers_token') || localStorage.getItem('mouvers_token') == '' ||
-    		localStorage.getItem('mouvers_token') == 'null') {
-    		this.router.navigateByUrl('/pagessimples/loginf');
-    	}
-
     	//Set memoria para los chats
     	localStorage.setItem('mouvers_chat_id', '');
 		localStorage.setItem('mouvers_usuario_id', '');
@@ -223,5 +218,15 @@ export class AppComponent implements OnInit {
 			}
 
 		}]);*/
+
+		setTimeout(()=>{
+	        if (!localStorage.getItem('mouvers_token') || localStorage.getItem('mouvers_token') == '' ||
+	    		localStorage.getItem('mouvers_token') == 'null') {
+	    		this.router.navigateByUrl('/pagessimples/loginf');
+	    	}
+        },16);
+
+		
+    	
   }
 }
