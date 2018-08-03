@@ -35,6 +35,24 @@ export class HeaderComponent implements OnInit {
    iconChats = 'nb-email';
    iconBlogs = 'nb-notifications';
 
+   conversationsCli = [
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'},
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'},
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'},
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'},
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'},
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'},
+   {imagen:'',nombre:'Prueba',created_at:'2:00pm', msg:'Esto es una prueba de mensaje largo del chat para generar un salto de linea y probar su extension'}
+   ];
+
+   notificationsCli = [
+     {mensaje: 'Un pedido necesita ser asignado desde el panel debido a que no se ubicó un motorizado', created_at:'2:00pm'},
+     {mensaje: 'Carlos Pérez ha realizado un nuevo pedido', created_at:'1:00pm'}
+   ]
+
+   showHideMessage: boolean = true;
+   showHideNotification: boolean = true;
+
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
               private userService: UserService,
@@ -112,6 +130,16 @@ export class HeaderComponent implements OnInit {
     }
     this.iconBlogs = 'nb-notifications',
     this.eventBlog = null;
+  }
+
+  changeShowMessage(){
+    this.showHideMessage = !this.showHideMessage;
+    this.showHideNotification = true;
+  }
+
+  changeShowNotification(){
+    this.showHideNotification = !this.showHideNotification;
+    this.showHideMessage = true;
   }
 
   toggleSidebar(): boolean {
