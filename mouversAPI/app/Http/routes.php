@@ -224,6 +224,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/chats/repartidores/{id}','ChatRepartidorController@show');
         Route::get('/chats/repartidores/michat/{usuario_id}','ChatRepartidorController@miChat');
         Route::put('/chats/repartidores/leer','ChatRepartidorController@leerMensajes');
+        Route::get('/chats/sinleer/repartidores/{receptor_id}','ChatRepartidorController@getMsgsSinLeer');
 
         
 });

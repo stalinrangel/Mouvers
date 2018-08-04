@@ -8,6 +8,8 @@
   <!-- <ngx-theme-switcher></ngx-theme-switcher> -->
 </div>
 
+<!-- <button (click)="newMensaje2()">newMensaje</button> -->
+
 <nb-actions
   size="medium"
   class="header-container"
@@ -20,22 +22,31 @@
   <!--nb-action class="control-item" icon="{{iconChats}}" (click)="getEventChat()">
   </nb-action-->
   <nb-action class="control-item" (click)="changeShowMessage()">
-    <i class="nb-email"><div class="noti_Counter" *ngIf="conversationsCli.length > 0">{{conversationsCli.length}}</div></i>    
+    <i class="nb-email"><div class="noti_Counter" *ngIf="conversationsCli.length > 0 || conversationsRep.length > 0">{{conversationsCli.length + conversationsRep.length}}</div></i>    
       <div id="notifications1" [hidden]="showHideMessage">
           <h3>Últimos mensajes</h3>
           <div>
             <ul class="people" >
-              <li class="person" *ngFor="let item of conversationsCli; let last = last">
-                  <img src="{{item.imagen}}" alt="" />
-                  <span class="name">{{item.nombre}}</span>
+              <div class="seeAll" *ngIf="conversationsCli.length > 0">Mensajes de clientes</div>
+              <li class="person" *ngFor="let item of conversationsCli; let last = last; let indice=index" (click)="leerMsg(item, indice)">
+                  <img src="{{item.emisor.imagen}}" alt="" />
+                  <span class="name">{{item.emisor.nombre}}</span>
                   <span class="time">{{item.created_at}}</span>
                   <span class="preview">{{item.msg}}</span>
                   <hr [hidden]="last"> 
-              </li> 
+              </li>
+              <div class="seeAll" *ngIf="conversationsRep.length > 0">Mensajes de repartidores</div> 
+              <li class="person" *ngFor="let item of conversationsRep; let last = last; let indice=index" (click)="leerMsg(item, indice)">
+                  <img src="{{item.emisor.imagen}}" alt="" />
+                  <span class="name">{{item.emisor.nombre}}</span>
+                  <span class="time">{{item.created_at}}</span>
+                  <span class="preview">{{item.msg}}</span>
+                  <hr [hidden]="last"> 
+              </li>
             </ul>
           </div>
-          <p *ngIf="conversationsCli.length == 0" class="info-empty">No hay mensajes.</p>
-          <div class="seeAll" *ngIf="conversationsCli.length > 0"><a href="#">Ver Todos</a></div>
+          <p *ngIf="conversationsCli.length == 0 && conversationsRep.length == 0" class="info-empty">No hay mensajes.</p>
+          <div class="seeAll" *ngIf="conversationsCli.length > 0 || conversationsRep.length > 0" (click)="verTodos()"><a>Ver Todos</a></div>
       </div>
   </nb-action>
   <nb-action class="control-item" (click)="changeShowNotification()">

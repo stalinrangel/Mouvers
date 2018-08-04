@@ -187,13 +187,17 @@ export class DashboardComponent implements OnInit {
 		this.themeService.changeTheme('default');
 
 		this.getContadores();
-		this.getDiagram1();
-		this.getDiagram2();
-		this.getDiagram3();
-		this.getDiagram4();
-		this.getDiagram5();
-		this.getTabla1();
-		this.getTabla2();
+		setTimeout(()=>{
+			this.getDiagram1();
+			this.getDiagram2();
+			this.getDiagram3();
+			this.getDiagram4();
+			this.getDiagram5();
+		},5);
+		setTimeout(()=>{
+			this.getTabla1();
+			this.getTabla2();
+		},8);
 	}
 
 	private showToast(type: string, title: string, body: string) {

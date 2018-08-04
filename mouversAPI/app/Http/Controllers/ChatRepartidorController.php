@@ -180,7 +180,13 @@ class ChatRepartidorController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -221,7 +227,13 @@ class ChatRepartidorController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -276,7 +288,13 @@ class ChatRepartidorController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -317,7 +335,13 @@ class ChatRepartidorController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -429,8 +453,39 @@ class ChatRepartidorController extends Controller
                 ->where('estado', 1)
                 ->update(['estado' => 2]);
 
-        return response()->json(['status'=>'ok'], 200);
+        return response()->json(['message'=>'ok'], 200);
     }
+
+    /*Retorna los ultimos 10 mensajes sin leer (estado=1) de un receptor_id*/
+    public function getMsgsSinLeer($receptor_id)
+    {
+        //cargar los ultimos 10 ids de mensajes sin leer
+        $idsSinLeer = \App\MsgChatRepartidor::
+            select(/*'id', 'estado', 'msg', 'created_at',*/ DB::raw('Max(id) AS max_id'))
+            ->where('estado', 1)
+            ->where('receptor_id', $receptor_id)
+            ->groupBy('chat_id')
+            ->orderBy('max_id', 'desc')
+            ->take(10)
+            ->get();
+
+        $idsAux = [];
+        for ($i=0; $i < count($idsSinLeer); $i++) { 
+            array_push($idsAux, $idsSinLeer[$i]->max_id);
+        }
+
+        //cargar toda la info de los mensajes sin leer
+        $msgs = \App\MsgChatRepartidor::select('id', 'msg', 'estado', 'chat_id', 'emisor_id', 'receptor_id', 'created_at')
+            ->whereIn('id', $idsAux)
+            ->with(['emisor' => function ($query) {
+                $query->select('id', 'nombre', 'imagen', 'tipo_usuario', 'token_notificacion');
+            }])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json([/*'idsSinLeer'=>$idsAux,*/ 'msgs'=>$msgs], 200); 
+    }
+
 
     /*Retorna el chat de un repartidor*/
     public function miChat($usuario_id)

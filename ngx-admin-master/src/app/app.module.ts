@@ -35,6 +35,8 @@ import { ViewHeaderEventService } from './services/eventos-services/view-header-
 import { HeaderToChatEventService } from './services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
 import { HeaderToBlogEventService } from './services/eventos-services/header-to-blog-event-service/header-to-blog-event.service';
 
+import { HeaderService } from './services/header-service/header.service';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -64,6 +66,7 @@ import { HeaderToBlogEventService } from './services/eventos-services/header-to-
   ],
   bootstrap: [AppComponent],
   providers: [
+    HeaderService,
     HeaderToBlogEventService,
     HeaderToChatEventService,
     ViewHeaderEventService,

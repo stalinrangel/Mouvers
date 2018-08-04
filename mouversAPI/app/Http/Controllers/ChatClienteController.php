@@ -191,7 +191,13 @@ class ChatClienteController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -232,7 +238,13 @@ class ChatClienteController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -288,7 +300,13 @@ class ChatClienteController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacionCliente($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -329,7 +347,13 @@ class ChatClienteController extends Controller
                     $imagen = str_replace('&', '%26', $emisor->imagen);
                     $emisor->imagen = $imagen;
 
-                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor);
+                    //Tratar los espacios de la fecha del mensaje
+                    $created_at = str_replace($order, $replace, $msg->created_at);
+                    $msgAux = array('id'=>$msg->id, 'estado'=>$msg->estado,
+                        'chat_id'=>$msg->chat_id, 'emisor_id'=>$msg->emisor_id,
+                        'receptor_id'=>$msg->receptor_id, 'created_at'=>$created_at);
+
+                    $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
                     $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
@@ -441,7 +465,7 @@ class ChatClienteController extends Controller
                 ->where('estado', 1)
                 ->update(['estado' => 2]);
 
-        return response()->json(['status'=>'ok'], 200);
+        return response()->json(['message'=>'ok'], 200);
     }
 
     /*Retorna los ultimos 10 mensajes sin leer (estado=1) de un receptor_id*/

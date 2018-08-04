@@ -26,6 +26,8 @@ import { NbSidebarService } from '@nebular/theme';
 import { ViewChatEventService } from '../../services/eventos-services/view-chat-event-service/view-chat-event.service';
 import { HeaderToChatEventService } from '../../services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
 
+import { HeaderService } from '../../services/header-service/header.service';
+
 @Component({
   selector: 'ngx-chat-box',
   styleUrls: ['./chat-box.component.scss'],
@@ -111,7 +113,8 @@ export class ChatBoxComponent implements OnInit{
 	       private conversationsCliService: ConversationsCliService,
 	       private conversationsRepService: ConversationsRepService,
 	       private viewChatEventService: ViewChatEventService,
-	       private headerToChatEventService: HeaderToChatEventService)
+	       private headerToChatEventService: HeaderToChatEventService,
+	       private headerService: HeaderService)
 	{
 		//Detectar evento add msg al chat
 		this.viewChatEventService.viewChatData.subscribe(
@@ -348,6 +351,8 @@ export class ChatBoxComponent implements OnInit{
 	        this.msgList = res;
 	        this.loading = false;
 	        this.scrollToBottom();
+	        this.clearHeaderConversation();
+	        this.putLeer();
 	    });
 	}
 
@@ -450,6 +455,13 @@ export class ChatBoxComponent implements OnInit{
 					}
 				}*/
 			}
+
+			this.clearHeaderConversation2(parseInt(this.chat_id),
+            	parseInt(this.usuario_id),
+            	parseInt(this.admin_id),
+            	parseInt(this.usuario_tipo));
+			this.putLeer();
+
 		},
 		msg => {
 			console.log(msg);
@@ -457,6 +469,16 @@ export class ChatBoxComponent implements OnInit{
 			if (index !== -1) {
 			  this.msgList[index].status = 3;
 			}
+
+			//token invalido/ausente o token expiro
+             if(msg.status == 400 || msg.status == 401){ 
+                  //alert(msg.error.error);
+                  this.showToast('warning', 'Warning!', msg.error.error);
+	              	setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
+              }
+
 		});
 	}
 
@@ -517,6 +539,11 @@ export class ChatBoxComponent implements OnInit{
               console.log(data);
               this.data = data;
 
+            this.clearHeaderConversation2(parseInt(this.chat_id),
+            	parseInt(this.usuario_id),
+            	parseInt(this.admin_id),
+            	parseInt(this.usuario_tipo));
+
 	            if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
 	              if (parseInt(this.chat_id) == this.eliminar_id && parseInt(this.usuario_id) == this.objAEliminar.usuario.id) {
 	              	this.msgList = [];
@@ -564,9 +591,10 @@ export class ChatBoxComponent implements OnInit{
              //token invalido/ausente o token expiro
              if(msg.status == 400 || msg.status == 401){ 
                   //alert(msg.error.error);
-                  //ir a login
-
                   this.showToast('warning', 'Warning!', msg.error.error);
+	              	setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
               }
               //no encontrada o confilto
               else if(msg.status == 404 || msg.status == 409){ 
@@ -927,12 +955,11 @@ export class ChatBoxComponent implements OnInit{
 		}	
   }
 
-  headerEvent(obj){
-  	var obj = JSON.parse(obj);
+  headerEvent(msg){
 
-  	this.setUsuario(obj.chat_id, obj.emisor.id,
-  		obj.emisor.tipo_usuario, obj.emisor.nombre,
-  		obj.emisor.imagen, obj.emisor.token_notificacion);
+  	this.setUsuario(msg.chat_id, msg.emisor.id,
+  		msg.emisor.tipo_usuario, msg.emisor.nombre,
+  		msg.emisor.imagen, msg.emisor.token_notificacion);
 
   	//get message list
 	if (this.chat_id != '' && this.chat_id != 'null' && this.chat_id) {
@@ -941,6 +968,81 @@ export class ChatBoxComponent implements OnInit{
 
 	}
   }
+
+  //Borrar de la lista de header al abrir un chat
+  clearHeaderConversation(){
+  	var aux =  {
+            chat_id: parseInt(this.chat_id),
+            emisor_id: parseInt(this.usuario_id),
+            receptor_id: parseInt(this.admin_id),
+            emisor: {
+                id: parseInt(this.usuario_id),
+                tipo_usuario: parseInt(this.usuario_tipo)
+            }
+        };
+
+        //console.log(aux);
+
+    this.headerService.clearConversationAux(aux);
+
+  }
+
+  //Borrar de la lista de header al borrar un chat
+  clearHeaderConversation2(chat_id, usuario_id, admin_id, usuario_tipo){
+  	var aux =  {
+            chat_id: parseInt(this.chat_id),
+            emisor_id: parseInt(this.usuario_id),
+            receptor_id: parseInt(this.admin_id),
+            emisor: {
+                id: parseInt(this.usuario_id),
+                tipo_usuario: parseInt(this.usuario_tipo)
+            }
+        };
+
+        //console.log(aux);
+
+    this.headerService.clearConversationAux(aux);
+
+  }
+  	//Actualizar los mensajes en la API a leidos (estado=2)
+  	putLeer(){
+
+		//Peticion a la tabla de mensajes de los clientes
+		if (this.usuario_tipo == '2') {
+			var url_final = 'clientes';
+		}
+		//Peticion a la tabla de mensajes de los repartidores
+		else if (this.usuario_tipo == '3'){
+			var url_final = 'repartidores';
+		}
+
+		var datos= {
+			chat_id: parseInt(this.chat_id),
+			receptor_id: parseInt(this.admin_id),
+	        token: localStorage.getItem('mouvers_token'),
+	      }
+
+		this.http.put(this.rutaService.getRutaApi()+'chats/'+url_final+'/leer', datos)
+	    .toPromise()
+	    .then(
+		data => {
+			console.log(data);
+
+		},
+		msg => {
+			console.log(msg);
+
+			//token invalido/ausente o token expiro
+             if(msg.status == 400 || msg.status == 401){ 
+                  //alert(msg.error.error);
+                  this.showToast('warning', 'Warning!', msg.error.error);
+	              	setTimeout(()=>{
+	                  this.router.navigateByUrl('/pagessimples/loginf');
+	                },1000);
+              }
+			
+		});
+	}
 
   //----Tabla<
    titulo_tabla = '';
