@@ -179,6 +179,20 @@
         text-overflow: ellipsis;
         color: #757575;
       }
+      .preview2 {
+        font-size: 13px;
+        line-height: 22px;
+        color: #333;
+        font-weight: bold;
+        width: 81%;
+        margin-bottom: 0px;
+
+        display: block;
+        overflow: hidden !important;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+      }
       &.active,&:hover {
         background-color: #fafafa;
       }

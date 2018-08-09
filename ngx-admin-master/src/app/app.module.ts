@@ -34,12 +34,16 @@ import { ViewBlogEventService } from './services/eventos-services/view-blog-even
 import { ViewHeaderEventService } from './services/eventos-services/view-header-event-service/view-header-event.service';
 import { HeaderToChatEventService } from './services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
 import { HeaderToBlogEventService } from './services/eventos-services/header-to-blog-event-service/header-to-blog-event.service';
+import { HeaderToPedidosEventService } from './services/eventos-services/header-to-pedidos-event-service/header-to-pedidos-event.service';
 
 import { HeaderService } from './services/header-service/header.service';
+
+import { ToasterModule } from 'angular2-toaster';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    ToasterModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCr8zuLtOO7IoK_rC948rLcqyqsIaZOouY',
       libraries: ["places"]
@@ -67,6 +71,7 @@ import { HeaderService } from './services/header-service/header.service';
   bootstrap: [AppComponent],
   providers: [
     HeaderService,
+    HeaderToPedidosEventService,
     HeaderToBlogEventService,
     HeaderToChatEventService,
     ViewHeaderEventService,

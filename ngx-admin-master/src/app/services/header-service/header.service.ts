@@ -9,13 +9,19 @@ import { RutaBaseService } from '../ruta-base/ruta-base.service';
 @Injectable()
 export class HeaderService {
 
+	//Arrays para los chats
 	public conversationsCli = [];
 	public conversationsRep = [];
+
+	//Array para los pedidos sin repartidor y los nuevos blogs
+	public notificationsCli = [];
 
 	public data:any;
 
   constructor(private http: HttpClient,
               private rutaService: RutaBaseService) { }
+
+  	//----Funciones para los chats
 
 	getConversationsCli(){
 		return this.conversationsCli;
@@ -131,6 +137,45 @@ export class HeaderService {
 		this.conversationsRep = [];
 		
 	}
+
+
+	//----Funciones para los pedidos y blogs
+
+	getNotificationsCli(){
+		return this.notificationsCli;
+	}
+
+	//agregar notification al principio del array
+	addNotificationCli(notification){
+		this.notificationsCli.unshift(notification);
+	}
+
+	//agregar notification al final del array
+	pushNotificationCli(notification){
+		this.notificationsCli.push(notification);
+	}
+
+	//elimina una notificacion del array pasandole el indice
+	clearNotificationCli(indice){
+		this.notificationsCli.splice(indice, 1);
+	}
+
+	//elimina una notificacion del array pasandole pedido_id
+	clearNotificationCliAux(pedido_id){
+		for (var i = 0; i < this.notificationsCli.length; i++) {
+			if (this.notificationsCli[i].id == pedido_id && this.notificationsCli[i].accion != '4') {
+				this.notificationsCli.splice(i, 1);
+			}
+		}
+		
+	}
+
+	//vaciar el array notificationsCli
+	ressetNotificationsCli(){
+		this.notificationsCli = [];
+	}
+
+	
 
 
 }

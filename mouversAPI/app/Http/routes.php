@@ -122,6 +122,8 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/pedidos/estado/curso','PedidoController@pedidosEncurso');
         Route::get('/pedidos/estado/finalizados','PedidoController@pedidosFinalizados');
         Route::get('/pedidos/estadisticas/{cliente_id}','PedidoController@conteoPedidos');
+        Route::get('/pedidos/por/asignar','PedidoController@pedidosPorAsignar');
+        Route::get('/pedidos/info/basica/{id}','PedidoController@infoBasica');
 
         //----Pruebas CalificacionController
         Route::get('/calificaciones','CalificacionController@index');

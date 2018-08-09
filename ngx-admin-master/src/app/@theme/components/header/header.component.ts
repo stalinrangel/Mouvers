@@ -10,6 +10,7 @@ import { RouterModule, Routes, Router, ActivatedRoute } from '@angular/router';
 import { ViewHeaderEventService } from '../../../services/eventos-services/view-header-event-service/view-header-event.service';
 import { HeaderToChatEventService } from '../../../services/eventos-services/header-to-chat-event-service/header-to-chat-event.service';
 import { HeaderToBlogEventService } from '../../../services/eventos-services/header-to-blog-event-service/header-to-blog-event.service';
+import { HeaderToPedidosEventService } from '../../../services/eventos-services/header-to-pedidos-event-service/header-to-pedidos-event.service';
 
 import { HeaderService } from '../../../services/header-service/header.service';
 
@@ -18,6 +19,9 @@ import 'rxjs/add/operator/toPromise';
 
 import { RutaBaseService } from '../../../services/ruta-base/ruta-base.service';
 
+import { ToasterService, ToasterConfig, Toast, BodyOutputType } from 'angular2-toaster';
+import 'style-loader!angular2-toaster/toaster.css';
+
 @Component({
   selector: 'ngx-header',
   styleUrls: ['./header.component.scss'],
@@ -25,6 +29,22 @@ import { RutaBaseService } from '../../../services/ruta-base/ruta-base.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
+  //----Alertas---<
+  config: ToasterConfig;
+
+  positionAlert = 'toast-top-right';
+  animationType = 'fade';
+  title = 'HI there!';
+  content = `I'm cool toaster!`;
+  timeout = 5000;
+  toastsLimit = 5;
+  type = 'default'; // 'default', 'info', 'success', 'warning', 'error'
+
+  isNewestOnTop = true;
+  isHideOnClick = true;
+  isDuplicatesPrevented = false;
+  isCloseButton = true;
+  //----Alertas--->
 
   @Input() position = 'normal';
 
@@ -40,19 +60,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
    eventBlog : any;
    iconChats = 'nb-email';
    iconBlogs = 'nb-notifications';
+   eventNotificationCli : any;
 
    conversationsCli = [];
    conversationsRep = [];
+   notificationsCli = []; //Array para los pedidos sin repartidor y los nuevos blogs
 
-   notificationsCli = [
+   /*notificationsCli = [
      {mensaje: 'Un pedido necesita ser asignado desde el panel debido a que no se ubicó un motorizado', created_at:'2:00pm'},
      {mensaje: 'Carlos Pérez ha realizado un nuevo pedido', created_at:'1:00pm'}
-   ]
+   ]*/
 
    showHideMessage: boolean = true;
    showHideNotification: boolean = true;
 
    public data:any;
+   public data2:any;
+   public data3:any;
+   public data4:any;
+   public pedido:any;
 
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
@@ -62,9 +88,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
               private viewHeaderEventService: ViewHeaderEventService,
               private headerToChatEventService: HeaderToChatEventService,
               private headerToBlogEventService: HeaderToBlogEventService,
+              private headerToPedidosEventService: HeaderToPedidosEventService,
               private headerService: HeaderService,
               private http: HttpClient,
-              private rutaService: RutaBaseService) {
+              private rutaService: RutaBaseService,
+              private toasterService: ToasterService) {
 
     //Detectar una nueva notificaion
     this.viewHeaderEventService.viewHeaderData.subscribe(
@@ -72,8 +100,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
           //console.log(data); 
           if (data.accion == '2') {
             this.newEventChat(data);
-          }else if (data.accion == '4') {
-            this.newEventBlog(data.obj);
+          }else if (data.accion == '4' || data.accion == '5' || data.accion == '6') {
+            
+            if (data.accion == '5') {
+              this.showToast('info', 'Info!', data.contenido);
+            }else if (data.accion == '6'){
+              this.showToastPermanente('warning', 'Info!', data.contenido);
+            }
+
+            this.newEventNotificationCli(data);
           }
       });
   }
@@ -86,12 +121,63 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       this.initConversationsCli();
       this.initConversationsRep();
+      this.initNotificationsCli();
 
   }
 
   ngOnDestroy() {
     this.headerService.ressetConversations();
+    this.headerService.ressetNotificationsCli();
    }
+
+  /*newAlert() {
+    this.showToastPermanente('info', 'Info!', 'Persistente');
+   }
+   newAlert2() {
+    this.showToast('info', 'Info!', 'Timeout');
+   }*/
+
+  private showToast(type: string, title: string, body: string) {
+      this.config = new ToasterConfig({
+        positionClass: this.position,
+        timeout: this.timeout,
+        newestOnTop: this.isNewestOnTop,
+        tapToDismiss: this.isHideOnClick,
+        preventDuplicates: this.isDuplicatesPrevented,
+        animation: this.animationType,
+        limit: this.toastsLimit,
+      });
+      const toast: Toast = {
+        type: type,
+        title: title,
+        body: body,
+        timeout: this.timeout,
+        showCloseButton: this.isCloseButton,
+        bodyOutputType: BodyOutputType.TrustedHtml,
+      };
+      this.toasterService.popAsync(toast);
+  }
+
+  private showToastPermanente(type: string, title: string, body: string) {
+      this.config = new ToasterConfig({
+        positionClass: this.position,
+        timeout: 0, /*persistente*/
+        newestOnTop: this.isNewestOnTop,
+        tapToDismiss: this.isHideOnClick,
+        preventDuplicates: this.isDuplicatesPrevented,
+        animation: this.animationType,
+        limit: 20,
+      });
+      const toast: Toast = {
+        type: type,
+        title: title,
+        body: body,
+        timeout: 0,
+        showCloseButton: this.isCloseButton,
+        bodyOutputType: BodyOutputType.TrustedHtml,
+      };
+      this.toasterService.popAsync(toast);
+  }
 
   initConversationsCli(){
     this.headerService.ressetConversationsCli();
@@ -134,10 +220,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
        .then(
          data => { // Success
            console.log(data);
-           this.data=data;
+           this.data2=data;
 
-           for (var i = 0; i < this.data.msgs.length; i++) {
-             this.headerService.pushConversation(this.data.msgs[i]);
+           for (var i = 0; i < this.data2.msgs.length; i++) {
+             this.headerService.pushConversation(this.data2.msgs[i]);
            }
 
            setTimeout(()=>{
@@ -243,11 +329,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.getEventChat();
   }
 
-  newEventBlog(obj){
-    //this.iconBlogs = 'fa fa-bell';
-    this.eventBlog = obj;
-  }
-
   getEventChat(){
     if (this.eventChat) {
       var obj = JSON.parse(this.eventChat.obj);
@@ -257,11 +338,120 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  getEventBlog(){
-    if (this.eventBlog) {
+  initNotificationsCli(){
+    this.headerService.ressetNotificationsCli();
+    this.http.get(this.rutaService.getRutaApi()+'pedidos/por/asignar?token='+localStorage.getItem('mouvers_token'))
+       .toPromise()
+       .then(
+         data => { // Success
+           console.log(data);
+           this.data3=data;
+           var pedido=null;
+
+           for (var i = 0; i < this.data3.porAsignar.length; i++) {
+
+             pedido = {
+                  id: this.data3.porAsignar[i].id,
+                  contenido: "El pedido de "+this.data3.porAsignar[i].usuario.nombre+" necesita un repartidor.",
+                  created_at: this.data3.porAsignar[i].created_at,
+                  icono: "nb-alert",
+                  accion: "6", 
+                  tema: "",
+                  creador: "", 
+              };
+
+             this.headerService.pushNotificationCli(pedido);
+           }
+
+           setTimeout(()=>{
+              this.notificationsCli = this.headerService.getNotificationsCli();
+            },500);
+
+           
+         },
+         msg => { // Error
+           console.log(msg);
+           
+           //token invalido/ausente o token expiro
+           if(msg.status == 400 || msg.status == 401){ 
+                //alert(msg.error.error);
+
+                console.log(msg.error.error);
+                
+            }
+            
+         }
+       );
+  }
+
+  //agregar notificacion
+  newNotificationCli(obj, contenido, accion, pedido_id){
+
+    /*Nota: si accion=4 tomo el id del blog
+        si accion=5 o 6 tomo pedido_id*/
+    var id = 0;
+    var tema = "";
+    var creador = "";
+    var icono = "nb-alert";
+
+    //Nuevo blog
+    if (accion == '4') {
+      id = parseInt(obj.blog_id);
+      tema = obj.tema;
+      creador = obj.creador;
+      icono = "fa fa-book";
+    }
+    //Nuevo pedido
+    else if (accion == '5'){
+      id = parseInt(pedido_id);
+      icono = "nb-compose";
+    }
+    //Pedido sin repartidor
+    else if (accion == '6'){
+      id = parseInt(pedido_id);
+      icono = "nb-alert";
+    }
+
+    var notification = {
+            id: id,
+            contenido: contenido,
+            created_at: obj.created_at,
+            icono: icono,
+            accion: "6", 
+            tema: tema,
+            creador: creador,
+        };
+
+    this.headerService.addNotificationCli(notification);
+  }
+
+  /*//Funcion de prueba
+  i = 1;
+  newNotificationCli2(){
+    this.i +=1; 
+
+    var notification = {
+            id: this.i,
+            contenido: "Prueba "+this.i,
+            created_at: "created_at",
+            icono: "fa fa-book",
+            accion: "4", 
+            tema: "tema",
+            creador: "creador",
+        };
+
+    this.headerService.addNotificationCli(notification);
+
+  }*/
+
+  //leer (eliminar) mgs de la lista
+  leerNotification(notification, indice){
+
+    if (notification.accion == '4') {
+
       if (this.router.url == '/pages/blogs') {
         // emitir obj al blog para cargarlo
-        this.headerToBlogEventService.headerToBlogData.emit(this.eventBlog);
+        this.headerToBlogEventService.headerToBlogData.emit(notification);
       }else{
 
         var obj = JSON.parse(this.eventBlog);
@@ -271,9 +461,104 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
         this.router.navigateByUrl('/pages/blogs');
       }
+      this.headerService.clearNotificationCli(indice);
+
+    }else if (notification.accion == '5' || notification.accion == '6') {
+      
+      this.http.get(this.rutaService.getRutaApi()+'pedidos/info/basica/'+notification.id+'?token='+localStorage.getItem('mouvers_token'))
+       .toPromise()
+       .then(
+         data => { // Success
+           console.log(data);
+           this.data4=data;
+           var pedido =  this.data4.pedido;
+           this.tratarPedido(pedido, indice);
+            
+           
+         },
+         msg => { // Error
+           console.log(msg);
+           
+           //token invalido/ausente o token expiro
+           if(msg.status == 400 || msg.status == 401){ 
+                //alert(msg.error.error);
+
+                console.log(msg.error.error);
+                //alert(msg.error.error);
+                this.salir();
+                //this.router.navigateByUrl('/pagessimples/loginf');
+                this.showToast('warning', 'Warning!', msg.error.error);
+                setTimeout(()=>{
+                  this.salir();
+                  this.router.navigateByUrl('/pagessimples/loginf');
+                },1000);
+                
+            }
+            else if(msg.status == 404){ 
+                //alert(msg.error.error);
+                this.showToast('info', 'Info!', msg.error.error);
+            }
+
+            
+         }
+       );
+  
     }
-    this.iconBlogs = 'nb-notifications',
-    this.eventBlog = null;
+
+  }
+
+  //Tratar pedido en base a su estado
+  tratarPedido(pedido, indice){
+    //pedido en curso
+    if (pedido.estado == 1 || pedido.estado == 2 || pedido.estado == 3) {
+
+      localStorage.setItem('mouvers_pedido_id', pedido.id);
+
+      if (this.router.url == '/pages/pedidos/encurso') {
+        // emitir event para cargar pedido_id
+        this.headerToPedidosEventService.headerToPedidosData.emit(pedido.id);
+      }else{
+
+        this.router.navigateByUrl('/pages/pedidos/encurso');
+      }
+
+    }
+    //pedido finalizado
+    else if(pedido.estado == 4){
+
+      localStorage.setItem('mouvers_pedido_id', pedido.id);
+
+      if (this.router.url == '/pages/pedidos/finalizados') {
+        // emitir event para cargar pedido_id
+        this.headerToPedidosEventService.headerToPedidosData.emit(pedido.id);
+      }else{
+
+        this.router.navigateByUrl('/pages/pedidos/finalizados');
+      }
+      //this.headerService.clearNotificationCli(indice);
+
+    }
+  }
+
+  newEventNotificationCli(data){
+    this.eventNotificationCli = data;
+    this.getEventNotificationCli();
+  }
+
+  getEventNotificationCli(){
+
+    if (this.eventNotificationCli) {
+
+      var obj = JSON.parse(this.eventNotificationCli.obj);
+      var contenido = this.eventNotificationCli.contenido;
+      var accion = this.eventNotificationCli.accion;
+      var pedido_id = this.eventNotificationCli.pedido_id;
+
+      this.eventNotificationCli = null;
+      this.newNotificationCli(obj, contenido, accion, pedido_id);
+
+    }
+
   }
 
   changeShowMessage(){

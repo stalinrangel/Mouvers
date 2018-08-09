@@ -73,8 +73,33 @@
       <nb-card>
         <nb-card-header>
           Detalles del pedido
+          <div class="pull-right" style="margin-right: 10px">
+            Estado: {{selectedObj.estado}} &nbsp;
+            <button type="button" class="btn btn-info btn-icon btn-sm btn-table" title="Asignar repartidor" (click)="getRepDisponibles(selectedObj, modal1)">
+                <i class="ion-android-bicycle"></i>
+              </button>
+          </div>
         </nb-card-header>
         <nb-card-body>
+
+          <h5 *ngIf="selectedObj.repartidor_nom"class="grid-h">Repartidor</h5>
+          <div *ngIf="selectedObj.repartidor_nom"class="row show-grid">
+
+            <div class="col-md-4">
+              <div>Nombre</div>
+            </div>
+            <div class="col-md-8">
+              <div>{{selectedObj.repartidor_nom}}</div>
+            </div>
+
+            <div *ngIf="selectedObj.repartidor" class="col-md-4">
+              <div>Teléfono</div>
+            </div>
+            <div *ngIf="selectedObj.repartidor" class="col-md-8">
+              <div>{{selectedObj.repartidor.usuario.telefono}}</div>
+            </div>
+
+          </div>
 
           <h5 class="grid-h">Fecha/Hora</h5>
           <div class="row show-grid">

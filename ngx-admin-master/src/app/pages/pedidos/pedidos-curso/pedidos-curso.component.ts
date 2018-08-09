@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 
 //Mis imports
 import { RouterModule, Routes, Router, ActivatedRoute } from '@angular/router';
@@ -14,6 +14,10 @@ import 'style-loader!angular2-toaster/toaster.css';
 
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
+import { HeaderToPedidosEventService } from '../../../services/eventos-services/header-to-pedidos-event-service/header-to-pedidos-event.service';
+import { HeaderService } from '../../../services/header-service/header.service';
+
+
 @Component({
   selector: 'ngx-curso-prod',
   templateUrl: './pedidos-curso.component.html',
@@ -24,7 +28,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
   `],*/
   styleUrls: ['./pedidos-curso.component.scss'],
 })
-export class PedidosCursoComponent implements OnInit{
+export class PedidosCursoComponent implements OnInit, OnDestroy{
 
   //----Alertas---<
   config: ToasterConfig;
@@ -65,15 +69,24 @@ export class PedidosCursoComponent implements OnInit{
                private toasterService: ToasterService,
                private http: HttpClient,
                private router: Router,
-               private rutaService: RutaBaseService
+               private rutaService: RutaBaseService,
+               private headerToPedidosEventService: HeaderToPedidosEventService,
+               private headerService: HeaderService
                )
   {
     
+    //Detectar evento cargar pedido de notificacion entrante
+    this.headerToPedidosEventService.headerToPedidosData.subscribe(
+        (data: any) => {
+          //console.log(data); 
+          this.headerEvent();
+      });
 
   }
 
   ngOnInit() {
     
+    this.viendo = null;
     this.loading = true;
     this.http.get(this.rutaService.getRutaApi()+'pedidos/estado/curso?token='+localStorage.getItem('mouvers_token'))
        .toPromise()
@@ -122,6 +135,9 @@ export class PedidosCursoComponent implements OnInit{
                this.filteredItems = this.productList;
                //console.log(this.productList);
 
+               //verificar si hay que cargar un pedido de una notificacion
+               this.checkHeaderEvent();
+
                this.init();
 
                this.loading = false;
@@ -153,6 +169,12 @@ export class PedidosCursoComponent implements OnInit{
          }
        );
   }
+
+  ngOnDestroy() {
+    // acciones de destrucción
+    localStorage.setItem('mouvers_pedido_id', '');
+
+   }
 
   private showToast(type: string, title: string, body: string) {
       this.config = new ToasterConfig({
@@ -325,9 +347,19 @@ export class PedidosCursoComponent implements OnInit{
               this.data = data;
               this.repartidor = this.data.repartidor;
 
+              //Actualiza la vista del detalle del pedido
+              this.selectedObj.repartidor = this.repartidor;
+              this.selectedObj.repartidor_nom = this.repartidor.usuario.nombre;
+              if (this.selectedObj.estado == 'No asignado') {
+                this.selectedObj.estado = 'Asignado';
+              }
+              this.headerService.clearNotificationCliAux(this.selectedObj.id);
+
               for (var i = 0; i < this.productList.length; ++i) {
                 if (this.productList[i].id == this.selectedObj.id) {
-                   this.productList[i].estado = 'Asignado';
+                  if (this.productList[i].estado == 'No asignado') {
+                    this.productList[i].estado = 'Asignado';
+                  }
                    this.productList[i].repartidor_id = this.repartidor.id;
                    this.productList[i].repartidor_nom = this.repartidor.usuario.nombre;
                    this.productList[i].repartidor = this.repartidor;
@@ -368,6 +400,36 @@ export class PedidosCursoComponent implements OnInit{
       if (this.selectedObj.lat && this.selectedObj.lng) {
         this.selectedObj.lat = parseFloat(this.selectedObj.lat);
         this.selectedObj.lng = parseFloat(this.selectedObj.lng);
+      }
+    }
+
+    headerEvent(){
+
+      this.ngOnInit();
+      
+    }
+
+    checkHeaderEvent(){
+      if (localStorage.getItem('mouvers_pedido_id') &&
+          localStorage.getItem('mouvers_pedido_id') != '' &&
+          localStorage.getItem('mouvers_pedido_id') != 'null') {
+      
+        var existe = false;
+        var pedido_id = parseInt( localStorage.getItem('mouvers_pedido_id') );
+        for (var i = 0; i < this.productList.length; i++) {
+          if (this.productList[i].id == pedido_id) {
+            this.ver(this.productList[i]);
+            localStorage.setItem('mouvers_pedido_id', '');
+            if (this.productList[i].estado == 'Asignado' || this.productList[i].estado == 'En camino') {
+              this.headerService.clearNotificationCliAux(this.productList[i].id);
+            }
+            existe = true;
+          }
+        }
+
+        if (!existe) {
+          this.showToast('warning', 'Warning!', 'El pedido solicitado ya no está en esta sección.');
+        }
       }
     }
 

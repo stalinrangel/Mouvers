@@ -203,6 +203,14 @@ export class AppComponent implements OnInit {
 
 		  		}
 		  	}
+		  	else if (event.data.accion == '5' || event.data.accion == '6'){
+
+		  		/*Setear en el header la alerta con los valores
+		    	de la notificacaion entrante*/
+		    	console.log('Setear solo el header blog');
+		    	that.viewHeaderEventService.viewHeaderData.emit(event.data);
+
+		  	}
 
 		});
 

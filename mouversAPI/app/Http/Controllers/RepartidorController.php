@@ -83,6 +83,7 @@ class RepartidorController extends Controller
         //$usuario->id_twitter = $request->input('id_twitter');
         //$usuario->id_instagram = $request->input('id_instagram');
         $usuario->validado = 1;
+        $usuario->status = 'ON';
 
         if($usuario->save()){
             /*Segundo creo una instancia en la tabla repartidores*/

@@ -364,7 +364,10 @@ class PedidoController extends Controller
     {
         //cargar todos los pedidos en curso (Estado 1, 2, 3)
         $pedidos = \App\Pedido::with('usuario')
-            ->with('repartidor')
+            //->with('repartidor')
+            ->with(['repartidor.usuario' => function ($query) {
+                $query->select('usuarios.id', 'usuarios.nombre', 'usuarios.telefono');
+            }])
             ->with('productos.establecimiento')
             ->where('estado_pago','aprobado')
             ->where(function ($query) {
@@ -388,7 +391,10 @@ class PedidoController extends Controller
     {
         //cargar todos los pedidos en finalizados (Estado 4)
         $pedidos = \App\Pedido::with('usuario')
-            ->with('repartidor')
+            //->with('repartidor')
+            ->with(['repartidor.usuario' => function ($query) {
+                $query->select('usuarios.id', 'usuarios.nombre', 'usuarios.telefono');
+            }])
             ->with('productos.establecimiento')
             ->with('calificacion')
             ->where('estado',4)
@@ -427,6 +433,43 @@ class PedidoController extends Controller
 
         return response()->json(['enCurso'=>$enCurso, 'enFinalizados'=>$enFinalizados], 200);
          
+    }
+
+    /*Retorna los ultimos 10 pedidos por asignar*/
+    public function pedidosPorAsignar()
+    {
+        //pedidos no asignados (Estado 1)
+        $porAsignar = \App\Pedido::select('id', 'estado', 'usuario_id', 'repartidor_id', 'estado_pago', 'created_at')
+            ->with(['usuario' => function ($query) {
+                $query->select('id', 'nombre');
+            }])
+            ->where('estado_pago','aprobado')
+            ->where('estado',1)
+            ->whereNull('repartidor_id')
+            ->where(DB::raw("PERIOD_DIFF(DATE_FORMAT(now(), '%y%m') ,DATE_FORMAT(created_at, '%y%m'))"), '<=', 1)
+            ->orderBy('id', 'desc')
+            ->take(10)
+            ->get();
+
+
+        return response()->json(['porAsignar'=>$porAsignar], 200);
+         
+    }
+
+    /*Retorna la info basica de un pedido para
+    balidar su estado en el panel*/
+    public function infoBasica($id)
+    {
+        //cargar un pedido
+        $pedido = \App\Pedido::select('id', 'estado', 'usuario_id', 'repartidor_id', 'estado_pago', 'created_at')
+            ->find($id);
+
+        if(count($pedido)==0){
+            return response()->json(['error'=>'No existe el pedido con id '.$id], 404);          
+        }else{
+
+            return response()->json(['pedido'=>$pedido], 200);
+        }
     }
 
 

@@ -1,3 +1,5 @@
+
+
 <div class="header-container"
      [class.left]="position === 'normal'"
      [class.right]="position === 'inverse'">
@@ -9,6 +11,11 @@
 </div>
 
 <!-- <button (click)="newMensaje2()">newMensaje</button> -->
+<!-- <button (click)="newNotificationCli2()">newNotificationCli</button> -->
+
+<!-- <button (click)="newAlert()">newAlert</button>
+<button (click)="newAlert2()">newAlert2</button> -->
+<toaster-container [toasterconfig]="config"></toaster-container>
 
 <nb-actions
   size="medium"
@@ -55,9 +62,10 @@
           <h3>Últimas notificaciones</h3>
           <div>
             <ul class="people" >
-              <li class="person" *ngFor="let item of notificationsCli; let last = last">
-                  <p class="name"><i class="nb-alert"></i> {{item.mensaje}}</p>
+              <li class="person" *ngFor="let item of notificationsCli; let last = last; let indice=index" (click)="leerNotification(item, indice)">
+                  <span class="name">&nbsp;</span>
                   <span class="time">{{item.created_at}}</span>
+                  <span class="preview2"><i class={{item.icono}}></i> {{item.contenido}}</span>
                   <hr [hidden]="last"> 
               </li> 
             </ul>
@@ -71,6 +79,8 @@
     <nb-search type="rotate-layout" (click)="startSearch()"></nb-search>
   </nb-action> -->
 </nb-actions>
+
+
 
 
 

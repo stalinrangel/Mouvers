@@ -50,7 +50,7 @@ class NotificacionController extends Controller
     que hay un nuevo pedido*/
     public function localizarRepartidores(Request $request, $id, $intento=1)
     {
-        //cargar un pedido y el el punto en la ruta del establecimineto mas lejano
+        //cargar un pedido y el punto en la ruta del establecimineto mas lejano
         $pedido = \App\Pedido::with(['ruta' => function ($query){
                     $query->where('posicion', 1);
                 }])->find($id);
@@ -61,11 +61,41 @@ class NotificacionController extends Controller
 
         }else{
 
-            if ($pedido->estado_pago == null || $pedido->estado_pago == 'declinado') {
+            if ($pedido->estado_pago == null || $pedido->estado_pago == 'pendiente' ||
+                $pedido->estado_pago == 'declinado') {
                 return response()->json(['error'=>'Para poder asignar un repartidor el pedido debe tener un pago registrado.'],409);
-            }
+            }   
 
-            $usuario = \App\User::select('token_notificacion')->find($pedido->usuario_id);
+            $usuario = \App\User::select('token_notificacion', 'nombre')->find($pedido->usuario_id);
+
+            $admins = \App\User::select('token_notificacion')
+                   ->where('tipo_usuario', 1)
+                   ->get();
+
+            //Enviar notificacion al panel solo una vez
+            if ($intento == 1) {
+                // Orden del reemplazo
+                //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                $order   = array("\r\n", "\n", "\r", " ", "&");
+                $replace = array('%20', '%20', '%20', '%20', '%26');
+
+                //tratar el nombre del cliente.
+                $clienteNom = str_replace($order, $replace, $usuario->nombre);
+
+                //Tratar los espacios de la fecha del pedido
+                $fecha = str_replace($order, $replace, $pedido->created_at);
+
+                $obj = array('created_at'=>$fecha);
+                $obj = json_encode($obj);
+
+                for ($j=0; $j < count($admins) ; $j++) { 
+                    if ($admins[$j]->token_notificacion) {
+                        
+                        $this->enviarNotificacion($admins[$j]->token_notificacion, $clienteNom.'%20ha%20realizado%20un%20nuevo%20pedido.', $pedido->id, 5, $obj);
+
+                    }
+                }
+            }
 
             set_time_limit(500);
 
@@ -76,18 +106,42 @@ class NotificacionController extends Controller
                     ->where('ocupado', 2)
                     ->get();
 
+            //return response()->json(['repartidores'=>$repartidores], 200);
+
             if(count($repartidores) == 0){
 
                 //Repetir todo el proceso
                 $intento = $intento + 1;
                 if ($intento <= 2) {
+                    //esperar
+                    sleep(30);
                     $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                if ($intento == 2) {
+                if ($intento > 2) {
                     //Enviar notificacion al cliente (pedido no asignado)
                     if ($usuario->token_notificacion) {
                         $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
+                    }
+
+                    // Orden del reemplazo
+                    //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                    $order   = array("\r\n", "\n", "\r", " ", "&");
+                    $replace = array('%20', '%20', '%20', '%20', '%26');
+
+                    //Tratar los espacios de la fecha del pedido
+                    $fecha = str_replace($order, $replace, $pedido->created_at);
+
+                    $obj = array('created_at'=>$fecha);
+                    $obj = json_encode($obj);
+
+                    //Enviar notificacion al panel (asignar pedido manualmente)
+                    for ($j=0; $j < count($admins) ; $j++) { 
+                        if ($admins[$j]->token_notificacion) {
+                            
+                            $this->enviarNotificacion($admins[$j]->token_notificacion, 'Un%20pedido%20necesita%20ser%20asignado%20desde%20el%20panel%20debido%20a%20que%20no%20se%20ubicó%20un%20motorizado.', $pedido->id, 6, $obj);
+
+                        }
                     }
 
                     return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
@@ -168,8 +222,10 @@ class NotificacionController extends Controller
                     //verificar
                     $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                     if ($pedidoAux->repartidor_id) {
-                        //Enviar notificacion al cliente (pedido asignado)
-                        /*if ($usuario->token_notificacion) {
+
+                        //Nota esta notificacion se envia desde el la funcion aceptar pedido
+                        /*//Enviar notificacion al cliente (pedido asignado)
+                        if ($usuario->token_notificacion) {
                             $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
                         }*/
 
@@ -188,10 +244,30 @@ class NotificacionController extends Controller
                     $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                if (!$bandera && $intento == 2) {
+                if (!$bandera && $intento > 2) {
                     //verificar
                     $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                     if (!$pedidoAux->repartidor_id) {
+
+                        // Orden del reemplazo
+                        //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                        $order   = array("\r\n", "\n", "\r", " ", "&");
+                        $replace = array('%20', '%20', '%20', '%20', '%26');
+
+                        //Tratar los espacios de la fecha del pedido
+                        $fecha = str_replace($order, $replace, $pedido->created_at);
+
+                        $obj = array('created_at'=>$fecha);
+                        $obj = json_encode($obj);
+
+                        //Enviar notificacion al panel (asignar pedido manualmente)
+                        for ($j=0; $j < count($admins) ; $j++) { 
+                            if ($admins[$j]->token_notificacion) {
+                                
+                                $this->enviarNotificacion($admins[$j]->token_notificacion, 'Un%20pedido%20necesita%20ser%20asignado%20desde%20el%20panel%20debido%20a%20que%20no%20se%20ubicó%20un%20motorizado.', $pedido->id, 6, $obj);
+
+                            }
+                        }
 
                         //Enviar notificacion al cliente (pedido no asignado)
                         if ($usuario->token_notificacion) {
@@ -201,11 +277,19 @@ class NotificacionController extends Controller
                         return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
 
                     }else{
+
+                        //Nota esta notificacion se envia desde el la funcion aceptar pedido
+                        /*//Enviar notificacion al cliente (pedido asignado)
+                        if ($usuario->token_notificacion) {
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                        }*/
+
                         return response()->json(['message'=>'Tu pedido va en camino.'], 200);
                     }
                 }
 
             }else{
+
                 $bandera = false; 
 
                 //Enviar notificacion a unico repartidor disponible
@@ -219,8 +303,10 @@ class NotificacionController extends Controller
                 //verificar
                 $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                 if ($pedidoAux->repartidor_id) {
-                    //Enviar notificacion al cliente (pedido asignado)
-                    /*if ($usuario->token_notificacion) {
+
+                    //Nota esta notificacion se envia desde el la funcion aceptar pedido
+                    /*//Enviar notificacion al cliente (pedido asignado)
+                    if ($usuario->token_notificacion) {
                         $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
                     }*/
 
@@ -235,11 +321,31 @@ class NotificacionController extends Controller
                     $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                if (!$bandera && $intento == 2) {
+                if (!$bandera && $intento > 2) {
 
                     //verificar
                     $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                     if (!$pedidoAux->repartidor_id) {
+
+                        // Orden del reemplazo
+                        //$str     = "Line 1\nLine 2\rLine 3\r\nLine 4\n";
+                        $order   = array("\r\n", "\n", "\r", " ", "&");
+                        $replace = array('%20', '%20', '%20', '%20', '%26');
+
+                        //Tratar los espacios de la fecha del pedido
+                        $fecha = str_replace($order, $replace, $pedido->created_at);
+
+                        $obj = array('created_at'=>$fecha);
+                        $obj = json_encode($obj);
+
+                        //Enviar notificacion al panel (asignar pedido manualmente)
+                        for ($j=0; $j < count($admins) ; $j++) { 
+                            if ($admins[$j]->token_notificacion) {
+                                
+                                $this->enviarNotificacion($admins[$j]->token_notificacion, 'Un%20pedido%20necesita%20ser%20asignado%20desde%20el%20panel%20debido%20a%20que%20no%20se%20ubicó%20un%20motorizado.', $pedido->id, 6, $obj);
+
+                            }
+                        }
 
                         //Enviar notificacion al cliente (pedido no asignado)
                         if ($usuario->token_notificacion) {
@@ -249,6 +355,13 @@ class NotificacionController extends Controller
                         return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
 
                     }else{
+
+                        //Nota esta notificacion se envia desde el la funcion aceptar pedido
+                        /*//Enviar notificacion al cliente (pedido asignado)
+                        if ($usuario->token_notificacion) {
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                        }*/
+
                         return response()->json(['message'=>'Tu pedido va en camino.'], 200);
                     }
                     
@@ -348,7 +461,12 @@ class NotificacionController extends Controller
     public function asignarPedido(Request $request, $repartidor_id)
     {
         // Comprobamos si el repartidor que nos están pasando existe o no.
-        $repartidor = \App\Repartidor::with('usuario')->find($repartidor_id);
+        $repartidor = \App\Repartidor::
+            //with('usuario')->
+            with(['usuario' => function ($query) {
+                $query->select('id', 'nombre', 'telefono', 'token_notificacion');
+            }])->
+            find($repartidor_id);
 
         if (count($repartidor)==0)
         {

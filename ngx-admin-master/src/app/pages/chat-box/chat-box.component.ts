@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 
 //Mis imports
 import { RouterModule, Routes, Router, ActivatedRoute } from '@angular/router';
@@ -34,7 +34,7 @@ import { HeaderService } from '../../services/header-service/header.service';
   templateUrl: './chat-box.component.html',
 })
 
-export class ChatBoxComponent implements OnInit{
+export class ChatBoxComponent implements OnInit, OnDestroy{
 
 	//----Alertas---<
 	config: ToasterConfig;

@@ -564,14 +564,15 @@ export class BlogsComponent implements OnInit, OnDestroy{
   }
 
   headerEvent(obj){
-  	var obj = JSON.parse(obj);
+  	//var obj = JSON.parse(obj);
 
-  	this.setBlog(obj.blog_id,obj.tema,obj.creador);
+  	this.setBlog(obj.id,obj.tema,obj.creador);
 
     //get message list
 	if (this.blog_id != '' && this.blog_id != 'null' && this.blog_id) {
 		this.getMsg();
 	}
+
   }
 
 
