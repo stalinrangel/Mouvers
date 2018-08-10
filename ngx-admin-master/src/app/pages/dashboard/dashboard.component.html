@@ -12,7 +12,7 @@
   </div>
 
   <div class="col-xxxl-3 col-md-6">
-    <ngx-status-card title="Repartidores Activos" type="info" data="{{count_3}}">
+    <ngx-status-card title="Repartidores Disponibles" type="info" data="{{count_3}}">
       <i class="ion-android-bicycle"></i>
     </ngx-status-card>
   </div>
@@ -736,15 +736,24 @@
                 <thead>
                   <tr>
                     <th>
+                     Pedido
+                    </th>
+                    <th>
                      Puntaje
                     </th>
                     <th>
                      Comentario
                     </th>
+                    <th>
+                     Repartidor
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of calificaciones">
+                    <td class="text-center">
+                      M00{{item.pedido_id}}
+                    </td>
                     <td class="text-center">
                       <div>
                         <ngb-rating [(rate)]="item.puntaje" max=5>
@@ -760,6 +769,9 @@
                     </td>
                     <td class="text-center">
                       {{item.comentario}}
+                    </td>
+                    <td class="text-center">
+                      {{item.pedido.repartidor_nom}}
                     </td>
                     
                   </tr>

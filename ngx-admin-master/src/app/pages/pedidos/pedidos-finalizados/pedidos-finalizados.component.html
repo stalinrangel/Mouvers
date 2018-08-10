@@ -20,7 +20,7 @@
     <table class="table">
       <thead>
          <!-- <th></th> -->
-         <!-- <th style="text-align: center;">ID</th> -->
+         <th style="text-align: center;">Pedido</th>
          <th style="text-align: center;">Usuario</th>
          <th style="text-align: center;">Fecha</th>
          <th style="text-align: center;">Hora</th>
@@ -31,6 +31,7 @@
       <tbody>
          <tr *ngFor="let item of items" >
             <!-- <td></td> -->
+            <td style="text-align: center; vertical-align:middle;">M00{{item.id}}</td>
             <td style="text-align: center; vertical-align:middle;">{{item.usuario.nombre}}</td>
             <td style="text-align: center; vertical-align:middle;"><!-- {{item.created_at | date:'dd/MM/yyyy'}} -->{{item.fecha}}</td>
             <td style="text-align: center; vertical-align:middle;"><!-- {{item.created_at | date:'hh:mm:ss'}} -->{{item.hora}}</td>
@@ -69,7 +70,7 @@
     <div class="col-md-12">
       <nb-card>
         <nb-card-header>
-          Detalles del pedido
+          Detalles del Pedido M00{{selectedObj.id}}
           <div class="pull-right" style="margin-right: 10px">
             Estado: {{selectedObj.estado}}
           </div>

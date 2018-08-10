@@ -101,12 +101,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
           if (data.accion == '2') {
             this.newEventChat(data);
           }else if (data.accion == '4' || data.accion == '5' || data.accion == '6') {
-            
-            if (data.accion == '5') {
-              this.showToast('info', 'Info!', data.contenido);
-            }else if (data.accion == '6'){
-              this.showToastPermanente('warning', 'Info!', data.contenido);
-            }
 
             this.newEventNotificationCli(data);
           }
@@ -352,7 +346,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
              pedido = {
                   id: this.data3.porAsignar[i].id,
-                  contenido: "El pedido de "+this.data3.porAsignar[i].usuario.nombre+" necesita un repartidor.",
+                  contenido: "El pedido M00"+this.data3.porAsignar[i].id+" necesita un repartidor.",
                   created_at: this.data3.porAsignar[i].created_at,
                   icono: "nb-alert",
                   accion: "6", 
@@ -541,6 +535,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   newEventNotificationCli(data){
+
+    if (data.accion == '5') {
+      this.showToast('info', 'Info!', data.contenido);
+    }else if (data.accion == '6'){
+      this.showToastPermanente('warning', 'Warning!', data.contenido);
+    }
+
     this.eventNotificationCli = data;
     this.getEventNotificationCli();
   }

@@ -57,13 +57,17 @@ class NotificacionController extends Controller
 
         if(count($pedido)==0){
 
-            return response()->json(['error'=>'No existe el pedido con id '.$id], 404);   
+            return response()->json(['error'=>'No existe el pedido M00'.$id], 404);   
 
         }else{
 
             if ($pedido->estado_pago == null || $pedido->estado_pago == 'pendiente' ||
                 $pedido->estado_pago == 'declinado') {
-                return response()->json(['error'=>'Para poder asignar un repartidor el pedido debe tener un pago registrado.'],409);
+                return response()->json(['error'=>'Para poder asignar un repartidor el pedido M00'.$pedido->id.' debe tener un pago registrado.'],409);
+            }
+
+            if ($pedido->repartidor_id) {
+                return response()->json(['error'=>'El pedido M00'.$pedido->id.' ya tiene un repartidor asignado.'],200);
             }   
 
             $usuario = \App\User::select('token_notificacion', 'nombre')->find($pedido->usuario_id);
@@ -91,7 +95,7 @@ class NotificacionController extends Controller
                 for ($j=0; $j < count($admins) ; $j++) { 
                     if ($admins[$j]->token_notificacion) {
                         
-                        $this->enviarNotificacion($admins[$j]->token_notificacion, $clienteNom.'%20ha%20realizado%20un%20nuevo%20pedido.', $pedido->id, 5, $obj);
+                        $this->enviarNotificacion($admins[$j]->token_notificacion, $clienteNom.'%20ha%20realizado%20un%20pedido%20M00'.$pedido->id, $pedido->id, 5, $obj);
 
                     }
                 }
@@ -121,7 +125,7 @@ class NotificacionController extends Controller
                 if ($intento > 2) {
                     //Enviar notificacion al cliente (pedido no asignado)
                     if ($usuario->token_notificacion) {
-                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.');
+                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles%20para%20su%20pedido%20M00'.$pedido->id);
                     }
 
                     // Orden del reemplazo
@@ -139,12 +143,12 @@ class NotificacionController extends Controller
                     for ($j=0; $j < count($admins) ; $j++) { 
                         if ($admins[$j]->token_notificacion) {
                             
-                            $this->enviarNotificacion($admins[$j]->token_notificacion, 'Un%20pedido%20necesita%20ser%20asignado%20desde%20el%20panel%20debido%20a%20que%20no%20se%20ubicó%20un%20motorizado.', $pedido->id, 6, $obj);
+                            $this->enviarNotificacion($admins[$j]->token_notificacion, 'El%20pedido%20M00'.$pedido->id.'%20necesita%20ser%20asignado%20desde%20el%20panel.', $pedido->id, 6, $obj);
 
                         }
                     }
 
-                    return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                    return response()->json(['error'=>'No hay repartidores disponibles para su pedido M00'.$pedido->id], 404);
                 }
                           
             }
@@ -213,7 +217,7 @@ class NotificacionController extends Controller
                 for ($i=0; $i < count($repSeleccionados); $i++) { 
                     //Enviar notificacion a repartidor de pedido pendiente
                     if ($repSeleccionados[$i]->usuario->token_notificacion) {
-                        $this->enviarNotificacion($repSeleccionados[$i]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id, 1);
+                        $this->enviarNotificacion($repSeleccionados[$i]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido%20M00'.$pedido->id, $pedido->id, 1);
                     }
 
                     //esperar
@@ -226,14 +230,14 @@ class NotificacionController extends Controller
                         //Nota esta notificacion se envia desde el la funcion aceptar pedido
                         /*//Enviar notificacion al cliente (pedido asignado)
                         if ($usuario->token_notificacion) {
-                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id, 7 );
                         }*/
 
                         $bandera = true;
 
                         //break;
 
-                        return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+                        return response()->json(['message'=>'Tu pedido M00'.$pedido->id.' va en camino.'], 200);
 
                     }
                 }
@@ -264,27 +268,27 @@ class NotificacionController extends Controller
                         for ($j=0; $j < count($admins) ; $j++) { 
                             if ($admins[$j]->token_notificacion) {
                                 
-                                $this->enviarNotificacion($admins[$j]->token_notificacion, 'Un%20pedido%20necesita%20ser%20asignado%20desde%20el%20panel%20debido%20a%20que%20no%20se%20ubicó%20un%20motorizado.', $pedido->id, 6, $obj);
+                                $this->enviarNotificacion($admins[$j]->token_notificacion, 'El%20pedido%20M00'.$pedido->id.'%20necesita%20ser%20asignado%20desde%20el%20panel.', $pedido->id, 6, $obj);
 
                             }
                         }
 
                         //Enviar notificacion al cliente (pedido no asignado)
                         if ($usuario->token_notificacion) {
-                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles%20para%20su%20pedido%20M00'.$pedido->id, $pedido->id);
                         }
 
-                        return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                        return response()->json(['error'=>'No hay repartidores disponibles para su pedido M00'.$pedido->id], 404);
 
                     }else{
 
                         //Nota esta notificacion se envia desde el la funcion aceptar pedido
                         /*//Enviar notificacion al cliente (pedido asignado)
                         if ($usuario->token_notificacion) {
-                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id, 7);
                         }*/
 
-                        return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+                        return response()->json(['message'=>'Tu pedido M00'.$pedido->id.' va en camino.'], 200);
                     }
                 }
 
@@ -294,7 +298,7 @@ class NotificacionController extends Controller
 
                 //Enviar notificacion a unico repartidor disponible
                 if ($repartidores[0]->usuario->token_notificacion) {
-                    $this->enviarNotificacion($repartidores[0]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido.', $pedido->id, 1);
+                    $this->enviarNotificacion($repartidores[0]->usuario->token_notificacion, 'Tienes%20un%20nuevo%20pedido%20M00'.$pedido->id, $pedido->id, 1);
                 }
 
                 //esperar
@@ -307,12 +311,12 @@ class NotificacionController extends Controller
                     //Nota esta notificacion se envia desde el la funcion aceptar pedido
                     /*//Enviar notificacion al cliente (pedido asignado)
                     if ($usuario->token_notificacion) {
-                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                        $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id, 7);
                     }*/
 
                     $bandera = true;
 
-                    return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+                    return response()->json(['message'=>'Tu pedido M00'.$pedido->id.' va en camino.'], 200);
                 }
 
                 //Repetir todo el proceso
@@ -342,27 +346,27 @@ class NotificacionController extends Controller
                         for ($j=0; $j < count($admins) ; $j++) { 
                             if ($admins[$j]->token_notificacion) {
                                 
-                                $this->enviarNotificacion($admins[$j]->token_notificacion, 'Un%20pedido%20necesita%20ser%20asignado%20desde%20el%20panel%20debido%20a%20que%20no%20se%20ubicó%20un%20motorizado.', $pedido->id, 6, $obj);
+                                $this->enviarNotificacion($admins[$j]->token_notificacion, 'El%20pedido%20M00'.$pedido->id.'%20necesita%20ser%20asignado%20desde%20el%20panel.', $pedido->id, 6, $obj);
 
                             }
                         }
 
                         //Enviar notificacion al cliente (pedido no asignado)
                         if ($usuario->token_notificacion) {
-                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles.', $pedido->id);
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles%20para%20su%20pedido%20M00'.$pedido->id, $pedido->id);
                         }
 
-                        return response()->json(['error'=>'No hay repartidores disponibles.'], 404);
+                        return response()->json(['error'=>'No hay repartidores disponibles para su pedido M00'.$pedido->id], 404);
 
                     }else{
 
                         //Nota esta notificacion se envia desde el la funcion aceptar pedido
                         /*//Enviar notificacion al cliente (pedido asignado)
                         if ($usuario->token_notificacion) {
-                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                            $this->enviarNotificacionCliente($usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id, 7);
                         }*/
 
-                        return response()->json(['message'=>'Tu pedido va en camino.'], 200);
+                        return response()->json(['message'=>'Tu pedido M00'.$pedido->id.' va en camino.'], 200);
                     }
                     
                 }
@@ -370,7 +374,7 @@ class NotificacionController extends Controller
             
 
             //return response()->json(['repSeleccionados'=>$repSeleccionados, 'repartidores'=>$repartidores], 200);
-            return response()->json(['error'=>'Pedido no asignado!'], 500);
+            return response()->json(['error'=>'Pedido M00'.$pedido->id.' no asignado!'], 500);
         }
 
     }
@@ -472,6 +476,10 @@ class NotificacionController extends Controller
         {
             // Devolvemos error codigo http 404
             return response()->json(['error'=>'No existe el repartidor con id '.$repartidor_id], 404);
+        }
+
+        if ($repartidor->estado != 'ON' || $repartidor->activo != 1 || $repartidor->ocupado != 2) {
+            return response()->json(['error'=>'Este repartidor ya no está disponible.'],409);
         }      
 
         // Listado de campos recibidos teóricamente.
@@ -492,15 +500,15 @@ class NotificacionController extends Controller
             if (count($pedido)==0)
             {
                 // Devolvemos error codigo http 404
-                return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
+                return response()->json(['error'=>'No existe el pedido M00'.$pedido_id], 404);
             }
 
             if ($pedido->estado_pago == null || $pedido->estado_pago == 'declinado' || $pedido->estado_pago == 'pendiente') {
-                return response()->json(['error'=>'Para poder asignar un repartidor el pedido debe tener un pago registrado.'],409);
+                return response()->json(['error'=>'Para poder asignar un repartidor el pedido M00'.$pedido_id.' debe tener un pago registrado.'],409);
             }
 
             if ($pedido->estado == 4) {
-                return response()->json(['error'=>'Este pedido ya está marcado como finalizado.'],409);
+                return response()->json(['error'=>'El pedido M00'.$pedido_id.' ya está marcado como finalizado.'],409);
             }
 
             if ($pedido->repartidor_id != null) {
@@ -534,27 +542,27 @@ class NotificacionController extends Controller
 
                 //Enviar notificacion al repartidor (nuevo pedido asignado)
                 if ($repartidor->usuario->token_notificacion) {
-                    $this->enviarNotificacion($repartidor->usuario->token_notificacion, 'Se%20te%20ha%20asignado%20un%20pedido.', $pedido->id);
+                    $this->enviarNotificacion($repartidor->usuario->token_notificacion, 'Se%20te%20ha%20asignado%20un%20pedido%20M00'.$pedido_id, $pedido->id);
                 }
 
                 if ($notificarCliente) {
                     //Enviar notificacion al cliente (pedido asignado)
                     if ($pedido->usuario->token_notificacion) {
-                        $this->enviarNotificacionCliente($pedido->usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                        $this->enviarNotificacionCliente($pedido->usuario->token_notificacion, 'Tu%20pedido%20M00'.$pedido_id.'%20va%20en%20camino.', $pedido->id, 7);
                     }
                 }
 
                 if ($notificarRepAntiguo) {
                     //Enviar notificacion al repartidor que se le quita el pedido
                     if ($rep->usuario->token_notificacion) {
-                        $this->enviarNotificacion($rep->usuario->token_notificacion, 'Se%20te%20ha%20eliminado%20un%20pedido.', $pedido->id);
+                        $this->enviarNotificacion($rep->usuario->token_notificacion, 'Se%20te%20ha%20eliminado%20un%20pedido%20M00'.$pedido_id, $pedido->id);
                     }
                 }
 
-                return response()->json(['message'=>'Pedido asignado.', 'pedido'=>$pedido, 'repartidor'=>$repartidor], 200);
+                return response()->json(['message'=>'Pedido M00'.$pedido_id.' asignado.', 'pedido'=>$pedido, 'repartidor'=>$repartidor], 200);
 
             }else{
-                return response()->json(['error'=>'Error al asignar el pedido.'], 500);
+                return response()->json(['error'=>'Error al asignar el pedido M00'.$pedido_id], 500);
             }
         }
         else
@@ -580,7 +588,7 @@ class NotificacionController extends Controller
                 $nomEst = $nomEst.$explode1[$i].'%20'; 
             }
 
-            $this->enviarNotificacionCliente($request->input('token_notificacion'), 'El%20repartidor%20ha%20visitado%20el%20establecimiento%20'.$nomEst, 'null');
+            $this->enviarNotificacionCliente($request->input('token_notificacion'), 'El%20repartidor%20ha%20visitado%20el%20establecimiento%20'.$nomEst, 'null', 7);
 
         }
 
@@ -614,11 +622,11 @@ class NotificacionController extends Controller
             if (count($pedido)==0)
             {
                 // Devolvemos error codigo http 404
-                return response()->json(['error'=>'No existe el pedido con id '.$pedido_id], 404);
+                return response()->json(['error'=>'No existe el pedido M00'.$pedido_id], 404);
             }
 
             if ($pedido->estado == 2 || $pedido->repartidor_id != null) {
-                return response()->json(['error'=>'El pedido ya tiene un repartidor asignado.'],409);
+                return response()->json(['error'=>'El pedido M00'.$pedido_id.' ya tiene un repartidor asignado.'],409);
             }
 
             $pedido->repartidor_id = $repartidor->id;
@@ -635,12 +643,12 @@ class NotificacionController extends Controller
             if ($pedido->save() && $repartidor->save()) {
 
                 if ($pedido->usuario->token_notificacion) {
-                    $this->enviarNotificacionCliente($pedido->usuario->token_notificacion, 'Tu%20pedido%20va%20en%20camino.', $pedido->id);
+                    $this->enviarNotificacionCliente($pedido->usuario->token_notificacion, 'Tu%20pedido%20M00'.$pedido_id.'%20va%20en%20camino.', $pedido->id, 7);
                 }
 
-                return response()->json(['message'=>'Pedido aceptado.'], 200);
+                return response()->json(['message'=>'Pedido M00'.$pedido_id.' aceptado.'], 200);
             }else{
-                return response()->json(['error'=>'Error al aceptar el pedido.'], 500);
+                return response()->json(['error'=>'Error al aceptar el pedido M00'.$pedido_id], 500);
             }
         }
         else
@@ -666,11 +674,11 @@ class NotificacionController extends Controller
                     ->update(['ocupado' => 2]);
 
         //Notificar al cliente
-        if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null) {
+        if ($request->input('token_notificacion') != '' && $request->input('token_notificacion') != null && $request->input('token_notificacion') != 'null') {
             $this->enviarNotificacionCliente($request->input('token_notificacion'), 'El%20repartidor%20ha%20llegado%20a%20tu%20ubicación.', $request->input('pedido_id'), 3);
         }
 
-        return response()->json(['message'=>'Pedido finalizado.'], 200);
+        return response()->json(['message'=>'Pedido M00'.$request->input('pedido_id').' finalizado.'], 200);
  
     }
 

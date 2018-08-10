@@ -38,7 +38,9 @@ class DashboardController extends Controller
             ->count();
 
         $repartidores_activos = \App\Repartidor::where('estado','ON')
-            ->where('activo',1)
+            ->where('estado', 'ON')
+            ->where('activo', 1)
+            ->where('ocupado', 2)
             ->count();
 
         $dinero_recaudado = \App\Pedido::where('estado_pago','aprobado')
@@ -622,7 +624,11 @@ class DashboardController extends Controller
             }
         }
 
-        $calificaciones = $calificacion->get();
+        $calificaciones = $calificacion
+            ->with(['pedido' => function ($query) {
+                $query->select('id', 'usuario_id', 'repartidor_id', 'repartidor_nom');
+            }])
+            ->get();
 
         return response()->json(['calificaciones'=>$calificaciones], 200);
      

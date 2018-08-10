@@ -115,6 +115,8 @@ export class PedidosFinalizadosComponent implements OnInit, OnDestroy{
              this.data.pedidos[i].fecha = dia+'/'+mes+'/'+anio;
              this.data.pedidos[i].hora = hora+':'+minutos+':'+segundos;
 
+             this.data.pedidos[i].ref = 'M00'+this.data.pedidos[i].id;
+
              //Control de estados del pedido
              if(this.data.pedidos[i].estado == 1){
                this.data.pedidos[i].estado = 'No asignado';
@@ -132,13 +134,14 @@ export class PedidosFinalizadosComponent implements OnInit, OnDestroy{
                this.productList = this.data.pedidos;
                this.filteredItems = this.productList;
                //console.log(this.productList);
-
-               //verificar si hay que cargar un pedido de una notificacion
-               this.checkHeaderEvent();
-
                this.init();
 
-               this.loading = false;
+               //verificar si hay que cargar un pedido de una notificacion
+               setTimeout(()=>{
+                  this.checkHeaderEvent();
+                  this.loading = false;
+                },600);
+
              },1000);
          },
          msg => { // Error
@@ -361,6 +364,8 @@ export class PedidosFinalizadosComponent implements OnInit, OnDestroy{
               }else if (this.productList[i].repartidor_nom.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
                  this.filteredItems.push(this.productList[i]);
               }else if (this.productList[i].estado.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
+                 this.filteredItems.push(this.productList[i]);
+              }else if (this.productList[i].ref.toUpperCase().indexOf(this.inputName.toUpperCase())>=0) {
                  this.filteredItems.push(this.productList[i]);
               }
             }
