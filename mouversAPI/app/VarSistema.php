@@ -24,7 +24,7 @@ class VarSistema extends Model
      *
      * @var array
      */
-    protected $fillable = ['costoxkm'];
+    protected $fillable = ['costoxkm', 'gastos_envio'];
 
     /**
      * The attributes excluded from the model's JSON form.

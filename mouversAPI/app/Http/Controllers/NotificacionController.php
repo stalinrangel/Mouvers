@@ -116,13 +116,13 @@ class NotificacionController extends Controller
 
                 //Repetir todo el proceso
                 $intento = $intento + 1;
-                if ($intento <= 2) {
+                if ($intento <= 10) {
                     //esperar
                     sleep(30);
                     $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                if ($intento > 2) {
+                if ($intento > 10) {
                     //Enviar notificacion al cliente (pedido no asignado)
                     if ($usuario->token_notificacion) {
                         $this->enviarNotificacionCliente($usuario->token_notificacion, 'No%20hay%20repartidores%20disponibles%20para%20su%20pedido%20M00'.$pedido->id);
@@ -244,11 +244,11 @@ class NotificacionController extends Controller
 
                 //Repetir todo el proceso
                 $intento = $intento + 1;
-                if ($intento <= 2) {
+                if ($intento <= 10) {
                     $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                if (!$bandera && $intento > 2) {
+                if (!$bandera && $intento > 10) {
                     //verificar
                     $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
                     if (!$pedidoAux->repartidor_id) {
@@ -321,11 +321,11 @@ class NotificacionController extends Controller
 
                 //Repetir todo el proceso
                 $intento = $intento + 1;
-                if ($intento <= 2) {
+                if ($intento <= 10) {
                     $this->localizarRepartidores($request, $id, $intento);
                 }
 
-                if (!$bandera && $intento > 2) {
+                if (!$bandera && $intento > 10) {
 
                     //verificar
                     $pedidoAux = \App\Pedido::select('estado', 'repartidor_id')->find($id);
@@ -542,7 +542,7 @@ class NotificacionController extends Controller
 
                 //Enviar notificacion al repartidor (nuevo pedido asignado)
                 if ($repartidor->usuario->token_notificacion) {
-                    $this->enviarNotificacion($repartidor->usuario->token_notificacion, 'Se%20te%20ha%20asignado%20un%20pedido%20M00'.$pedido_id, $pedido->id);
+                    $this->enviarNotificacion($repartidor->usuario->token_notificacion, 'Se%20te%20ha%20asignado%20un%20pedido%20M00'.$pedido_id, $pedido->id, 8);
                 }
 
                 if ($notificarCliente) {

@@ -200,6 +200,11 @@ export class PedidosCursoComponent implements OnInit, OnDestroy{
       this.toasterService.popAsync(toast);
   }
 
+  refreshTabla() {
+    localStorage.setItem('mouvers_pedido_id', '');
+    this.ngOnInit();
+  }
+
   //Abrir modal por defecto
   open(modal) {
     this.modalService.open(modal);

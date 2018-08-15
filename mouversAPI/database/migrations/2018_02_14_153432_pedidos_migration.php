@@ -20,7 +20,8 @@ class PedidosMigration extends Migration
             $table->string('direccion');
             $table->float('distancia')->nullable(); //Km desde el establecimiento hasta el destino
             $table->float('tiempo')->nullable(); //minutos desde el establecimiento hasta el destino
-            $table->float('costo_envio'); //costo del envio
+            $table->float('gastos_envio')->nullable(); //costo del traslado del repartidor al primer establecimineto
+            $table->float('costo_envio'); //costo del envio (Incluye la suma de gastos_envio)
             $table->float('subtotal'); //suma del costo de los prods solicitados 
             $table->float('costo'); //costo total
 

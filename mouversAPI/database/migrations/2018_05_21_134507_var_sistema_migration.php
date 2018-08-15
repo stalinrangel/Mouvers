@@ -15,6 +15,7 @@ class VarSistemaMigration extends Migration
         Schema::create('var_sistema', function (Blueprint $table) {
             $table->increments('id');
             $table->float('costoxkm')->nullable();
+            $table->float('gastos_envio')->nullable(); //costo del traslado del repartidor al primer establecimineto
 
             //$table->timestamps();
         });

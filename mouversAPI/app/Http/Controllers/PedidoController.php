@@ -54,6 +54,7 @@ class PedidoController extends Controller
         if (!$request->input('lat') ||
             !$request->input('lng') ||
             !$request->input('direccion') ||
+            !$request->input('gastos_envio') ||
             !$request->input('costo_envio') ||
             !$request->input('subtotal') ||
             !$request->input('costo') ||
@@ -107,6 +108,7 @@ class PedidoController extends Controller
             'direccion'=>$dir, 
             'distancia'=>$request->input('distancia'), 
             'tiempo'=>$request->input('tiempo'),
+            'gastos_envio'=>$request->input('gastos_envio'),
             'costo_envio'=>$request->input('costo_envio'), 
             'subtotal'=>$request->input('subtotal'),
             'costo'=>$request->input('costo'),

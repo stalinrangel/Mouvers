@@ -191,7 +191,7 @@
         border-right: 1px solid $light;
         border-left: 1px solid $light;
         width: calc(100% + 2px);
-        height: 100%;
+        height: calc(100% - 70px);
         overflow-y: scroll;
         overflow-x: hidden; 
           .person {

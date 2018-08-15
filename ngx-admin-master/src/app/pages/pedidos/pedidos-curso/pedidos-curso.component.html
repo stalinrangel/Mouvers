@@ -1,8 +1,11 @@
 <nb-card *ngIf="!viendo && mostrar">
   <nb-card-header>
     <div class="row show-grid">
-          <div class="col-6">
-            <div>Pedidos en curso</div>
+          <div class="col-6" >
+            Pedidos en curso &nbsp;
+              <button style="display: inline-block;"  type="button" class="btn btn-icon btn-tn" title="Refresh" (click)="refreshTabla()"> <i class="fa fa-refresh icon-refresh"></i>
+              </button>
+            
           </div>
           <div class="col-6">
             <div>

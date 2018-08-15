@@ -16,7 +16,28 @@
         <button type="submit" class="btn btn-success" [disabled]="costoxkm == '' || costoxkm == undefined || costoxkm < 0" (click)="configurarSist()">Aceptar</button>
       </nb-card-body>
     </nb-card>
+  </div>
+</div>
 
+<div class="row">
+  <div class="col-lg-6" style="display:block; margin:auto">
+  
+    <nb-card>
+      <nb-card-header>Costos de envío</nb-card-header>
+      <nb-card-body>
+        <div class="input-group">
+          <input type="number" class="form-control" placeholder="Costo" [(ngModel)]="gastos_envio" id="input-gastos_envio">
+          <span class="input-group-btn">
+            <button class="btn btn-danger">
+              $ MXN
+            </button>
+          </span>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-success" [disabled]="gastos_envio == '' || gastos_envio == undefined || gastos_envio < 0" (click)="configurarSist2()">Aceptar</button>
+      </nb-card-body>
+    </nb-card>
+  </div>
 </div>
 
 

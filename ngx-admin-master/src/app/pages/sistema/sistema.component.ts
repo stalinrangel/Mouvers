@@ -45,6 +45,7 @@ export class SistemaComponent implements OnInit{
 	public sistConfigurado=false;
 	public idVarSistema:any;
 	public costoxkm:any;
+	public gastos_envio:any;
 
 	constructor( private modalService: NgbModal,
 	       private toasterService: ToasterService,
@@ -69,6 +70,7 @@ export class SistemaComponent implements OnInit{
 		       this.data=data;
 		       this.idVarSistema=this.data.varSistema.id;
 		       this.costoxkm=this.data.varSistema.costoxkm;
+		       this.gastos_envio=this.data.varSistema.gastos_envio;
 
 		       this.loading = false;
 		       this.sistConfigurado = true;
@@ -121,11 +123,21 @@ export class SistemaComponent implements OnInit{
 	  this.toasterService.popAsync(toast);
 	}
 
+	//Configurar costo por km
 	configurarSist() {
 		if (!this.sistConfigurado) {
 			this.crearVarSist();
 		}else{
 			this.actualizarVarSist();
+		}
+	}
+
+	//Configurar gastos de envio
+	configurarSist2() {
+		if (!this.sistConfigurado) {
+			this.crearVarSist();
+		}else{
+			this.actualizarVarSist2();
 		}
 	}
 
@@ -136,6 +148,7 @@ export class SistemaComponent implements OnInit{
 		var datos= {
 	        token: localStorage.getItem('mouvers_token'),
 	        costoxkm: this.costoxkm,
+	        gastos_envio: this.gastos_envio,
 	      }
 	    console.log(datos);
 
@@ -148,6 +161,7 @@ export class SistemaComponent implements OnInit{
 
 		       this.idVarSistema=this.data.varSistema.id;
 		       this.costoxkm=this.data.varSistema.costoxkm;
+		       this.gastos_envio=this.data.varSistema.gastos_envio;
 
 		       this.loading = false;
 		       this.showToast('success', 'Success!', this.data.message);
@@ -194,6 +208,50 @@ export class SistemaComponent implements OnInit{
 
 		       this.idVarSistema=this.data.varSistema.id;
 		       this.costoxkm=this.data.varSistema.costoxkm;
+
+		       this.loading = false;
+		       this.showToast('success', 'Success!', this.data.message);
+
+		     },
+		     msg => { // Error
+		       console.log(msg);
+		       //console.log(msg.error.error);
+
+		       this.loading = false;
+
+		       //token invalido/ausente o token expiro
+		       if(msg.status == 400 || msg.status == 401){ 
+		            //alert(msg.error.error);
+		            this.showToast('warning', 'Warning!', msg.error.error);
+		        }
+		        else { 
+		            //alert(msg.error.error);
+		            this.showToast('error', 'Erro!', msg.error.error);
+		        }   
+
+		     }
+		   );
+	}
+
+	actualizarVarSist2() {
+
+		this.loading = true;
+
+		var datos= {
+	        token: localStorage.getItem('mouvers_token'),
+	        gastos_envio: this.gastos_envio,
+	      }
+	    console.log(datos);
+
+		this.http.put(this.rutaService.getRutaApi()+'sistema/'+this.idVarSistema, datos)
+		   .toPromise()
+		   .then(
+		     data => { // Success
+		       console.log(data);
+		       this.data = data;
+
+		       this.idVarSistema=this.data.varSistema.id;
+		       this.gastos_envio=this.data.varSistema.gastos_envio;
 
 		       this.loading = false;
 		       this.showToast('success', 'Success!', this.data.message);

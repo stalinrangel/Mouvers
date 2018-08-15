@@ -47,12 +47,18 @@ class VarSistemaController extends Controller
      */
     public function store(Request $request)
     {
-        // Primero comprobaremos si estamos recibiendo todos los campos.
+        /*// Primero comprobaremos si estamos recibiendo todos los campos.
         if ( !$request->input('costoxkm') )
         {
             // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
             return response()->json(['error'=>'Falta el parametro costoxkm.'],422);
         }
+
+        if ( !$request->input('gastos_envio') )
+        {
+            // Se devuelve un array error con los errors encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para messagees de validación.
+            return response()->json(['error'=>'Falta el parametro gastos_envio.'],422);
+        }*/
 
         if($varSistema=\App\VarSistema::create($request->all())){
            return response()->json(['message'=>'Sistema configurado con éxito.',
