@@ -149,6 +149,7 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Anouar\Fpdf\FpdfServiceProvider::class,
         GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
+        //Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
 
     ],
 

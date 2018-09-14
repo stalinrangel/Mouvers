@@ -337,6 +337,15 @@ class PedidoController extends Controller
         //Eliminar las relaciones(productos) en la tabla pivote
         $pedido->productos()->detach();
 
+        //Eliminar la ruta
+        $ruta = $pedido->ruta;
+        if (sizeof($ruta) > 0)
+        {
+            for ($i=0; $i < count($ruta) ; $i++) { 
+                $ruta[$i]->delete();
+            }
+        }
+
         // Eliminamos el pedido.
         $pedido->delete();
 

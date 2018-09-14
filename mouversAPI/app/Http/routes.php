@@ -16,6 +16,13 @@ Route::get('/', function () {
     
 });
 
+
+/*Route::get('test', function () {
+    \Log::info('Info log test');
+});*/
+
+//Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
 Route::group(  ['middleware' =>'cors'], function(){
 
         
@@ -38,13 +45,25 @@ Route::group(  ['middleware' =>'cors'], function(){
     //----Pruebas CoordenadasController
     Route::get('/coordenadas','CoordenadasController@index');
 
+    //----Pruebas UsuarioController
     Route::post('/usuarios','UsuarioController@store');
     Route::get('/usuarios/validar/{email}','UsuarioController@validarCuenta');
 
     //----Pruebas EntidadMunicipioController
     Route::get('/entidades/municipios','EntidadMunicipioController@index');
 
+    //----Pruebas VarSistemaController
+    Route::get('/sistema','VarSistemaController@index');
     Route::get('/sistema/contacto','VarSistemaController@getContacto');
+
+    //----Pruebas CategoriaController
+    Route::get('/categorias','CategoriaController@index');
+    Route::get('/categorias/habilitadas','CategoriaController@categoriasHabilitadas');
+    Route::get('/categorias/{id}','CategoriaController@show');
+
+    //----Pruebas BlogController
+    Route::get('/blogs','BlogController@index');
+    Route::get('/blogs/{id}','BlogController@show');
 
     Route::group(['middleware' => 'jwt-auth'], function(){
 
@@ -74,13 +93,13 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/usuarios/{id}/pedidos/finalizados','UsuarioController@misPedidosFinalizados');
 
         //----Pruebas CategoriaController
-        Route::get('/categorias','CategoriaController@index');
+        //Route::get('/categorias','CategoriaController@index');
         Route::get('/categorias/subcats/productos/establecimiento','CategoriaController@catsSubcatsProdsEst');
-        Route::get('/categorias/habilitadas','CategoriaController@categoriasHabilitadas');
+        //Route::get('/categorias/habilitadas','CategoriaController@categoriasHabilitadas');
         Route::post('/categorias','CategoriaController@store');
         Route::put('/categorias/{id}','CategoriaController@update');
         Route::delete('/categorias/{id}','CategoriaController@destroy');
-        Route::get('/categorias/{id}','CategoriaController@show');
+        //Route::get('/categorias/{id}','CategoriaController@show');
         Route::get('/categorias/{id}/subcategorias','CategoriaController@categoriaSubcategorias');
 
         //----Pruebas EstablecimientoController
@@ -148,11 +167,11 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/repartidores/estadisticas/{repartidor_id}','RepartidorController@conteoPedidos');
 
         //----Pruebas BlogController
-        Route::get('/blogs','BlogController@index');
+        //Route::get('/blogs','BlogController@index');
         Route::post('/blogs','BlogController@store');
         Route::put('/blogs/{id}','BlogController@update');
         Route::delete('/blogs/{id}','BlogController@destroy');
-        Route::get('/blogs/{id}','BlogController@show');
+        //Route::get('/blogs/{id}','BlogController@show');
 
         //----Pruebas MsgBlogController
         //Route::get('/mensajes/blogs','MsgBlogController@index');
@@ -160,24 +179,6 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/mensajes/blogs/{id}','MsgBlogController@update');
         Route::delete('/mensajes/blogs/{id}','MsgBlogController@destroy');
         //Route::get('/mensajes/blogs/{id}','MsgBlogController@show');
-
-        /*//----Pruebas MsgClienteAdminController
-        Route::get('/mensajes/cliente','MsgClienteAdminController@index');
-        Route::post('/mensajes/cliente','MsgClienteAdminController@store');
-        //Route::put('/mensajes/cliente/{id}','MsgClienteAdminController@update');
-        Route::delete('/mensajes/cliente/{id}','MsgClienteAdminController@destroy');
-        //Route::get('/mensajes/cliente/{id}','MsgClienteAdminController@show');
-        Route::get('/mensajes/cliente/chat/{cliente_id}','MsgClienteAdminController@miChat');
-        Route::put('/mensajes/cliente/leer','MsgClienteAdminController@leerMensajes');
-
-        //----Pruebas MsgRepAdminController
-        Route::get('/mensajes/repartidor','MsgRepAdminController@index');
-        Route::post('/mensajes/repartidor','MsgRepAdminController@store');
-        //Route::put('/mensajes/repartidor/{id}','MsgRepAdminController@update');
-        Route::delete('/mensajes/repartidor/{id}','MsgRepAdminController@destroy');
-        //Route::get('/mensajes/repartidor/{id}','MsgRepAdminController@show');
-        Route::get('/mensajes/repartidor/chat/{cliente_id}','MsgRepAdminController@miChat');
-        Route::put('/mensajes/repartidor/leer','MsgRepAdminController@leerMensajes');*/
 
         //----Pruebas NotificacionController
         Route::get('/notificaciones/localizar/repartidores/pedido_id/{id}','NotificacionController@localizarRepartidores');
@@ -187,7 +188,7 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::put('/notificaciones/{repartidor_id}/finalizar/pedido','NotificacionController@finalizarPedido');
 
         //----Pruebas VarSistemaController
-        Route::get('/sistema','VarSistemaController@index');
+        //Route::get('/sistema','VarSistemaController@index');
         Route::post('/sistema','VarSistemaController@store');
         Route::put('/sistema/{id}','VarSistemaController@update');
 
@@ -199,12 +200,6 @@ Route::group(  ['middleware' =>'cors'], function(){
         //Route::put('/pagos/{id}','PagoController@update');
         //Route::delete('/pagos/{id}','PagoController@destroy');
         Route::get('/pagos/{id}','PagoController@show');
-
-        
-
-    });
-
-
 
         //----Pruebas ChatClienteController
         Route::get('/chats/clientes','ChatClienteController@index');
@@ -227,6 +222,13 @@ Route::group(  ['middleware' =>'cors'], function(){
         Route::get('/chats/repartidores/michat/{usuario_id}','ChatRepartidorController@miChat');
         Route::put('/chats/repartidores/leer','ChatRepartidorController@leerMensajes');
         Route::get('/chats/sinleer/repartidores/{receptor_id}','ChatRepartidorController@getMsgsSinLeer');
+
+        
+    });
+
+
+
+        
 
         
 });
