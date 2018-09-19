@@ -17,7 +17,7 @@
             width: 85%;
             min-width: 400px;
             margin: auto;
-            background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.9)),url(http://mouvers.mx/terminos/imgs/edificios.png) #fff;
+            background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.9)),url(https://mouvers.mx/terminos/imgs/edificios.png) #fff;
             background-size: 100%;
             background-position-y: bottom;
             background-repeat: no-repeat;
@@ -48,7 +48,7 @@
         <div class="content-text">
             <h2 class="title">USUARIO VALIDADO</h2>
             <br>
-            <img src="http://mouvers.mx/terminos/imgs/user-check.png" class="user-img">
+            <img src="https://mouvers.mx/terminos/imgs/user-check.png" class="user-img">
             <p class="center">¡Enhorabuena! tu usuario ha sido validado con éxito.</p>
             <p class="center">Ya puedes disfrutar de todos los servicios que te ofrece Möuvers.</p>
         <br>

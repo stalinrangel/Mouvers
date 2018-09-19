@@ -29,6 +29,14 @@ class VarSistemaController extends Controller
         }
     }
 
+    public function ubicacion()
+    {
+    //cargar la ubicacion publica y privada
+    $ubicacion = \App\VarSistema::where('id', 2)->get();
+
+    return response()->json(['ubicacion'=>$ubicacion], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

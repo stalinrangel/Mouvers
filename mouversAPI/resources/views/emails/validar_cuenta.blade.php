@@ -17,7 +17,7 @@
             width: 35%;
             min-width: 400px;
             margin: auto;
-            background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.9)),url(http://mouvers.mx/terminos/imgs/edificios.png) #fff;
+            background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.9)),url(https://mouvers.mx/terminos/imgs/edificios.png) #fff;
             background-size: 100%;
             background-position: bottom;
             background-repeat: no-repeat;
@@ -49,7 +49,7 @@
 </head>
 <body>
     <div class="content">
-        <img src="http://mouvers.mx/terminos/imgs/bg.jpg" alt="">
+        <img src="https://mouvers.mx/terminos/imgs/bg.jpg" alt="">
         <div class="content-text">
             <h2 class="title">BIENVENIDO A MÖUVERS</h2>
             <br>

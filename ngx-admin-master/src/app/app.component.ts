@@ -71,18 +71,43 @@ export class AppComponent implements OnInit {
 	        "message": "Gracias por suscribirse a las notificaciones!"
 	      },
 	      notifyButton: {
-	          	/* Your other notify button settings here ... */
+	          	// Your other notify button settings here 
 		        enable: true,
 		        displayPredicate: function() {
 		            return OneSignal.isPushNotificationsEnabled()
 		                .then(function(isPushEnabled) {
-		                    /* The user is subscribed, so we want to return "false" to hide the notify button */
+		                    // The user is subscribed, so we want to return "false" to hide the notify button
 		                    return !isPushEnabled;
 		                });
 		        }, 
 	      }
 	    }]);
 	    console.log('OneSignal Initialized');
+
+	    /*OneSignal.push(function() {
+	      OneSignal.init({
+	        appId: "a75f81f0-b531-45c1-b7bf-fc41a11191b9",
+	        autoRegister: true,
+	        allowLocalhostAsSecureOrigin: true,
+
+		    httpPermissionRequest: {
+		      enable: true,
+		      modalTitle: 'Mouvers',
+		      modalMessage: 'Gracias por suscribirse a las notificaciones!',
+		      modalButtonText:'OK'
+
+		    },
+		    welcomeNotification:{
+		      "title": "Mouvers",
+		      "message": "Gracias por suscribirse a las notificaciones!"
+		    },
+
+	        notifyButton: {
+	          enable: true,
+	        },
+	      });
+	    });
+	    console.log('OneSignal Initialized');*/
 	    
     	/*OneSignal.push(function () {
 	      console.log('Register For Push');

@@ -438,7 +438,7 @@ class UsuarioController extends Controller
         //$enlace = 'http://localhost/gitHub/Mouvers/mouversAPI/public/usuarios/validar/'.$email;
 
         //$enlace = 'http://mouvers.mx/mouversAPI/public/usuarios/validar/'.$email;
-        $enlace = 'http://api.mouvers.mx/usuarios/validar/'.$email;
+        $enlace = 'https://api.mouvers.mx/usuarios/validar/'.$email;
 
         //return response()->view('emails.validar_cuenta', ['enlace' => $enlace], 200);
 
