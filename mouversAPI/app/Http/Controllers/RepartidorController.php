@@ -76,7 +76,7 @@ class RepartidorController extends Controller
         $usuario->ciudad = $request->input('ciudad');
         $usuario->estado = $request->input('estado');
         $usuario->telefono = $request->input('telefono');
-        $usuario->imagen = 'http://mouvers.mx/terminos/imgs/user-white.png';
+        $usuario->imagen = 'https://mouvers.mx/terminos/imgs/user-white.png';
         $usuario->tipo_usuario = 3;
         $usuario->tipo_registro = 1;
         //$usuario->id_facebook = $request->input('id_facebook');

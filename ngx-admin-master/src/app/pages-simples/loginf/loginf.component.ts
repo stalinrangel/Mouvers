@@ -37,8 +37,8 @@ export class LoginfComponent implements OnInit {
 	isCloseButton = true;
 	//----Alertas--->
 
-	email= 'admin@correo.com'
-	password='12345';
+	email= ''
+	password='';
 	private data:any;
 	public loading = false;
 

@@ -31,10 +31,10 @@ class VarSistemaController extends Controller
 
     public function ubicacion()
     {
-    //cargar la ubicacion publica y privada
-    $ubicacion = \App\VarSistema::where('id', 2)->get();
+        //cargar la ubicacion publica y privada
+        $ubicacion = \App\VarSistema::all();
 
-    return response()->json(['ubicacion'=>$ubicacion], 200);
+        return response()->json(['ubicacion'=>$ubicacion], 200);
     }
 
     /**

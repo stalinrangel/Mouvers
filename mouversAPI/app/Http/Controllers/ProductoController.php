@@ -218,7 +218,7 @@ class ProductoController extends Controller
             $subcategoria = \App\Subcategoria::find($subcategoria_id);
 
             if(count($subcategoria)==0){
-                return response()->json(['error'=>'No existe la subcategoría con id '.$categoria_id], 404);          
+                return response()->json(['error'=>'No existe la subcategoría con id '.$subcategoria_id], 404);          
             } 
 
             if ($producto->subcategoria_id != $subcategoria_id) {

@@ -16,7 +16,7 @@ class NotificacionController extends Controller
     public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0, $obj = 'null')
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
+        curl_setopt($ch, CURLOPT_URL, "https://api.mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -28,12 +28,14 @@ class NotificacionController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
     }
+
+
 
     //Enviar notificacion a un dispositivo cliente mediante su token_notificacion
     public function enviarNotificacionCliente($token_notificacion, $msg, $pedido_id = 'null', $accion = 0, $obj = 'null')
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
+        curl_setopt($ch, CURLOPT_URL, "http://api.mouvers.mx/onesignalclientes.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -45,6 +47,7 @@ class NotificacionController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
     }
+
 
     /*Localiza los repartidores disponibles para notificarles
     que hay un nuevo pedido*/

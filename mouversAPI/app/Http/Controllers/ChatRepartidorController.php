@@ -14,7 +14,7 @@ class ChatRepartidorController extends Controller
     public function enviarNotificacion($token_notificacion, $msg, $pedido_id = 'null', $accion = 0, $obj = 'null')
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
+        curl_setopt($ch, CURLOPT_URL, "https://api.mouvers.mx/onesignal.php?contenido=".$msg."&token_notificacion=".$token_notificacion."&pedido_id=".$pedido_id."&accion=".$accion."&obj=".$obj);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
             'Authorization: Basic YmEwZDMwMDMtODY0YS00ZTYxLTk1MjYtMGI3Nzk3N2Q1YzNi'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -23,7 +23,7 @@ class ChatRepartidorController extends Controller
         ///curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
-        $response = curl_exec($ch);
+        return $response = curl_exec($ch);
         curl_close($ch);
     }
 
@@ -79,6 +79,8 @@ class ChatRepartidorController extends Controller
     /*crear un mesage asociado a un chat*/
     public function storeMsg(Request $request)
     {
+        $oneSignal = 'sinEjecutar';
+
         // Primero comprobaremos si estamos recibiendo todos los campos.
         if ( !$request->input('emisor_id') )
         {
@@ -189,7 +191,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $oneSignal = $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
 
@@ -236,7 +238,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $oneSignal = $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
             }
@@ -245,7 +247,7 @@ class ChatRepartidorController extends Controller
             $msg->token_notificacion = $receptor->token_notificacion;
             //$msg->emisor = \App\User::select('id', 'nombre', 'imagen')->find($msg->emisor_id);
 
-            return response()->json(['message'=>'Mensaje enviado con éxito.', 'chat'=>$chat, 'msg'=>$msg], 200);
+            return response()->json(['message'=>'Mensaje enviado con éxito.', 'chat'=>$chat, 'msg'=>$msg, 'oneSignal'=>$oneSignal], 200);
         }
         //Crear el mensaje asociado al chat
         else{
@@ -297,7 +299,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $oneSignal = $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
 
@@ -344,7 +346,7 @@ class ChatRepartidorController extends Controller
                     $obj = array('chat_id'=>$msg->chat_id, 'emisor'=>$emisor, 'msg'=>$msgAux);
                     $obj = json_encode($obj);
 
-                    $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
+                    $oneSignal = $this->enviarNotificacion($request->input('token_notificacion'), $newstr, 'null', 2, $obj);
 
                 }
             }
@@ -354,7 +356,7 @@ class ChatRepartidorController extends Controller
             //$msg->emisor = \App\User::select('id', 'nombre', 'imagen')->find($msg->emisor_id);
 
            return response()->json(['message'=>'Mensaje enviado con éxito.',
-             'chat'=>$chat, 'msg'=>$msg], 200);
+             'chat'=>$chat, 'msg'=>$msg, 'oneSignal'=>$oneSignal], 200);
 
         }
     }
